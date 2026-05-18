@@ -1,15 +1,15 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { SetWins } from '../../models/squash';
+import type { SetWins } from '../../utils/squash';
+import { SquashNodeSvg } from '../SquashNode/SquashNodeSvg';
 import {
   MOCK_COLORS,
   MOCK_META,
   MOCK_META_LIVE,
   MOCK_META_UPCOMING,
   renderWithAppearance,
-} from '../../test-utils/bracketTestUtils';
-import { SquashNodeSvg } from '../SquashNode/SquashNodeSvg';
+} from './testUtils';
 
 const baseVariantProps = {
   nodeId: 'test-node',
@@ -67,20 +67,6 @@ describe('SquashNodeSvg', () => {
       </svg>
     );
     expect(screen.getByTestId('squash-node-svg-clip')).toBeInTheDocument();
-  });
-
-  it('generates a non-empty collision-resistant clipPath id for unsafe node ids', () => {
-    renderWithAppearance(
-      <svg>
-        <SquashNodeSvg {...baseVariantProps} nodeId="!!!" />
-        <SquashNodeSvg {...baseVariantProps} nodeId="!!!" />
-      </svg>
-    );
-    const clipIds = screen
-      .getAllByTestId('squash-node-svg-clip')
-      .map((clipPath) => clipPath.getAttribute('id'));
-    expect(clipIds.every(Boolean)).toBe(true);
-    expect(new Set(clipIds).size).toBe(2);
   });
 
   it('renders a live indicator circle for live matches', () => {

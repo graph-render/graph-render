@@ -1,4 +1,4 @@
-import { VerticalStagePosition } from '@graph-render/types/tournament';
+import { VerticalStagePosition } from '@graph-render/types';
 import { describe, expect, it } from 'vitest';
 
 import { NAVIGATION_MAX_ZOOM, NAVIGATION_MIN_ZOOM } from '../../constants/stageNavigation';

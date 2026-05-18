@@ -1,10 +1,10 @@
-import { VerticalStagePosition } from '@graph-render/types/tournament';
+import { VerticalStagePosition } from '@graph-render/types';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderWithAppearance } from '../../test-utils/bracketTestUtils';
 import { BracketFrame } from '../Bracket/BracketFrame';
+import { renderWithAppearance } from './testUtils';
 
 const baseProps = {
   title: 'World Championship',

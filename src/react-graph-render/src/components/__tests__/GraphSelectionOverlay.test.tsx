@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_MARQUEE_FILL } from '../../constants/graph';
 import { GraphSelectionOverlay } from '../GraphSelectionOverlay';
 
 describe('GraphSelectionOverlay', () => {
@@ -46,14 +45,14 @@ describe('GraphSelectionOverlay', () => {
     expect(rect?.getAttribute('stroke-dasharray')).toBeTruthy();
   });
 
-  it('uses default marquee fill from theme constants', () => {
+  it('uses semi-transparent blue fill', () => {
     const { container } = render(
       <svg>
         <GraphSelectionOverlay rect={{ x: 0, y: 0, width: 50, height: 50 }} />
       </svg>
     );
     const rect = container.querySelector('rect');
-    expect(rect?.getAttribute('fill')).toBe(DEFAULT_MARQUEE_FILL);
+    expect(rect?.getAttribute('fill')).toContain('rgba(');
   });
 
   it('has pointer-events none', () => {

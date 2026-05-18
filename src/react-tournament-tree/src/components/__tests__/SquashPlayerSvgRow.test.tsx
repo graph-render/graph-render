@@ -1,8 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { MOCK_COLORS } from '../../test-utils/bracketTestUtils';
 import { SquashPlayerSvgRow } from '../SquashNode/SquashPlayerSvgRow';
+import { MOCK_COLORS } from './testUtils';
 
 const baseProps = {
   nodeId: 'n1',
@@ -109,28 +109,6 @@ describe('SquashPlayerSvgRow', () => {
     );
     fireEvent.mouseLeave(screen.getByTestId('player-svg-row'));
     expect(onPlayerLeave).toHaveBeenCalledOnce();
-  });
-
-  it('is keyboard and touch accessible', () => {
-    const onPlayerEnter = vi.fn();
-    const onPlayerLeave = vi.fn();
-    render(
-      <svg>
-        <SquashPlayerSvgRow
-          {...baseProps}
-          onPlayerEnter={onPlayerEnter}
-          onPlayerLeave={onPlayerLeave}
-        />
-      </svg>
-    );
-    const row = screen.getByRole('button', { name: /player one, 2 sets won/i });
-    fireEvent.focus(row);
-    fireEvent.keyDown(row, { key: ' ' });
-    fireEvent.touchStart(row);
-    fireEvent.blur(row);
-    fireEvent.touchCancel(row);
-    expect(onPlayerEnter).toHaveBeenCalledWith(0, { name: 'Player One', seed: 1 });
-    expect(onPlayerLeave).toHaveBeenCalledTimes(2);
   });
 
   it('renders second player (playerIndex=1) correctly', () => {

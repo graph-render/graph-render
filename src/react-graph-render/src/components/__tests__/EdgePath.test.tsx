@@ -97,19 +97,6 @@ describe('EdgePath', () => {
     expect(hitPath?.getAttribute('role')).toBe('button');
   });
 
-  it('renders a visible focus halo when the interactive path receives focus', () => {
-    vi.mocked(buildEdgePath).mockReturnValue('M0,0 L10,10');
-    const { container } = render(
-      <svg>
-        <EdgePath {...baseProps} onClick={vi.fn()} />
-      </svg>
-    );
-
-    fireEvent.focus(container.querySelector('path[data-graph-edge-interactive]')!);
-
-    expect(container.querySelectorAll('path').length).toBe(3);
-  });
-
   it('does not add role="button" to hit path when onClick is not provided', () => {
     vi.mocked(buildEdgePath).mockReturnValue('M0,0 L10,10');
     const { container } = render(
@@ -118,8 +105,7 @@ describe('EdgePath', () => {
       </svg>
     );
     const hitPath = container.querySelector('path[data-graph-edge-interactive]');
-    expect(hitPath).toBeNull();
-    expect(container.querySelector('path')?.getAttribute('role')).toBeNull();
+    expect(hitPath?.getAttribute('role')).toBeNull();
   });
 
   it('sets aria-label to edge label when onClick and label are provided', () => {

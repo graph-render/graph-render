@@ -4,8 +4,8 @@ import {
   centerViewportOnNode,
   clampViewportTranslation,
   clampZoom,
-  getGraphBounds,
   getFitViewport,
+  getGraphBounds,
   normalizeViewport,
 } from '../utils/viewport';
 
@@ -27,7 +27,7 @@ describe('clampZoom', () => {
 // ── normalizeViewport ─────────────────────────────────────────────────────────
 describe('normalizeViewport', () => {
   it('falls back to 0 for non-finite x/y', () => {
-    const vp = normalizeViewport({ x: NaN, y: Infinity, zoom: 1 }, 0.5, 4);
+    const vp = normalizeViewport({ x: Number.NaN, y: Number.POSITIVE_INFINITY, zoom: 1 }, 0.5, 4);
     expect(vp.x).toBe(0);
     expect(vp.y).toBe(0);
   });
@@ -39,7 +39,7 @@ describe('normalizeViewport', () => {
 
   it('falls back to zoom 1 when zoom is NaN after clamping', () => {
     // NaN treated as if zoom value; normalizeViewport uses isFinite, falls back to 1
-    const vp = normalizeViewport({ x: 0, y: 0, zoom: NaN }, 0.5, 4);
+    const vp = normalizeViewport({ x: 0, y: 0, zoom: Number.NaN }, 0.5, 4);
     // NaN is not finite, so falls back then clamps: clamp(1, 0.5, 4) = 1
     expect(vp.zoom).toBe(1);
   });
@@ -52,28 +52,21 @@ describe('normalizeViewport', () => {
 
 // ── clampViewportTranslation ──────────────────────────────────────────────────
 describe('clampViewportTranslation', () => {
-  const extent = [[0, 0], [1000, 800]] as const;
+  const extent = [
+    [0, 0],
+    [1000, 800],
+  ] as const;
 
   it('centres content when it fits in the container', () => {
     // World 1000×800 at zoom 0.1 = 100×80, fits in 800×600 container
-    const vp = clampViewportTranslation(
-      { x: 0, y: 0, zoom: 0.1 },
-      extent,
-      800,
-      600
-    );
+    const vp = clampViewportTranslation({ x: 0, y: 0, zoom: 0.1 }, extent, 800, 600);
     // x = 800/2 - (0 + 500) * 0.1 = 400 - 50 = 350
     expect(vp.x).toBeCloseTo(350);
     expect(vp.y).toBeCloseTo(260);
   });
 
   it('clamps translation when content is larger than the container', () => {
-    const vp = clampViewportTranslation(
-      { x: 2000, y: 2000, zoom: 2 },
-      extent,
-      800,
-      600
-    );
+    const vp = clampViewportTranslation({ x: 2000, y: 2000, zoom: 2 }, extent, 800, 600);
     // At zoom 2, world 1000×800 → 2000×1600 > container → clamp x
     expect(vp.x).toBeLessThanOrEqual(0);
     expect(vp.y).toBeLessThanOrEqual(0);

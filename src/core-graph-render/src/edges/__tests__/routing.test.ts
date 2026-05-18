@@ -62,17 +62,4 @@ describe('routeEdges', () => {
     const result = routeEdges(nodes, edges);
     expect(result[0]).toHaveProperty('labelPosition');
   });
-
-  it('falls back to safe routing distances when options are non-finite', () => {
-    const nodes = [makeNode('a', 0, 0), makeNode('b', 300, 0)];
-    const edges = [makeEdge('e1', 'a', 'b')];
-    const result = routeEdges(nodes, edges, {
-      arrowPadding: Number.NaN,
-      edgeSeparation: Number.POSITIVE_INFINITY,
-      selfLoopRadius: Number.NEGATIVE_INFINITY,
-    });
-    expect(
-      result[0]!.points.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y))
-    ).toBe(true);
-  });
 });

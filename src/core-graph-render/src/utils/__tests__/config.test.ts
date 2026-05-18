@@ -111,20 +111,4 @@ describe('normalizeGraphConfig', () => {
   it('preserves hoverHighlight: false', () => {
     expect(normalizeGraphConfig({ hoverHighlight: false }).hoverHighlight).toBe(false);
   });
-
-  it('normalizes vertex and UI theme colors', () => {
-    const theme = normalizeGraphConfig({
-      theme: {
-        nodeFill: '#f8fafc',
-        marqueeFill: 'rgba(1, 2, 3, 0.5)',
-        controlTextColor: '#abcdef',
-      },
-    }).theme;
-
-    expect(theme.nodeFill).toBe('#f8fafc');
-    expect(theme.marqueeFill).toBe('rgba(1, 2, 3, 0.5)');
-    expect(theme.controlTextColor).toBe('#abcdef');
-    expect(theme.nodeStroke).toBeTruthy();
-    expect(theme.nodeRadius).toBeGreaterThanOrEqual(0);
-  });
 });

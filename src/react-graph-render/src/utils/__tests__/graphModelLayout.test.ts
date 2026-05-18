@@ -4,7 +4,7 @@ import {
   toError,
   validatePositionedNodes,
 } from '@graph-render/core';
-import { GraphErrorPhase } from '@graph-render/types/react';
+import { GraphErrorPhase } from '@graph-render/types';
 import { describe, expect, it, vi } from 'vitest';
 
 import { resolvePositionedNodes } from '../graphModelLayout';
@@ -34,11 +34,10 @@ describe('resolvePositionedNodes', () => {
     vi.mocked(layoutNodes).mockReturnValue(nodes);
     vi.mocked(validatePositionedNodes).mockReturnValue(undefined);
     const result = resolvePositionedNodes(baseOptions);
-    expect(result.nodes).toBe(nodes);
-    expect(result.errors).toEqual([]);
+    expect(result).toBe(nodes);
   });
 
-  it('returns a Layout phase error when layoutNodes throws in degraded mode', () => {
+  it('calls onError with Layout phase when layoutNodes throws', () => {
     const error = new Error('layout fail');
     vi.mocked(layoutNodes).mockImplementation(() => {
       throw error;
@@ -47,16 +46,12 @@ describe('resolvePositionedNodes', () => {
     vi.mocked(buildFallbackLayout).mockReturnValue([]);
     vi.mocked(validatePositionedNodes).mockReturnValue(undefined);
 
-    const result = resolvePositionedNodes({ ...baseOptions, allowDegradedGraph: true });
-    expect(result.errors).toEqual([
-      {
-        context: {
-          graph: baseOptions.graph,
-          phase: GraphErrorPhase.Layout,
-        },
-        error,
-      },
-    ]);
+    const onError = vi.fn();
+    resolvePositionedNodes({ ...baseOptions, allowDegradedGraph: true, onError });
+    expect(onError).toHaveBeenCalledWith(error, {
+      graph: baseOptions.graph,
+      phase: GraphErrorPhase.Layout,
+    });
   });
 
   it('throws when layoutNodes fails and allowDegradedGraph is false', () => {
@@ -73,8 +68,7 @@ describe('resolvePositionedNodes', () => {
     const layoutNodesOverride = vi.fn().mockReturnValue(overrideNodes);
     vi.mocked(validatePositionedNodes).mockReturnValue(undefined);
     const result = resolvePositionedNodes({ ...baseOptions, layoutNodesOverride });
-    expect(result.nodes).toBe(overrideNodes);
-    expect(result.errors).toEqual([]);
+    expect(result).toBe(overrideNodes);
     expect(layoutNodesOverride).toHaveBeenCalledWith(baseOptions.layoutOptions);
   });
 
@@ -87,18 +81,18 @@ describe('resolvePositionedNodes', () => {
     const layoutNodesOverride = vi.fn().mockImplementation(() => {
       throw new Error('override fail');
     });
+    const onError = vi.fn();
     const result = resolvePositionedNodes({
       ...baseOptions,
       allowDegradedGraph: true,
       layoutNodesOverride,
+      onError,
     });
-    expect(result.errors).toEqual([
-      expect.objectContaining({
-        context: expect.objectContaining({ phase: GraphErrorPhase.LayoutOverride }),
-        error: expect.any(Error),
-      }),
-    ]);
-    expect(result.nodes).toBe(fallback);
+    expect(onError).toHaveBeenCalledWith(
+      expect.any(Error),
+      expect.objectContaining({ phase: GraphErrorPhase.LayoutOverride })
+    );
+    expect(result).toBe(fallback);
   });
 
   it('calls buildFallbackLayout when both layoutNodes and override fail', () => {
@@ -111,6 +105,6 @@ describe('resolvePositionedNodes', () => {
     vi.mocked(toError).mockImplementation((e) => (e instanceof Error ? e : new Error(String(e))));
     const result = resolvePositionedNodes({ ...baseOptions, allowDegradedGraph: true });
     expect(buildFallbackLayout).toHaveBeenCalled();
-    expect(result.nodes).toBe(fallbackNodes);
+    expect(result).toBe(fallbackNodes);
   });
 });

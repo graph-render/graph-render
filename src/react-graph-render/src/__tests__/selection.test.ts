@@ -1,7 +1,12 @@
 import { SelectionMode } from '@graph-render/types';
 import { describe, expect, it } from 'vitest';
 
-import { getMarqueeSelection, isPointInsideRect, normalizeRect, toggleId } from '../utils/selection';
+import {
+  getMarqueeSelection,
+  isPointInsideRect,
+  normalizeRect,
+  toggleId,
+} from '../utils/selection';
 
 // ── toggleId ─────────────────────────────────────────────────────────────────
 describe('toggleId — Single mode', () => {
@@ -86,7 +91,15 @@ describe('getMarqueeSelection', () => {
   ] as any[];
 
   const edges = [
-    { id: 'e1', source: 'n1', target: 'n2', points: [{ x: 10, y: 10 }, { x: 15, y: 15 }] },
+    {
+      id: 'e1',
+      source: 'n1',
+      target: 'n2',
+      points: [
+        { x: 10, y: 10 },
+        { x: 15, y: 15 },
+      ],
+    },
   ] as any[];
 
   it('selects nodes overlapping with the marquee rect', () => {

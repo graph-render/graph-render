@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { renderWithAppearance } from '../../test-utils/bracketTestUtils';
 import { StageLabelGrid } from '../Bracket/stage-labels/StageLabelGrid';
+import { renderWithAppearance } from './testUtils';
 
 describe('StageLabelGrid', () => {
   it('renders all stage labels', () => {

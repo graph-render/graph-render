@@ -1,13 +1,17 @@
-import type { GraphConfig } from '@graph-render/types';
-import type { GraphHandle, VertexComponentProps } from '@graph-render/types/react';
+import type {
+  GraphConfig,
+  GraphHandle,
+  TournamentBracketProps,
+  VertexComponentProps,
+} from '@graph-render/types';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { TournamentBracketProps } from '../../models/tournamentBracket';
 import { BracketGraphCanvas } from '../Bracket/BracketGraphCanvas';
 
-// Mock @graph-render/react — Graph is a complex canvas component.
+// Mock @graph-render/react — Graph is a complex canvas component; GraphStageSync uses
+// groupPositionedNodesByColumn from the same package.
 vi.mock('@graph-render/react', () => ({
   Graph: vi.fn(() => null),
   groupPositionedNodesByColumn: vi.fn(() => []),
@@ -34,7 +38,6 @@ const baseProps = {
   labels: ['QF', 'SF'],
   onStagesChange: vi.fn(),
   onMatchClick: undefined,
-  onInvalidNode: undefined,
 };
 
 describe('BracketGraphCanvas', () => {

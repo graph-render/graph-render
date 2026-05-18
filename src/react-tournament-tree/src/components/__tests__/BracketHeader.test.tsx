@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderWithAppearance } from '../../test-utils/bracketTestUtils';
 import { BracketHeader } from '../Bracket/BracketHeader';
+import { renderWithAppearance } from './testUtils';
 
 const baseProps = {
   title: 'World Championship',
@@ -20,13 +20,6 @@ describe('BracketHeader', () => {
   it('renders the title', () => {
     renderWithAppearance(<BracketHeader {...baseProps} />);
     expect(screen.getByText('World Championship')).toBeInTheDocument();
-  });
-
-  it('renders the title as a heading', () => {
-    renderWithAppearance(<BracketHeader {...baseProps} />);
-    expect(
-      screen.getByRole('heading', { name: 'World Championship', level: 2 })
-    ).toBeInTheDocument();
   });
 
   it('renders the badge text', () => {

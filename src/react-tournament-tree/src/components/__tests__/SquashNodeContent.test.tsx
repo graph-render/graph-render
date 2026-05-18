@@ -1,9 +1,9 @@
-import { SquashNodeRenderMode } from '@graph-render/types/tournament';
+import { SquashNodeRenderMode } from '@graph-render/types';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { MOCK_META, MOCK_META_LIVE, renderWithAppearance } from '../../test-utils/bracketTestUtils';
 import { SquashNodeContent } from '../SquashNode/SquashNodeContent';
+import { MOCK_META, MOCK_META_LIVE, renderWithAppearance } from './testUtils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test fixture needs to accept arbitrary meta values including null
 const makeNode = (meta: unknown = MOCK_META): any => ({

@@ -1,15 +1,15 @@
 import { screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { SetWins } from '../../models/squash';
+import type { SetWins } from '../../utils/squash';
+import { SquashNodeHtml } from '../SquashNode/SquashNodeHtml';
 import {
   MOCK_COLORS,
   MOCK_META,
   MOCK_META_LIVE,
   MOCK_META_UPCOMING,
   renderWithAppearance,
-} from '../../test-utils/bracketTestUtils';
-import { SquashNodeHtml } from '../SquashNode/SquashNodeHtml';
+} from './testUtils';
 
 const baseVariantProps = {
   nodeId: 'test-node',

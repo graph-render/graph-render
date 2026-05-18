@@ -46,7 +46,9 @@ describe('findSearchMatchedNodeIds', () => {
   });
 
   it('swallows predicate errors and treats node as non-matched', () => {
-    const throwing = () => { throw new Error('boom'); };
+    const throwing = () => {
+      throw new Error('boom');
+    };
     const result = findSearchMatchedNodeIds(nodes, 'alpha', throwing);
     expect(result).toHaveLength(0);
   });
@@ -89,7 +91,13 @@ describe('findSearchMatchedEdgeIds', () => {
 
 // ── getDerivedHighlightResults ────────────────────────────────────────────────
 describe('getDerivedHighlightResults', () => {
-  const ctx = { query: 'abc', nodes: [], edges: [], selectedNodeIds: [], selectedEdgeIds: [] } as any;
+  const ctx = {
+    query: 'abc',
+    nodes: [],
+    edges: [],
+    selectedNodeIds: [],
+    selectedEdgeIds: [],
+  } as any;
   const emptyCtx = { ...ctx, query: '   ' };
 
   it('returns empty arrays for blank query', () => {
@@ -111,7 +119,9 @@ describe('getDerivedHighlightResults', () => {
   });
 
   it('swallows strategy errors and returns empty arrays', () => {
-    const failing = () => { throw new Error('boom'); };
+    const failing = () => {
+      throw new Error('boom');
+    };
     expect(getDerivedHighlightResults(ctx, failing)).toEqual({ nodeIds: [], edgeIds: [] });
   });
 });

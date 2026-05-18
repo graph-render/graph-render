@@ -1,8 +1,8 @@
 import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { renderWithAppearance } from '../../test-utils/bracketTestUtils';
 import { StageLabelBar } from '../Bracket/StageLabelBar';
+import { renderWithAppearance } from './testUtils';
 
 const baseProps = {
   stageLabels: ['Round of 16', 'Quarterfinals', 'Semifinals'],

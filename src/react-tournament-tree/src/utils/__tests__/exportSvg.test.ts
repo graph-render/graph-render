@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { downloadSvgFromElement, SvgExportError } from '../exportSvg';
+import { downloadSvgFromElement } from '../exportSvg';
 
 // jsdom does not implement URL.createObjectURL, so we must mock it.
 const mockCreateObjectURL = vi.fn((_blob: Blob) => 'blob:mock-url');
@@ -32,14 +32,14 @@ describe('downloadSvgFromElement', () => {
     document.body.innerHTML = '';
   });
 
-  it('throws when rootElement is null', () => {
-    expect(() => downloadSvgFromElement(null)).toThrow(SvgExportError);
+  it('does nothing when rootElement is null', () => {
+    downloadSvgFromElement(null);
     expect(mockCreateObjectURL).not.toHaveBeenCalled();
   });
 
-  it('throws when there is no <svg> inside rootElement', () => {
+  it('does nothing when there is no <svg> inside rootElement', () => {
     const div = document.createElement('div');
-    expect(() => downloadSvgFromElement(div)).toThrow(SvgExportError);
+    downloadSvgFromElement(div);
     expect(mockCreateObjectURL).not.toHaveBeenCalled();
   });
 
