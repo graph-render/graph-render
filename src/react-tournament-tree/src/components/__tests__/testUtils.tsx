@@ -1,7 +1,7 @@
 /**
  * Shared test utilities and fixtures for component tests.
  */
-import { MatchStatus } from '@graph-render/types';
+import { MatchStatus } from '@graph-render/types/tournament';
 import { render, type RenderOptions } from '@testing-library/react';
 import type React from 'react';
 

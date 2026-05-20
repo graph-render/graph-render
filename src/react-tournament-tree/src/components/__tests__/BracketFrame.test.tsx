@@ -1,4 +1,4 @@
-import { VerticalStagePosition } from '@graph-render/types';
+import { VerticalStagePosition } from '@graph-render/types/tournament';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';

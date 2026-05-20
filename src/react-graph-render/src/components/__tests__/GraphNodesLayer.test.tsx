@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { createNodeMeasurementScheduler } from '../../utils/nodeMeasurementScheduler';
 import { GraphNodesLayer } from '../GraphNodesLayer';
 
 const StubVertex = ({ node }: any) => (
@@ -19,6 +20,7 @@ const makeNode = (id: string, overrides: Record<string, unknown> = {}) =>
 const baseProps = {
   Vertex: StubVertex,
   selectedNodeSet: new Set<string>(),
+  nodeSelectionEnabled: true,
   focusedNodeId: null,
   highlightedNodeSet: new Set<string>(),
   highlightColor: '#f59e0b',
@@ -30,6 +32,7 @@ const baseProps = {
   hoverNodeOutColor: '#ff5b5b',
   hoverNodeHighlight: true,
   hoveredNodeStates: undefined,
+  measurementScheduler: createNodeMeasurementScheduler(),
   onNodeFocus: vi.fn(),
   onNodeClick: vi.fn(),
   onNodeDoubleClick: vi.fn(),
@@ -37,6 +40,12 @@ const baseProps = {
   onNodeMouseLeave: vi.fn(),
   onPathHover: vi.fn(),
   onPathLeave: vi.fn(),
+  nodeFill: 'white',
+  nodeStroke: '#d7dbe3',
+  nodeTextColor: '#111827',
+  nodeTextSize: 14,
+  nodeRadius: 8,
+  fontFamily: 'system-ui, sans-serif',
 };
 
 describe('GraphNodesLayer', () => {

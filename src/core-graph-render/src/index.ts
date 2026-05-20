@@ -103,14 +103,11 @@ export type {
 } from '@graph-render/types';
 export {
   EdgeType,
-  GraphErrorPhase,
   GraphFailureBehavior,
-  GraphHoverTrigger,
   GraphInputValidationMode,
   LayoutDirection,
   LayoutType,
   NodeSide,
   NodeSizingMode,
   RoutingStyle,
-  SelectionMode,
 } from '@graph-render/types';

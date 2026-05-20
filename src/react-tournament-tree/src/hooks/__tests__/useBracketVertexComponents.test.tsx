@@ -1,4 +1,4 @@
-import { SquashNodeRenderMode } from '@graph-render/types';
+import { SquashNodeRenderMode } from '@graph-render/types/tournament';
 import { render, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -17,7 +17,7 @@ const BASE_PROPS = {
   nodeRenderMode: SquashNodeRenderMode.Html,
   onInvalidNode: undefined,
   vertexComponent: undefined,
-} as const;
+};
 
 describe('useBracketVertexComponents', () => {
   it('returns exportVertexComponent and resolvedVertexComponent', () => {

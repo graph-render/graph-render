@@ -1,8 +1,11 @@
+import { fromTypedNxGraph } from '@graph-render/core';
 import { LayoutDirection, LayoutType, RoutingStyle } from '@graph-render/types';
+import { SelectionMode } from '@graph-render/types/react';
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { makeEmptyNxGraph } from '../../test-utils/graphFixtures';
 import { Graph } from '../Graph';
 
 vi.mock('@graph-render/core', () => ({
@@ -68,7 +71,7 @@ const StubVertex = ({ node }: any) => (
   <text data-testid={`vertex-${node.id}`}>{node.label ?? node.id}</text>
 );
 
-const emptyGraph = { nodes: {}, edges: {} } as any;
+const emptyGraph = makeEmptyNxGraph();
 
 describe('Graph', () => {
   it('renders an SVG element', () => {
@@ -76,8 +79,15 @@ describe('Graph', () => {
     expect(container.querySelector('svg')).not.toBeNull();
   });
 
-  it('has role="figure" on the SVG', () => {
+  it('uses role="application" when keyboard navigation is enabled', () => {
     const { container } = render(<Graph graph={emptyGraph} vertexComponent={StubVertex} />);
+    expect(container.querySelector('svg[role="application"]')).not.toBeNull();
+  });
+
+  it('uses role="figure" when keyboard navigation is disabled', () => {
+    const { container } = render(
+      <Graph graph={emptyGraph} vertexComponent={StubVertex} keyboardNavigation={false} />
+    );
     expect(container.querySelector('svg[role="figure"]')).not.toBeNull();
   });
 
@@ -151,5 +161,57 @@ describe('Graph', () => {
     expect(() =>
       render(<Graph ref={ref} graph={emptyGraph} vertexComponent={StubVertex} />)
     ).not.toThrow();
+  });
+
+  it('stops propagation for handled keyboard shortcuts', () => {
+    const onParentKeyDown = vi.fn();
+    const { container } = render(
+      <button type="button" onKeyDown={onParentKeyDown}>
+        <Graph graph={emptyGraph} vertexComponent={StubVertex} />
+      </button>
+    );
+    fireEvent.keyDown(container.querySelector('svg')!, { key: '+' });
+    expect(onParentKeyDown).not.toHaveBeenCalled();
+  });
+
+  it('clears drag state on pointer cancel', () => {
+    const { container } = render(<Graph graph={emptyGraph} vertexComponent={StubVertex} />);
+    const svg = container.querySelector('svg')!;
+    fireEvent.pointerDown(svg, { button: 0, clientX: 10, clientY: 10, pointerId: 1 });
+    expect(svg).toHaveStyle({ cursor: 'grabbing' });
+    fireEvent.pointerCancel(svg, { pointerId: 1 });
+    expect(svg).toHaveStyle({ cursor: 'grab' });
+  });
+
+  it('commits the latest marquee bounds when pointer up happens before RAF paint', () => {
+    vi.mocked(fromTypedNxGraph).mockReturnValue({
+      nodes: [{ id: 'n1', label: 'Node 1' }],
+      edges: [],
+    });
+    const onSelectionChange = vi.fn();
+    const { container } = render(
+      <Graph
+        graph={emptyGraph}
+        vertexComponent={StubVertex}
+        selectionMode={SelectionMode.Multiple}
+        onSelectionChange={onSelectionChange}
+        layoutNodesOverride={() => [
+          {
+            id: 'n1',
+            label: 'Node 1',
+            position: { x: 100, y: 100 },
+            size: { width: 20, height: 20 },
+          },
+        ]}
+      />
+    );
+
+    const svg = container.querySelector('svg')!;
+    fireEvent.pointerDown(svg, { button: 0, clientX: 0, clientY: 0, pointerId: 1, shiftKey: true });
+    fireEvent.pointerMove(svg, { clientX: 150, clientY: 150, pointerId: 1, shiftKey: true });
+    fireEvent.pointerUp(svg, { clientX: 150, clientY: 150, pointerId: 1, shiftKey: true });
+
+    expect(onSelectionChange).toHaveBeenCalledWith({ nodeIds: ['n1'], edgeIds: [] });
+    vi.mocked(fromTypedNxGraph).mockReturnValue({ nodes: [], edges: [] });
   });
 });

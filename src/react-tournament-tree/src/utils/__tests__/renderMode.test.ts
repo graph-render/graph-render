@@ -1,4 +1,4 @@
-import { SquashNodeRenderMode } from '@graph-render/types';
+import { SquashNodeRenderMode } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
 import { isSvgCompatibleRenderMode } from '../renderMode';

@@ -1,4 +1,4 @@
-import { GraphControlsPosition } from '@graph-render/types';
+import { GraphControlsPosition } from '@graph-render/types/react';
 import { fireEvent, render } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -34,6 +34,16 @@ describe('GraphViewportControls', () => {
     );
     const buttons = container.querySelectorAll('[role="button"]');
     expect(buttons.length).toBe(4);
+  });
+
+  it('includes focus-visible styling for keyboard users', () => {
+    const { container } = render(
+      <svg>
+        <GraphViewportControls {...makeProps()} />
+      </svg>
+    );
+
+    expect(container.querySelector('style')?.textContent).toContain(':focus-visible');
   });
 
   it('each button has an aria-label', () => {

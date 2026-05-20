@@ -1,9 +1,6 @@
-import type {
-  GraphConfig,
-  GraphHandle,
-  TournamentBracketProps,
-  VertexComponentProps,
-} from '@graph-render/types';
+import type { GraphConfig } from '@graph-render/types';
+import type { GraphHandle, VertexComponentProps } from '@graph-render/types/react';
+import type { TournamentBracketProps } from '../../models/tournamentBracket';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -38,6 +35,7 @@ const baseProps = {
   labels: ['QF', 'SF'],
   onStagesChange: vi.fn(),
   onMatchClick: undefined,
+  onInvalidNode: undefined,
 };
 
 describe('BracketGraphCanvas', () => {

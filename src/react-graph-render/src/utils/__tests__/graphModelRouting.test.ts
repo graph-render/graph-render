@@ -4,7 +4,7 @@ import {
   toError,
   validatePositionedEdges,
 } from '@graph-render/core';
-import { GraphErrorPhase } from '@graph-render/types';
+import { GraphErrorPhase } from '@graph-render/types/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { resolvePositionedEdges } from '../graphModelRouting';
@@ -35,7 +35,8 @@ describe('resolvePositionedEdges', () => {
     vi.mocked(routeEdges).mockReturnValue(edges);
     vi.mocked(validatePositionedEdges).mockReturnValue(undefined);
     const result = resolvePositionedEdges(baseOptions);
-    expect(result).toBe(edges);
+    expect(result.edges).toBe(edges);
+    expect(result.errors).toEqual([]);
   });
 
   it('throws when routeEdges fails and allowDegradedGraph is false', () => {
@@ -46,7 +47,7 @@ describe('resolvePositionedEdges', () => {
     expect(() => resolvePositionedEdges(baseOptions)).toThrow();
   });
 
-  it('calls onError with Routing phase when routeEdges throws', () => {
+  it('returns a Routing phase error when routeEdges throws in degraded mode', () => {
     const error = new Error('route fail');
     vi.mocked(routeEdges).mockImplementation(() => {
       throw error;
@@ -54,12 +55,16 @@ describe('resolvePositionedEdges', () => {
     vi.mocked(toError).mockReturnValue(error);
     vi.mocked(buildFallbackEdges).mockReturnValue([]);
     vi.mocked(validatePositionedEdges).mockReturnValue(undefined);
-    const onError = vi.fn();
-    resolvePositionedEdges({ ...baseOptions, allowDegradedGraph: true, onError });
-    expect(onError).toHaveBeenCalledWith(error, {
-      graph: baseOptions.graph,
-      phase: GraphErrorPhase.Routing,
-    });
+    const result = resolvePositionedEdges({ ...baseOptions, allowDegradedGraph: true });
+    expect(result.errors).toEqual([
+      {
+        context: {
+          graph: baseOptions.graph,
+          phase: GraphErrorPhase.Routing,
+        },
+        error,
+      },
+    ]);
   });
 
   it('uses routeEdgesOverride when provided', () => {
@@ -67,7 +72,8 @@ describe('resolvePositionedEdges', () => {
     const routeEdgesOverride = vi.fn().mockReturnValue(overrideEdges);
     vi.mocked(validatePositionedEdges).mockReturnValue(undefined);
     const result = resolvePositionedEdges({ ...baseOptions, routeEdgesOverride });
-    expect(result).toBe(overrideEdges);
+    expect(result.edges).toBe(overrideEdges);
+    expect(result.errors).toEqual([]);
     expect(routeEdgesOverride).toHaveBeenCalled();
   });
 
@@ -79,18 +85,18 @@ describe('resolvePositionedEdges', () => {
     vi.mocked(routeEdges).mockReturnValue(fallback);
     vi.mocked(validatePositionedEdges).mockReturnValue(undefined);
     vi.mocked(toError).mockImplementation((e) => (e instanceof Error ? e : new Error(String(e))));
-    const onError = vi.fn();
     const result = resolvePositionedEdges({
       ...baseOptions,
       allowDegradedGraph: true,
       routeEdgesOverride,
-      onError,
     });
-    expect(onError).toHaveBeenCalledWith(
-      expect.any(Error),
-      expect.objectContaining({ phase: GraphErrorPhase.RoutingOverride })
-    );
-    expect(result).toBe(fallback);
+    expect(result.errors).toEqual([
+      expect.objectContaining({
+        context: expect.objectContaining({ phase: GraphErrorPhase.RoutingOverride }),
+        error: expect.any(Error),
+      }),
+    ]);
+    expect(result.edges).toBe(fallback);
   });
 
   it('calls buildFallbackEdges when routeEdges fails with degraded mode', () => {
@@ -103,6 +109,6 @@ describe('resolvePositionedEdges', () => {
     vi.mocked(toError).mockImplementation((e) => (e instanceof Error ? e : new Error(String(e))));
     const result = resolvePositionedEdges({ ...baseOptions, allowDegradedGraph: true });
     expect(buildFallbackEdges).toHaveBeenCalled();
-    expect(result).toBe(fallbackEdges);
+    expect(result.edges).toBe(fallbackEdges);
   });
 });

@@ -1,4 +1,4 @@
-import { SelectionMode } from '@graph-render/types';
+import { SelectionMode } from '@graph-render/types/react';
 import { describe, expect, it } from 'vitest';
 
 import {

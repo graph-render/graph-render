@@ -1,4 +1,4 @@
-import { MatchStatus } from '@graph-render/types';
+import { MatchStatus } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
 import { normalizeMatchMeta } from '../normalizeMatchMeta';

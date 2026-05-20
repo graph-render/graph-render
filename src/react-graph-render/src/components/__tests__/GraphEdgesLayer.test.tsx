@@ -45,6 +45,8 @@ const baseProps = {
   hoveredEdgeId: null,
   hoveredNodeId: null,
   selectedEdgeSet: new Set<string>(),
+  edgeSelectionEnabled: true,
+  edgeInteractive: true,
   highlightedEdgeSet: new Set<string>(),
   hoverEdgeColor: '#4da3ff',
   hoverNodeOutColor: '#ff5b5b',
@@ -130,6 +132,25 @@ describe('GraphEdgesLayer', () => {
     );
     fireEvent.click(getByTestId('edge-e1'));
     expect(onEdgeSelection).toHaveBeenCalledWith(edge);
+  });
+
+  it('does not attach a click handler when edge interaction is disabled', () => {
+    const onEdgeSelection = vi.fn();
+    const edge = makeEdge('e1');
+    const { getByTestId } = render(
+      <svg>
+        <GraphEdgesLayer
+          {...baseProps}
+          edges={[edge]}
+          edgeInteractive={false}
+          onEdgeSelection={onEdgeSelection}
+        />
+      </svg>
+    );
+
+    fireEvent.click(getByTestId('edge-e1'));
+
+    expect(onEdgeSelection).not.toHaveBeenCalled();
   });
 
   it('passes isHovered=true when edge id matches hoveredEdgeId', () => {

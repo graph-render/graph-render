@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { KeyboardDirection } from '../../models/utils';
+import { KeyboardDirection } from '../../constants/keyboard';
 import { getNearestNodeInDirection } from '../keyboardNavigation';
 
 const makeNode = (id: string, x: number, y: number, width = 100, height = 72) =>
