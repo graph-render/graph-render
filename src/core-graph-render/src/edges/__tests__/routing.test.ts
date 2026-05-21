@@ -88,9 +88,7 @@ describe('routeEdges', () => {
   });
 
   it('skips obstacle avoidance for very large graphs', () => {
-    const nodes = Array.from({ length: 150 }, (_, index) =>
-      makeNode(`n${index}`, index * 10, 0)
-    );
+    const nodes = Array.from({ length: 150 }, (_, index) => makeNode(`n${index}`, index * 10, 0));
     const edges = Array.from({ length: 150 }, (_, index) =>
       makeEdge(`e${index}`, `n${index}`, `n${(index + 1) % 150}`)
     );

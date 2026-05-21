@@ -5,35 +5,35 @@ import { defaultEdgeRenderer, defaultNodeRenderer } from '../defaultRenderers';
 
 describe('defaultNodeRenderer', () => {
   it('renders a rectangle and label text for a node', () => {
-    const markup = defaultNodeRenderer({
+    const nodeSvg = defaultNodeRenderer({
       id: 'n1',
       position: { x: 0, y: 0 },
       size: { width: 120, height: 48 },
       label: 'Player A',
     });
 
-    expect(markup).toContain('<rect');
-    expect(markup).toContain('Player A');
-    expect(markup).toContain('<text');
+    expect(nodeSvg).toContain('<rect');
+    expect(nodeSvg).toContain('Player A');
+    expect(nodeSvg).toContain('<text');
   });
 
   it('falls back to node id when label is missing', () => {
-    const markup = defaultNodeRenderer({
+    const nodeSvg = defaultNodeRenderer({
       id: 'fallback-id',
       position: { x: 10, y: 20 },
     });
 
-    expect(markup).toContain('fallback-id');
+    expect(nodeSvg).toContain('fallback-id');
   });
 
   it('escapes xml characters in labels', () => {
-    const markup = defaultNodeRenderer({
+    const nodeSvg = defaultNodeRenderer({
       id: 'n1',
       position: { x: 0, y: 0 },
       label: 'A & B <final>',
     });
 
-    expect(markup).toContain('A &amp; B &lt;final&gt;');
+    expect(nodeSvg).toContain('A &amp; B &lt;final&gt;');
   });
 });
 
@@ -46,7 +46,7 @@ describe('defaultEdgeRenderer', () => {
   };
 
   it('renders a path with marker for directed edges', () => {
-    const markup = defaultEdgeRenderer(
+    const edgeSvg = defaultEdgeRenderer(
       {
         id: 'e1',
         source: 'a',
@@ -61,12 +61,12 @@ describe('defaultEdgeRenderer', () => {
       theme
     );
 
-    expect(markup).toContain('<path');
-    expect(markup).toContain('url(#arrow-end)');
+    expect(edgeSvg).toContain('<path');
+    expect(edgeSvg).toContain('url(#arrow-end)');
   });
 
   it('renders edge label text when label position is provided', () => {
-    const markup = defaultEdgeRenderer(
+    const edgeSvg = defaultEdgeRenderer(
       {
         id: 'e1',
         source: 'a',
@@ -82,12 +82,12 @@ describe('defaultEdgeRenderer', () => {
       theme
     );
 
-    expect(markup).toContain('Final');
-    expect(markup).toContain('<text');
+    expect(edgeSvg).toContain('Final');
+    expect(edgeSvg).toContain('<text');
   });
 
   it('omits marker for undirected edges', () => {
-    const markup = defaultEdgeRenderer(
+    const edgeSvg = defaultEdgeRenderer(
       {
         id: 'e1',
         source: 'a',
@@ -102,6 +102,6 @@ describe('defaultEdgeRenderer', () => {
       theme
     );
 
-    expect(markup).not.toContain('marker-end');
+    expect(edgeSvg).not.toContain('marker-end');
   });
 });

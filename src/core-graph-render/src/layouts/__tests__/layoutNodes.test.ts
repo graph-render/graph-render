@@ -48,9 +48,13 @@ describe('layoutNodes', () => {
     });
     expect(result).toHaveLength(2);
     for (const node of result) {
-      expect(node.position).toBeDefined();
-      expect(Number.isFinite(node.position!.x)).toBe(true);
-      expect(Number.isFinite(node.position!.y)).toBe(true);
+      const position = node.position;
+      expect(position).toBeDefined();
+      if (!position) {
+        continue;
+      }
+      expect(Number.isFinite(position.x)).toBe(true);
+      expect(Number.isFinite(position.y)).toBe(true);
     }
   });
 

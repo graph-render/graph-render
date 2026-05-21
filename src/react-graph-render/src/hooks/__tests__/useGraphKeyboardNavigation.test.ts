@@ -63,9 +63,7 @@ describe('useGraphKeyboardNavigation', () => {
 
   it('fits the viewport on 0', () => {
     const fitView = vi.fn();
-    const { result } = renderHook(() =>
-      useGraphKeyboardNavigation(makeOptions({ fitView }))
-    );
+    const { result } = renderHook(() => useGraphKeyboardNavigation(makeOptions({ fitView })));
 
     act(() => result.current(createKeyEvent('0') as never));
     expect(fitView).toHaveBeenCalled();

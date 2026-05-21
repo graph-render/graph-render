@@ -42,9 +42,7 @@ describe('useGraphHoverHandlers', () => {
     const setHoveredNodeId = vi.fn();
     const setFocusedPath = vi.fn();
     const { result } = renderHook(() =>
-      useGraphHoverHandlers(
-        makeOptions({ onNodeHoverChange, setHoveredNodeId, setFocusedPath })
-      )
+      useGraphHoverHandlers(makeOptions({ onNodeHoverChange, setHoveredNodeId, setFocusedPath }))
     );
 
     act(() => result.current.handleNodeMouseEnter('n1'));
@@ -93,9 +91,7 @@ describe('useGraphHoverHandlers', () => {
     const setHoveredNodeId = vi.fn();
     const onEdgeHoverChange = vi.fn();
     const { result } = renderHook(() =>
-      useGraphHoverHandlers(
-        makeOptions({ setHoveredEdgeId, setHoveredNodeId, onEdgeHoverChange })
-      )
+      useGraphHoverHandlers(makeOptions({ setHoveredEdgeId, setHoveredNodeId, onEdgeHoverChange }))
     );
 
     act(() => result.current.handleEdgeHoverChange('e1', true));

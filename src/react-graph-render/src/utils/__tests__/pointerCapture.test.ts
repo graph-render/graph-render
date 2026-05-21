@@ -1,9 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  releasePointerCaptureIfAvailable,
-  setPointerCaptureIfAvailable,
-} from '../pointerCapture';
+import { releasePointerCaptureIfAvailable, setPointerCaptureIfAvailable } from '../pointerCapture';
 
 describe('pointer capture helpers', () => {
   it('sets pointer capture when supported', () => {
