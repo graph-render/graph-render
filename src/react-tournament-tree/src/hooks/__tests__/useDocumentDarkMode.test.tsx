@@ -56,8 +56,8 @@ describe('useDocumentDarkMode', () => {
     expect(result.current.isDarkMode).toBe(false);
   });
 
-  it('toggleDarkMode updates the html element class', () => {
-    const { result } = renderHook(() => useDocumentDarkMode());
+  it('toggleDarkMode updates the html element class when syncToDocument is enabled', () => {
+    const { result } = renderHook(() => useDocumentDarkMode({ syncToDocument: true }));
 
     act(() => {
       result.current.toggleDarkMode();
