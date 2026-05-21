@@ -1,3 +1,16 @@
+## <small>1.3.6 (2026-05-21)</small>
+
+* fix(core): format vitest config files for prettier ([2c81d40](https://github.com/graph-render/graph-render/commit/2c81d40))
+* refactor(packages) make productuin ready (#15) ([381166a](https://github.com/graph-render/graph-render/commit/381166a)), closes [#15](https://github.com/graph-render/graph-render/issues/15)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/types:** upgraded to 1.2.6
+
 ## <small>1.3.5 (2026-05-18)</small>
 
 - fix: use HTML badges and fix GitHub URLs in all package READMEs ([d70e39d](https://github.com/graph-render/graph-render/commit/d70e39d))
