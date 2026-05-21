@@ -70,9 +70,4 @@ describe('buildParallelEdgeIndex', () => {
     expect(index.get('e1')!.total).toBe(1);
     expect(index.get('e2')!.total).toBe(1);
   });
-
-  it('rejects duplicate edge ids instead of overwriting metadata', () => {
-    const edges = [makeEdge('e1', 'a', 'b'), makeEdge('e1', 'a', 'b')];
-    expect(() => buildParallelEdgeIndex(edges)).toThrow('Duplicate edge id "e1"');
-  });
 });

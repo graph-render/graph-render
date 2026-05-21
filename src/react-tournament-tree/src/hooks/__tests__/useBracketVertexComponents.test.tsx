@@ -12,7 +12,7 @@ const EMPTY_NODE = {
   meta: {},
 } as never;
 
-const BASE_PROPS: Parameters<typeof useBracketVertexComponents>[0] = {
+const BASE_PROPS = {
   compact: true,
   nodeRenderMode: SquashNodeRenderMode.Html,
   onInvalidNode: undefined,
@@ -67,16 +67,16 @@ describe('useBracketVertexComponents', () => {
     expect(result.current.exportVertexComponent).toBe(result.current.resolvedVertexComponent);
   });
 
-  it('keeps resolvedVertexComponent stable when nodeRenderMode changes', () => {
+  it('vertexOptions updates when nodeRenderMode changes', () => {
     type Props = Parameters<typeof useBracketVertexComponents>[0];
     const { result, rerender } = renderHook((props: Props) => useBracketVertexComponents(props), {
       initialProps: BASE_PROPS,
     });
-    const first = result.current.resolvedVertexComponent;
+    const firstComponent = result.current.resolvedVertexComponent;
 
     rerender({ ...BASE_PROPS, nodeRenderMode: SquashNodeRenderMode.Svg });
-    expect(result.current.resolvedVertexComponent).toBe(first);
     expect(result.current.vertexOptions.nodeRenderMode).toBe(SquashNodeRenderMode.Svg);
+    expect(result.current.resolvedVertexComponent).toBe(firstComponent);
   });
 
   it('components render without throwing (smoke test)', () => {

@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { MOCK_COLORS } from '../../test-utils/bracketTestUtils';
 import { SquashHtmlScoreSegments } from '../SquashNode/SquashHtmlScoreSegments';
+import { MOCK_COLORS } from './testUtils';
 
 const defaultProps = {
   nodeId: 'n1',

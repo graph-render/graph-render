@@ -7,7 +7,8 @@ import { describe, expect, it, vi } from 'vitest';
 import type { TournamentBracketProps } from '../../models/tournamentBracket';
 import { BracketGraphCanvas } from '../Bracket/BracketGraphCanvas';
 
-// Mock @graph-render/react — Graph is a complex canvas component.
+// Mock @graph-render/react — Graph is a complex canvas component; GraphStageSync uses
+// groupPositionedNodesByColumn from the same package.
 vi.mock('@graph-render/react', () => ({
   Graph: vi.fn(() => null),
   groupPositionedNodesByColumn: vi.fn(() => []),

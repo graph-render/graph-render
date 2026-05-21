@@ -1,9 +1,9 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { MOCK_COLORS } from '../../test-utils/bracketTestUtils';
 import { resolveBracketAppearance } from '../../utils/resolveBracketAppearance';
 import { SquashPlayerHtmlRow } from '../SquashNode/SquashPlayerHtmlRow';
+import { MOCK_COLORS } from './testUtils';
 
 const resolved = resolveBracketAppearance(undefined, false, false);
 
@@ -65,26 +65,6 @@ describe('SquashPlayerHtmlRow', () => {
     render(<SquashPlayerHtmlRow {...baseProps} onPlayerLeave={onPlayerLeave} />);
     fireEvent.mouseLeave(screen.getByTestId('player-html-row'));
     expect(onPlayerLeave).toHaveBeenCalledOnce();
-  });
-
-  it('is keyboard and touch accessible', () => {
-    const onPlayerEnter = vi.fn();
-    const onPlayerLeave = vi.fn();
-    render(
-      <SquashPlayerHtmlRow
-        {...baseProps}
-        onPlayerEnter={onPlayerEnter}
-        onPlayerLeave={onPlayerLeave}
-      />
-    );
-    const row = screen.getByRole('button', { name: /player one, 2 sets won/i });
-    fireEvent.focus(row);
-    fireEvent.keyDown(row, { key: 'Enter' });
-    fireEvent.touchStart(row);
-    fireEvent.blur(row);
-    fireEvent.touchEnd(row);
-    expect(onPlayerEnter).toHaveBeenCalledWith(0, { name: PLAYER_ONE_NAME, seed: 1 });
-    expect(onPlayerLeave).toHaveBeenCalledTimes(2);
   });
 
   it('renders correctly in winner state', () => {

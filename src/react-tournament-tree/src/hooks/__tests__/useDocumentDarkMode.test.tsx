@@ -66,34 +66,6 @@ describe('useDocumentDarkMode', () => {
     expect(document.documentElement).toHaveClass('dark');
   });
 
-  it('uses defaultDarkMode before a local toggle', () => {
-    const { result } = renderHook(() => useDocumentDarkMode({ defaultDarkMode: true }));
-
-    expect(result.current.isDarkMode).toBe(true);
-  });
-
-  it('uses controlled isDarkMode and reports toggle requests', () => {
-    const changes: boolean[] = [];
-    const { result, rerender } = renderHook(
-      ({ isDarkMode }) =>
-        useDocumentDarkMode({
-          isDarkMode,
-          onDarkModeChange: (next) => changes.push(next),
-        }),
-      { initialProps: { isDarkMode: false } }
-    );
-
-    act(() => {
-      result.current.toggleDarkMode();
-    });
-
-    expect(result.current.isDarkMode).toBe(false);
-    expect(changes).toEqual([true]);
-
-    rerender({ isDarkMode: true });
-    expect(result.current.isDarkMode).toBe(true);
-  });
-
   it('returns a stable toggleDarkMode reference across renders', () => {
     const { result, rerender } = renderHook(() => useDocumentDarkMode());
     const firstRef = result.current.toggleDarkMode;

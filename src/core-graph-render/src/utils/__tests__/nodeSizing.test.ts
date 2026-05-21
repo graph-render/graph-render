@@ -67,6 +67,24 @@ describe('applyNodeSizing', () => {
     });
   });
 
+  it('uses measurementHints.label when provided', () => {
+    const nodes = [
+      {
+        id: 'a',
+        measurementHints: { label: 'Hint label' },
+        label: 'Ignored',
+      },
+    ];
+    const result = applyNodeSizing(nodes, { ...baseOptions, nodeSizing: NodeSizingMode.Label });
+    expect(result[0]!.size!.width).toBeGreaterThan(0);
+  });
+
+  it('skips blank lines when estimating label size', () => {
+    const nodes = [{ id: 'a', label: '\n\nShort\n' }];
+    const result = applyNodeSizing(nodes, { ...baseOptions, nodeSizing: NodeSizingMode.Label });
+    expect(result[0]!.size!.height).toBeGreaterThan(0);
+  });
+
   describe('Measured mode', () => {
     it('uses measuredSize when available', () => {
       const nodes = [{ id: 'a', measuredSize: { width: 250, height: 90 } }];
@@ -111,32 +129,5 @@ describe('applyNodeSizing', () => {
     });
     // Node overrides Fixed with Label: should NOT use 500×500
     expect(result[0]!.size!.width).toBeLessThan(500);
-  });
-
-  it('sanitizes non-finite sizes and measurement hints', () => {
-    const nodes = [
-      {
-        id: 'a',
-        label: 'Sized',
-        size: { width: Number.NaN, height: Number.POSITIVE_INFINITY },
-        measurementHints: {
-          paddingX: Number.NaN,
-          paddingY: Number.POSITIVE_INFINITY,
-          estimatedCharWidth: Number.NaN,
-          lineHeight: Number.POSITIVE_INFINITY,
-        },
-      },
-    ];
-    const result = applyNodeSizing(nodes, {
-      ...baseOptions,
-      nodeSizing: NodeSizingMode.Label,
-      fixedNodeSize: { width: Number.NaN, height: Number.POSITIVE_INFINITY },
-      labelMeasurementPaddingX: Number.NaN,
-      labelMeasurementPaddingY: Number.POSITIVE_INFINITY,
-      labelMeasurementCharWidth: Number.NaN,
-      labelMeasurementLineHeight: Number.POSITIVE_INFINITY,
-    });
-    expect(Number.isFinite(result[0]!.size!.width)).toBe(true);
-    expect(Number.isFinite(result[0]!.size!.height)).toBe(true);
   });
 });

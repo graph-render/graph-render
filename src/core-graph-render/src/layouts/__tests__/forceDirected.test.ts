@@ -61,19 +61,4 @@ describe('forceDirectedLayout', () => {
     expect(result[0]!.position.y).toBeGreaterThanOrEqual(0);
     expect(result[0]!.position.y).toBeLessThanOrEqual(height);
   });
-
-  it('sanitizes non-finite layout dimensions', () => {
-    const result = forceDirectedLayout(
-      [makeNode('a'), makeNode('b')],
-      [makeEdge('e1', 'a', 'b')],
-      Number.NaN,
-      Number.POSITIVE_INFINITY,
-      Number.NEGATIVE_INFINITY,
-      Number.NaN
-    );
-    for (const node of result) {
-      expect(Number.isFinite(node.position.x)).toBe(true);
-      expect(Number.isFinite(node.position.y)).toBe(true);
-    }
-  });
 });

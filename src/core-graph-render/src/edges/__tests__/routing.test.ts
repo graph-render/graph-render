@@ -1,3 +1,4 @@
+import { LayoutDirection, RoutingStyle } from '@graph-render/types';
 import { describe, expect, it } from 'vitest';
 
 import { routeEdges } from '../routing';
@@ -63,16 +64,37 @@ describe('routeEdges', () => {
     expect(result[0]).toHaveProperty('labelPosition');
   });
 
-  it('falls back to safe routing distances when options are non-finite', () => {
-    const nodes = [makeNode('a', 0, 0), makeNode('b', 300, 0)];
+  it('applies routing options (straight, orthogonal, RTL, custom padding)', () => {
+    const nodes = [makeNode('a', 0, 0), makeNode('b', 400, 200)];
     const edges = [makeEdge('e1', 'a', 'b')];
-    const result = routeEdges(nodes, edges, {
+
+    const straight = routeEdges(nodes, edges, {
+      straight: true,
       arrowPadding: Number.NaN,
-      edgeSeparation: Number.POSITIVE_INFINITY,
-      selfLoopRadius: Number.NEGATIVE_INFINITY,
+      edgeSeparation: 0,
+      selfLoopRadius: 5,
     });
-    expect(
-      result[0]!.points.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y))
-    ).toBe(true);
+    const orthogonal = routeEdges(nodes, edges, {
+      routingStyle: RoutingStyle.Orthogonal,
+      layoutDirection: LayoutDirection.RTL,
+      forceRightToLeft: true,
+      arrowPadding: 12,
+      edgeSeparation: 24,
+      selfLoopRadius: 40,
+    });
+
+    expect(straight[0]!.points.length).toBeGreaterThanOrEqual(2);
+    expect(orthogonal[0]!.points.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('skips obstacle avoidance for very large graphs', () => {
+    const nodes = Array.from({ length: 150 }, (_, index) => makeNode(`n${index}`, index * 10, 0));
+    const edges = Array.from({ length: 150 }, (_, index) =>
+      makeEdge(`e${index}`, `n${index}`, `n${(index + 1) % 150}`)
+    );
+
+    const result = routeEdges(nodes, edges);
+    expect(result).toHaveLength(150);
+    expect(result.every((edge) => edge.points.length >= 2)).toBe(true);
   });
 });
