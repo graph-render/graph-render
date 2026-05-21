@@ -1,6 +1,6 @@
 {
   "name": "@graph-render/react",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "Interactive React SVG graph canvas for graph-render.",
   "keywords": [
     "graph",
@@ -53,8 +53,8 @@
     "lint": "eslint src --ext .ts,.tsx"
   },
   "dependencies": {
-    "@graph-render/core": "1.3.5",
-    "@graph-render/types": "1.2.5"
+    "@graph-render/core": "1.3.6",
+    "@graph-render/types": "1.2.6"
   },
   "engines": {
     "node": ">=20.19.0"
