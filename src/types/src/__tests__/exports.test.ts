@@ -19,4 +19,5 @@ describe('@graph-render/types public exports', () => {
     expect(reactTypes.SelectionMode).toBeDefined();
     expect(reactTypes.GraphErrorPhase).toBeDefined();
   });
+
 });

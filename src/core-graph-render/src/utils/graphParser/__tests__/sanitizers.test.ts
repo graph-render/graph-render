@@ -151,4 +151,36 @@ describe('sanitizeNodeData', () => {
     const node = sanitizeNodeData('n1', { sizeMode: 'invalid-mode' });
     expect(node.sizeMode).toBeUndefined();
   });
+
+  it('sanitizes measurement hints when values are valid', () => {
+    const node = sanitizeNodeData('n1', {
+      measurementHints: {
+        label: 'Measured',
+        paddingX: 8,
+        paddingY: 4,
+        estimatedCharWidth: 9,
+        lineHeight: 14,
+      },
+    });
+
+    expect(node.measurementHints).toEqual({
+      label: 'Measured',
+      paddingX: 8,
+      paddingY: 4,
+      estimatedCharWidth: 9,
+      lineHeight: 14,
+    });
+  });
+
+  it('drops invalid measurement hint fields', () => {
+    const node = sanitizeNodeData('n1', {
+      measurementHints: {
+        label: 42,
+        paddingX: -1,
+        estimatedCharWidth: 0,
+      },
+    });
+
+    expect(node.measurementHints).toBeUndefined();
+  });
 });

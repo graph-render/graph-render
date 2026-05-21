@@ -49,6 +49,16 @@ describe('calculateLabelPosition', () => {
     expect(result?.y).toBeCloseTo(0, 1);
   });
 
+  it('handles a zero-length leading segment before the halfway point', () => {
+    const points = [
+      { x: 10, y: 10 },
+      { x: 10, y: 10 },
+      { x: 100, y: 10 },
+    ];
+    const result = calculateLabelPosition(points);
+    expect(result).toEqual({ x: 55, y: 10 });
+  });
+
   it('returns a defined result for a multi-point path', () => {
     const points = [
       { x: 0, y: 0 },

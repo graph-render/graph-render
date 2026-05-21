@@ -67,6 +67,24 @@ describe('applyNodeSizing', () => {
     });
   });
 
+  it('uses measurementHints.label when provided', () => {
+    const nodes = [
+      {
+        id: 'a',
+        measurementHints: { label: 'Hint label' },
+        label: 'Ignored',
+      },
+    ];
+    const result = applyNodeSizing(nodes, { ...baseOptions, nodeSizing: NodeSizingMode.Label });
+    expect(result[0]!.size!.width).toBeGreaterThan(0);
+  });
+
+  it('skips blank lines when estimating label size', () => {
+    const nodes = [{ id: 'a', label: '\n\nShort\n' }];
+    const result = applyNodeSizing(nodes, { ...baseOptions, nodeSizing: NodeSizingMode.Label });
+    expect(result[0]!.size!.height).toBeGreaterThan(0);
+  });
+
   describe('Measured mode', () => {
     it('uses measuredSize when available', () => {
       const nodes = [{ id: 'a', measuredSize: { width: 250, height: 90 } }];
