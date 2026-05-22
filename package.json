@@ -49,6 +49,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "graph": "nx graph",
+    "bench": "nx run-many -t bench --projects=@graph-render/core,@graph-render/react,@graph-render/tournament-tree --outputStyle=static",
     "smoke:exports": "node scripts/smoke-package-exports.mjs",
     "prepare": "husky"
   },

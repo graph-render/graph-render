@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "ES2021",
     "module": "ES2020",
     "lib": ["ES2021"],
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "types": [],
     "strict": true,
     "esModuleInterop": true,

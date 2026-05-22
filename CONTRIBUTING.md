@@ -12,6 +12,12 @@ Thank you for your interest in contributing. This monorepo publishes `@graph-ren
 yarn quality
 ```
 
+For changes that can affect graph rendering cost, also run:
+
+```bash
+yarn bench
+```
+
 ## Package layout
 
 | Path                        | Package                         |
@@ -27,6 +33,7 @@ React-specific types live in `@graph-render/types/react`. Framework-neutral cont
 
 - Keep changes focused; one concern per PR when possible.
 - Add or update tests for behavior changes.
+- Add or update benchmarks for layout, routing, culling, export, or interaction performance changes.
 - Update README snippets when public APIs change (`vertexComponent` is required on `<Graph />`).
 - Follow existing ESLint and Prettier settings (`yarn lint`, `yarn format:check`).
 - Use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.

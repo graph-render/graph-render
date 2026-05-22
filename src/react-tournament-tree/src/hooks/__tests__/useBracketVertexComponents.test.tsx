@@ -3,6 +3,7 @@ import { render, renderHook } from '@testing-library/react';
 import { createElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { BracketAppearanceProvider } from '../../contexts/BracketAppearanceContext';
 import { useBracketVertexComponents } from '../useBracketVertexComponents';
 
 const EMPTY_NODE = {
@@ -82,10 +83,18 @@ describe('useBracketVertexComponents', () => {
   it('components render without throwing (smoke test)', () => {
     const { result } = renderHook(() => useBracketVertexComponents(BASE_PROPS));
     expect(() => {
-      render(createElement(result.current.exportVertexComponent, { node: EMPTY_NODE }));
+      render(
+        <BracketAppearanceProvider isDarkMode={false} compact>
+          <svg>{createElement(result.current.exportVertexComponent, { node: EMPTY_NODE })}</svg>
+        </BracketAppearanceProvider>
+      );
     }).not.toThrow();
     expect(() => {
-      render(createElement(result.current.resolvedVertexComponent, { node: EMPTY_NODE }));
+      render(
+        <BracketAppearanceProvider isDarkMode={false} compact>
+          <svg>{createElement(result.current.resolvedVertexComponent, { node: EMPTY_NODE })}</svg>
+        </BracketAppearanceProvider>
+      );
     }).not.toThrow();
   });
 });

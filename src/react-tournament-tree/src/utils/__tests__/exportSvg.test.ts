@@ -9,6 +9,7 @@ const mockRevokeObjectURL = vi.fn();
 beforeEach(() => {
   URL.createObjectURL = mockCreateObjectURL;
   URL.revokeObjectURL = mockRevokeObjectURL;
+  vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
   mockCreateObjectURL.mockClear();
   mockRevokeObjectURL.mockClear();
 });

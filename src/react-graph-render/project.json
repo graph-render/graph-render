@@ -38,6 +38,13 @@
         "cwd": "{projectRoot}"
       }
     },
+    "bench": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest bench --run",
+        "cwd": "{projectRoot}"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {

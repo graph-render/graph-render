@@ -1,28 +1,17 @@
-import { DEFAULT_THEME, normalizeGraphConfig } from '@graph-render/core';
+import { normalizeGraphConfig } from '@graph-render/core';
 import { NodeSizingMode } from '@graph-render/types';
 import type { GraphHandle, GraphProps, GraphRenderContext } from '@graph-render/types/react';
 import { SelectionMode } from '@graph-render/types/react';
-import { useCallback, useDeferredValue, useEffect, useId, useMemo, useRef } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef } from 'react';
 
 import { EdgePath } from '../components/EdgePath';
 import type { GraphCanvasProps } from '../components/GraphCanvas';
 import {
-  DEFAULT_CONTROL_FILL,
-  DEFAULT_CONTROL_FOCUS_STROKE,
-  DEFAULT_CONTROL_STROKE,
-  DEFAULT_CONTROL_TEXT_COLOR,
   DEFAULT_CONTROLS_POSITION,
-  DEFAULT_MARQUEE_FILL,
-  DEFAULT_MARQUEE_STROKE,
   DEFAULT_MAX_ZOOM,
   DEFAULT_MIN_ZOOM,
-  DEFAULT_NODE_FILL,
-  DEFAULT_NODE_RADIUS,
-  DEFAULT_NODE_STROKE,
   DEFAULT_SELECTION,
   DEFAULT_SELECTION_COLOR,
-  DEFAULT_TEXT_FILL,
-  DEFAULT_TEXT_SIZE,
   DEFAULT_VIEWPORT,
   DEFAULT_ZOOM_STEP,
 } from '../constants/graph';
@@ -38,6 +27,7 @@ import { useGraphHoverHandlers } from './useGraphHoverHandlers';
 import { useGraphKeyboardNavigation } from './useGraphKeyboardNavigation';
 import { useGraphModel } from './useGraphModel';
 import { useGraphPointerInteractions } from './useGraphPointerInteractions';
+import { useGraphRenderBindings } from './useGraphRenderBindings';
 import { useGraphSelectionHandlers } from './useGraphSelectionHandlers';
 import { useGraphViewportController } from './useGraphViewportController';
 import { useGraphViewState } from './useGraphViewState';
@@ -141,8 +131,6 @@ export const useGraphController = (
   const safeMinZoom = zoomRange.minZoom;
   const safeMaxZoom = zoomRange.maxZoom;
   const stableConfig = useStableConfig(config);
-  const markerPrefix = useId().replaceAll(':', '-');
-  const svgDescId = `${markerPrefix}-desc`;
   const svgRef = useRef<SVGSVGElement>(null);
   const contentRef = useRef<SVGGElement>(null);
   const measurementScheduler = useMemo(() => createNodeMeasurementScheduler(), []);
@@ -156,33 +144,6 @@ export const useGraphController = (
   const cfg = useMemo(() => normalizeGraphConfig(stableConfig), [stableConfig]);
   const effectiveViewportCulling = viewportCulling && cfg.nodeSizing !== NodeSizingMode.Measured;
   const mergedTheme = cfg.theme;
-  const edgeColor = mergedTheme.edgeColor ?? DEFAULT_THEME.edgeColor ?? '#8b9dbf';
-  const edgeWidth = mergedTheme.edgeWidth ?? DEFAULT_THEME.edgeWidth ?? 2;
-  const selectionEdgeColor = edgeSelectionColor ?? selectionColor;
-  const hoverNodeBorderColor = cfg.hoverNodeBorderColor ?? cfg.hoverEdgeColor;
-  const hoverNodeBothColor = cfg.hoverNodeBothColor ?? cfg.hoverEdgeColor;
-  const nodeBorderColor = mergedTheme.nodeBorderColor;
-  const nodeBorderWidth = mergedTheme.nodeBorderWidth ?? 0;
-  const nodeFill = mergedTheme.nodeFill ?? DEFAULT_NODE_FILL;
-  const nodeStroke = mergedTheme.nodeStroke ?? DEFAULT_NODE_STROKE;
-  const nodeTextColor = mergedTheme.nodeTextColor ?? DEFAULT_TEXT_FILL;
-  const nodeTextSize = mergedTheme.nodeTextSize ?? DEFAULT_TEXT_SIZE;
-  const nodeRadius = mergedTheme.nodeRadius ?? DEFAULT_NODE_RADIUS;
-  const fontFamily =
-    mergedTheme.fontFamily ??
-    DEFAULT_THEME.fontFamily ??
-    'system-ui, -apple-system, Segoe UI, sans-serif';
-  const marqueeFill = mergedTheme.marqueeFill ?? DEFAULT_MARQUEE_FILL;
-  const marqueeStroke = mergedTheme.marqueeStroke ?? DEFAULT_MARQUEE_STROKE;
-  const controlFill = mergedTheme.controlFill ?? DEFAULT_CONTROL_FILL;
-  const controlStroke = mergedTheme.controlStroke ?? DEFAULT_CONTROL_STROKE;
-  const controlTextColor = mergedTheme.controlTextColor ?? DEFAULT_CONTROL_TEXT_COLOR;
-  const controlFocusStroke = mergedTheme.controlFocusStroke ?? DEFAULT_CONTROL_FOCUS_STROKE;
-  const showArrows = cfg.showArrows;
-  const arrowMarkerId = `${markerPrefix}-arrow`;
-  const hoverArrowMarkerId = `${markerPrefix}-arrow-hover`;
-  const hoverIncomingArrowMarkerId = `${markerPrefix}-arrow-hover-in`;
-  const selectionArrowMarkerId = `${markerPrefix}-arrow-selected`;
 
   const {
     viewport,
@@ -428,19 +389,15 @@ export const useGraphController = (
     viewport,
   });
 
-  const svgRole = keyboardNavigation ? 'application' : 'figure';
-
-  const svgStyle = useMemo(
-    () => ({
-      background: mergedTheme.background,
-      fontFamily: mergedTheme.fontFamily,
-      cursor: isDragging ? 'grabbing' : panEnabled ? 'grab' : 'default',
-      touchAction: panEnabled || zoomEnabled ? 'none' : 'auto',
-      overflow: 'hidden',
-      userSelect: 'none' as const,
-    }),
-    [isDragging, mergedTheme.background, mergedTheme.fontFamily, panEnabled, zoomEnabled]
-  );
+  const renderBindings = useGraphRenderBindings({
+    cfg,
+    edgeSelectionColor,
+    isDragging,
+    keyboardNavigation,
+    panEnabled,
+    selectionColor,
+    zoomEnabled,
+  });
 
   const selectionRect = selectionBox ? normalizeRect(selectionBox) : null;
   const handleControlZoomIn = useCallback(
@@ -471,22 +428,22 @@ export const useGraphController = (
     contentRef,
     cfg,
     viewport,
-    svgDescId,
-    svgRole,
-    svgStyle,
+    svgDescId: renderBindings.svgDescId,
+    svgRole: renderBindings.svgRole,
+    svgStyle: renderBindings.svgStyle,
     Vertex,
     EdgeComponent,
     renderBackground,
     renderOverlay,
     renderContext,
-    showArrows,
-    arrowMarkerId,
-    hoverArrowMarkerId,
-    hoverIncomingArrowMarkerId,
-    selectionArrowMarkerId,
-    edgeColor,
-    edgeWidth,
-    selectionEdgeColor,
+    showArrows: renderBindings.showArrows,
+    arrowMarkerId: renderBindings.arrowMarkerId,
+    hoverArrowMarkerId: renderBindings.hoverArrowMarkerId,
+    hoverIncomingArrowMarkerId: renderBindings.hoverIncomingArrowMarkerId,
+    selectionArrowMarkerId: renderBindings.selectionArrowMarkerId,
+    edgeColor: renderBindings.edgeColor,
+    edgeWidth: renderBindings.edgeWidth,
+    selectionEdgeColor: renderBindings.selectionEdgeColor,
     culledEdgesForRender,
     culledNodes,
     positionedNodes,
@@ -505,10 +462,10 @@ export const useGraphController = (
     activePathNodeIds: pathHighlight?.nodes,
     highlightColor,
     selectionColor,
-    nodeBorderColor,
-    nodeBorderWidth,
-    hoverNodeBorderColor,
-    hoverNodeBothColor,
+    nodeBorderColor: renderBindings.nodeBorderColor,
+    nodeBorderWidth: renderBindings.nodeBorderWidth,
+    hoverNodeBorderColor: renderBindings.hoverNodeBorderColor,
+    hoverNodeBothColor: renderBindings.hoverNodeBothColor,
     hoverNodeInColor: cfg.hoverNodeInColor,
     hoverNodeOutColor: cfg.hoverNodeOutColor,
     hoverNodeHighlight: cfg.hoverNodeHighlight,
@@ -525,18 +482,18 @@ export const useGraphController = (
     handleEdgeHoverChange,
     handleEdgeSelection,
     selectionRect,
-    marqueeFill,
-    marqueeStroke,
-    nodeFill,
-    nodeStroke,
-    nodeTextColor,
-    nodeTextSize,
-    nodeRadius,
-    fontFamily,
-    controlFill,
-    controlStroke,
-    controlTextColor,
-    controlFocusStroke,
+    marqueeFill: renderBindings.marqueeFill,
+    marqueeStroke: renderBindings.marqueeStroke,
+    nodeFill: renderBindings.nodeFill,
+    nodeStroke: renderBindings.nodeStroke,
+    nodeTextColor: renderBindings.nodeTextColor,
+    nodeTextSize: renderBindings.nodeTextSize,
+    nodeRadius: renderBindings.nodeRadius,
+    fontFamily: renderBindings.fontFamily,
+    controlFill: renderBindings.controlFill,
+    controlStroke: renderBindings.controlStroke,
+    controlTextColor: renderBindings.controlTextColor,
+    controlFocusStroke: renderBindings.controlFocusStroke,
     showControls,
     controlsPosition,
     handleControlZoomIn,
