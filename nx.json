@@ -51,5 +51,6 @@
         "analyzeSourceFiles": true
       }
     }
-  ]
+  ],
+  "analytics": false
 }

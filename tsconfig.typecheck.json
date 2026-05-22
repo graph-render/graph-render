@@ -2,7 +2,8 @@
   "extends": "./tsconfig.react.json",
   "compilerOptions": {
     "composite": false,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist", "build", "coverage", ".nx", "src/*/dist", "src/*/*.config.ts"]
