@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import * as rootTypes from '../index';
 import { isPositionedNode, makePositionedNode } from '../node';
 import * as reactTypes from '../react';
+import { MatchStatus, SquashNodeRenderMode, VerticalStagePosition } from '../tournament';
 
 describe('@graph-render/types public exports', () => {
   it('exports core graph enums from the root entry', () => {
@@ -46,5 +47,26 @@ describe('isPositionedNode', () => {
 
   it('returns false when position is undefined', () => {
     expect(isPositionedNode({ id: 'n1' })).toBe(false);
+  });
+});
+
+describe('tournament.ts enums', () => {
+  it('MatchStatus has expected values', () => {
+    expect(MatchStatus.Completed).toBe('completed');
+    expect(MatchStatus.Live).toBe('live');
+    expect(MatchStatus.Upcoming).toBe('upcoming');
+  });
+
+  it('SquashNodeRenderMode has expected values', () => {
+    expect(SquashNodeRenderMode.Svg).toBe('svg');
+    expect(SquashNodeRenderMode.Html).toBe('html');
+    expect(SquashNodeRenderMode.Export).toBe('export');
+    expect(SquashNodeRenderMode.Server).toBe('server');
+  });
+
+  it('VerticalStagePosition has expected values', () => {
+    expect(VerticalStagePosition.Top).toBe('top');
+    expect(VerticalStagePosition.Bottom).toBe('bottom');
+    expect(VerticalStagePosition.Center).toBe('center');
   });
 });

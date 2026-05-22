@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import type { StorybookConfig } from '@storybook/react-vite';
 import react from '@vitejs/plugin-react';
@@ -6,7 +7,7 @@ import { mergeConfig } from 'vite';
 
 const config: StorybookConfig = {
   stories: ['./stories/**/*.stories.@(ts|tsx)'],
-  addons: ['@storybook/addon-essentials', '@storybook/addon-interactions'],
+  addons: [],
   framework: {
     name: '@storybook/react-vite',
     options: {},
@@ -19,6 +20,7 @@ const config: StorybookConfig = {
     check: false,
   },
   viteFinal: async (config) => {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
     const plugins = config.plugins ?? [];
     const hasReactPlugin = plugins.some(
       (plugin) =>
