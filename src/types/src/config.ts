@@ -12,11 +12,27 @@ export enum RoutingStyle {
   Bundled = 'bundled',
 }
 
+/**
+ * Tree-shakeable alternative to the `RoutingStyle` enum.
+ * Prefer this and `RoutingStyleValue` for new code — plain string literals
+ * are assignable to `RoutingStyleValue` without needing to import the enum.
+ */
+export const RoutingStyleValues = {
+  Smart: 'smart',
+  Orthogonal: 'orthogonal',
+  Bundled: 'bundled',
+} as const;
+export type RoutingStyleValue = (typeof RoutingStyleValues)[keyof typeof RoutingStyleValues];
+
 export enum EdgeType {
   Directed = 'directed',
   Undirected = 'undirected',
 }
 
+/**
+ * Tree-shakeable alternative available as `LayoutTypeValues`/`LayoutTypeValue`.
+ * Prefer those for new code — plain string literals are assignable to `LayoutTypeValue`.
+ */
 export enum LayoutType {
   Grid = 'grid',
   Tree = 'tree',
@@ -28,10 +44,30 @@ export enum LayoutType {
   OrthogonalFlow = 'orthogonal-flow',
 }
 
+export const LayoutTypeValues = {
+  Grid: 'grid',
+  Tree: 'tree',
+  Centered: 'centered',
+  Radial: 'radial',
+  Dag: 'dag',
+  ForceDirected: 'force-directed',
+  CompactBracket: 'compact-bracket',
+  OrthogonalFlow: 'orthogonal-flow',
+} as const;
+export type LayoutTypeValue = (typeof LayoutTypeValues)[keyof typeof LayoutTypeValues];
+
+/**
+ * Tree-shakeable alternative available as `LayoutDirectionValues`/`LayoutDirectionValue`.
+ * Prefer those for new code.
+ */
 export enum LayoutDirection {
   LTR = 'ltr',
   RTL = 'rtl',
 }
+
+export const LayoutDirectionValues = { LTR: 'ltr', RTL: 'rtl' } as const;
+export type LayoutDirectionValue =
+  (typeof LayoutDirectionValues)[keyof typeof LayoutDirectionValues];
 
 export interface GraphTheme {
   readonly background?: string | undefined;

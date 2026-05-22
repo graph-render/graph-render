@@ -8,31 +8,43 @@ interface MutablePoint {
   x: number;
   y: number;
 }
-// NOTE: this cache is intentionally module-level so warm hits persist across
-// sequential renders of the same graph (common during viewport-only updates).
-// Trade-off: all <Graph> instances in the same JS bundle share the same 24-slot
-// LRU.  Keys include the full node/edge topology, so stale hits are extremely
-// unlikely.  If you mount many independent graphs with similar-but-distinct
-// topologies and see layout lag, increase FORCE_LAYOUT_CACHE_LIMIT.
-const forceLayoutCache = new Map<string, readonly PositionedNode[]>();
+
+export type ForceLayoutCache = Map<string, readonly PositionedNode[]>;
+
+/**
+ * Creates an isolated force-layout LRU cache.
+ *
+ * In browser environments the module-level default cache is shared across all
+ * `<Graph>` instances, which is usually acceptable. In SSR environments (Next.js,
+ * Remix, etc.) you MUST create a per-request cache to prevent cross-request data
+ * leaks:
+ *
+ * ```ts
+ * // In your request handler / RSC:
+ * const layoutCache = createForceLayoutCache();
+ * // Pass it via GraphProps.forceLayoutCache (future) or use forceDirectedLayout directly.
+ * ```
+ */
+export const createForceLayoutCache = (): ForceLayoutCache =>
+  new Map<string, readonly PositionedNode[]>();
+
+// Module-level default cache for browser environments only.
+// All <Graph> instances sharing a JS bundle share this 24-slot LRU.
+// For SSR usage, create a per-request cache with createForceLayoutCache().
+const defaultForceLayoutCache: ForceLayoutCache = createForceLayoutCache();
 
 const finitePositive = (value: number, fallback: number): number => {
   return Number.isFinite(value) && value > 0 ? value : fallback;
 };
 
-const serializeNodeLabel = (label: unknown): string | number | boolean | null => {
-  if (typeof label === 'string') {
-    return label.slice(0, 160);
-  }
-  if (typeof label === 'number' && Number.isFinite(label)) {
-    return label;
-  }
-  if (typeof label === 'boolean') {
-    return label;
-  }
-  return null;
-};
-
+/**
+ * Builds a cache key from topology-relevant data only.
+ *
+ * Layout positions depend on node identity, node sizes, edge topology, and layout
+ * parameters — NOT on label text. Using only IDs and sizes eliminates the previous
+ * label-truncation collision (two nodes differing only after character 160 would
+ * produce the same key) and avoids serialising potentially large label strings.
+ */
 const buildForceLayoutCacheKey = (
   nodes: readonly NodeData[],
   edges: readonly EdgeData[],
@@ -50,7 +62,6 @@ const buildForceLayoutCacheKey = (
       nodes: nodes.map((node) => ({
         id: node.id,
         size: node.size,
-        label: serializeNodeLabel(node.label),
       })),
       edges: edges.map((edge) => ({
         id: edge.id,
@@ -64,18 +75,21 @@ const buildForceLayoutCacheKey = (
   }
 };
 
-const getCachedForceLayout = (cacheKey: string | null): readonly PositionedNode[] | undefined => {
+const getCachedForceLayout = (
+  cacheKey: string | null,
+  cache: ForceLayoutCache
+): readonly PositionedNode[] | undefined => {
   if (!cacheKey) {
     return undefined;
   }
 
-  const cached = forceLayoutCache.get(cacheKey);
+  const cached = cache.get(cacheKey);
   if (!cached) {
     return undefined;
   }
 
-  forceLayoutCache.delete(cacheKey);
-  forceLayoutCache.set(cacheKey, cached);
+  cache.delete(cacheKey);
+  cache.set(cacheKey, cached);
   return cached.map((node) => {
     const size = node.size ? { ...node.size } : undefined;
     return {
@@ -86,19 +100,23 @@ const getCachedForceLayout = (cacheKey: string | null): readonly PositionedNode[
   });
 };
 
-const setCachedForceLayout = (cacheKey: string | null, nodes: readonly PositionedNode[]): void => {
+const setCachedForceLayout = (
+  cacheKey: string | null,
+  nodes: readonly PositionedNode[],
+  cache: ForceLayoutCache
+): void => {
   if (!cacheKey) {
     return;
   }
 
-  if (forceLayoutCache.size >= FORCE_LAYOUT_CACHE_LIMIT) {
-    const oldestKey = forceLayoutCache.keys().next().value;
+  if (cache.size >= FORCE_LAYOUT_CACHE_LIMIT) {
+    const oldestKey = cache.keys().next().value;
     if (oldestKey) {
-      forceLayoutCache.delete(oldestKey);
+      cache.delete(oldestKey);
     }
   }
 
-  forceLayoutCache.set(
+  cache.set(
     cacheKey,
     nodes.map((node) => {
       const size = node.size ? { ...node.size } : undefined;
@@ -150,7 +168,8 @@ export const forceDirectedLayout = (
   pad: number = DEFAULT_PADDING,
   width = 960,
   height = 720,
-  gap: number = DEFAULT_NODE_GAP
+  gap: number = DEFAULT_NODE_GAP,
+  cache: ForceLayoutCache = defaultForceLayoutCache
 ): readonly PositionedNode[] => {
   const resolvedPad = finitePositive(pad, DEFAULT_PADDING);
   const resolvedWidth = finitePositive(width, 960);
@@ -173,7 +192,7 @@ export const forceDirectedLayout = (
     resolvedHeight,
     resolvedGap
   );
-  const cached = getCachedForceLayout(cacheKey);
+  const cached = getCachedForceLayout(cacheKey, cache);
   if (cached) {
     return cached;
   }
@@ -265,7 +284,7 @@ export const forceDirectedLayout = (
     };
   });
 
-  setCachedForceLayout(cacheKey, positionedNodes);
+  setCachedForceLayout(cacheKey, positionedNodes, cache);
 
   return positionedNodes;
 };

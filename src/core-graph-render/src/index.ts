@@ -2,8 +2,10 @@ export { buildEdgePath, routeEdges, segmentIntersectsRect } from './edges';
 export {
   centeredLayout,
   compactBracketLayout,
+  createForceLayoutCache,
   dagLayout,
   forceDirectedLayout,
+  type ForceLayoutCache,
   gridLayout,
   layoutNodes,
   orthogonalFlowLayout,

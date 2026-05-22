@@ -120,7 +120,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   });
 
   return (
-    <BracketAppearanceProvider appearance={appearance} isDarkMode={isDarkMode} compact={compact}>
+    <BracketAppearanceProvider resolvedAppearance={resolvedAppearance}>
       <BracketFrame
         title={title}
         badgeText={resolvedBadgeText}

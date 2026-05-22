@@ -1,7 +1,7 @@
 import { buildEdgePath } from '@graph-render/core';
 import { EdgeType } from '@graph-render/types';
 import type { EdgePathProps } from '@graph-render/types/react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 // Memoised so that unchanged edges are skipped during re-renders of the parent
 // Graph component (e.g. when hover/selection state changes for a different edge).
@@ -30,6 +30,12 @@ export const EdgePath = React.memo(function EdgePath({
   onClick,
 }: EdgePathProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const handleMouseEnter = useCallback(() => {
+    if (hoverEnabled) onHoverChange?.(true);
+  }, [hoverEnabled, onHoverChange]);
+  const handleMouseLeave = useCallback(() => {
+    if (hoverEnabled) onHoverChange?.(false);
+  }, [hoverEnabled, onHoverChange]);
   const d = buildEdgePath(edge, curveEdges, curveStrength);
   if (!d) return null;
 
@@ -61,8 +67,8 @@ export const EdgePath = React.memo(function EdgePath({
           onClick ? (edge.label != null ? `Edge: ${String(edge.label)}` : 'Graph edge') : undefined
         }
         aria-pressed={onClick && selectionEnabled ? isSelected : undefined}
-        onMouseEnter={() => hoverEnabled && onHoverChange?.(true)}
-        onMouseLeave={() => hoverEnabled && onHoverChange?.(false)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onClick={onClick}

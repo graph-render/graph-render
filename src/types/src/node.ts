@@ -10,11 +10,22 @@ export interface Size {
   readonly height: number;
 }
 
+/**
+ * Tree-shakeable alternative available as `NodeSizingModeValues`/`NodeSizingModeValue`.
+ * Prefer those for new code — plain string literals are assignable to `NodeSizingModeValue`.
+ */
 export enum NodeSizingMode {
   Fixed = 'fixed',
   Label = 'label',
   Measured = 'measured',
 }
+
+export const NodeSizingModeValues = {
+  Fixed: 'fixed',
+  Label: 'label',
+  Measured: 'measured',
+} as const;
+export type NodeSizingModeValue = (typeof NodeSizingModeValues)[keyof typeof NodeSizingModeValues];
 
 export interface NodeMeasurementHints {
   readonly label?: string | undefined;
@@ -47,3 +58,25 @@ export interface PositionedNode<
 > extends NodeData<TData, TMeta, TLabel> {
   readonly position: Point;
 }
+
+/**
+ * Type-safe factory that merges a `NodeData` with an explicit `position`,
+ * producing a `PositionedNode` without unsafe `as` casts.
+ */
+export const makePositionedNode = <
+  TData = unknown,
+  TMeta extends object = Record<string, unknown>,
+  TLabel = unknown,
+>(
+  node: NodeData<TData, TMeta, TLabel>,
+  position: Point
+): PositionedNode<TData, TMeta, TLabel> => ({ ...node, position });
+
+/** Type guard: returns true when the node's `position` field is already set. */
+export const isPositionedNode = <
+  TData = unknown,
+  TMeta extends object = Record<string, unknown>,
+  TLabel = unknown,
+>(
+  node: NodeData<TData, TMeta, TLabel>
+): node is PositionedNode<TData, TMeta, TLabel> => node.position !== undefined;

@@ -1,6 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { GraphConfig } from './config';
+import type { GraphConfig, NormalizedGraphConfig } from './config';
 import type { EdgeData, PositionedEdge as CorePositionedEdge, PositionedEdge } from './edge';
 import type { NxGraphInput } from './graph';
 import type { LayoutOptions } from './layout';
@@ -89,15 +89,23 @@ export interface GraphRenderContext<
   readonly graph: TGraph;
   readonly nodes: readonly TNode[];
   readonly edges: readonly TEdge[];
-  readonly config?: GraphConfig | undefined;
+  /** Normalized configuration that is always available at render time. */
+  readonly config: NormalizedGraphConfig;
   readonly viewport: GraphViewport;
   readonly selection: GraphSelection;
 }
 
+/**
+ * Tree-shakeable alternative available as `SelectionModeValues`/`SelectionModeValue`.
+ * Prefer those for new code — plain string literals are assignable to `SelectionModeValue`.
+ */
 export enum SelectionMode {
   Single = 'single',
   Multiple = 'multiple',
 }
+
+export const SelectionModeValues = { Single: 'single', Multiple: 'multiple' } as const;
+export type SelectionModeValue = (typeof SelectionModeValues)[keyof typeof SelectionModeValues];
 
 export enum GraphHoverTrigger {
   Pointer = 'pointer',
@@ -115,6 +123,10 @@ export interface GraphSearchResults {
   readonly edgeIds: readonly string[];
 }
 
+/**
+ * Tree-shakeable alternative available as `GraphErrorPhaseValues`/`GraphErrorPhaseValue`.
+ * Prefer those for new code.
+ */
 export enum GraphErrorPhase {
   Layout = 'layout',
   LayoutOverride = 'layout-override',
@@ -123,6 +135,17 @@ export enum GraphErrorPhase {
   Interaction = 'interaction',
   Render = 'render',
 }
+
+export const GraphErrorPhaseValues = {
+  Layout: 'layout',
+  LayoutOverride: 'layout-override',
+  Routing: 'routing',
+  RoutingOverride: 'routing-override',
+  Interaction: 'interaction',
+  Render: 'render',
+} as const;
+export type GraphErrorPhaseValue =
+  (typeof GraphErrorPhaseValues)[keyof typeof GraphErrorPhaseValues];
 
 export interface GraphErrorContext<TGraph extends NxGraphInput = NxGraphInput> {
   readonly graph: TGraph;
@@ -143,6 +166,12 @@ export interface GraphHandle {
       | ((current: GraphViewport) => Partial<GraphViewport> | GraphViewport)
   ) => void;
   readonly clearSelection: () => void;
+  /** Read the current selection without a re-render. */
+  readonly getSelection: () => GraphSelection;
+  /** Read the current collapsed node IDs without a re-render. */
+  readonly getCollapsedNodeIds: () => readonly string[];
+  /** Read the node IDs whose async expansion is currently in-flight. */
+  readonly getPendingExpansionNodeIds: () => ReadonlySet<string>;
 }
 
 export interface DragState {
@@ -197,10 +226,26 @@ export interface GraphProps<
   readonly onViewportChange?: ((viewport: GraphViewport) => void) | undefined;
   readonly fitViewOnMount?: boolean | undefined;
   readonly fitViewPadding?: number | undefined;
+  /**
+   * @deprecated Use {@link GraphViewportOptions.minZoom} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly minZoom?: number | undefined;
+  /**
+   * @deprecated Use {@link GraphViewportOptions.maxZoom} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly maxZoom?: number | undefined;
+  /**
+   * @deprecated Use {@link GraphViewportOptions.zoomStep} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly zoomStep?: number | undefined;
-  /** World-space bounding box `[[minX, minY], [maxX, maxY]]` the user cannot pan outside of. */
+  /**
+   * World-space bounding box `[[minX, minY], [maxX, maxY]]` the user cannot pan outside of.
+   * @deprecated Use {@link GraphViewportOptions.translateExtent} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly translateExtent?:
     | readonly [readonly [number, number], readonly [number, number]]
     | undefined;
@@ -214,12 +259,40 @@ export interface GraphProps<
   readonly onLayoutChange?:
     | ((context: GraphRenderContext<TGraph, TNode, TEdge>) => void)
     | undefined;
+  /**
+   * @deprecated Use {@link GraphInteractionOptions.panEnabled} via the `interaction` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly panEnabled?: boolean | undefined;
+  /**
+   * @deprecated Use {@link GraphInteractionOptions.zoomEnabled} via the `interaction` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly zoomEnabled?: boolean | undefined;
+  /**
+   * @deprecated Use {@link GraphInteractionOptions.pinchZoomEnabled} via the `interaction` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly pinchZoomEnabled?: boolean | undefined;
+  /**
+   * @deprecated Use {@link GraphInteractionOptions.keyboardNavigation} via the `interaction` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly keyboardNavigation?: boolean | undefined;
+  /**
+   * @deprecated Use {@link GraphViewportOptions.showControls} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly showControls?: boolean | undefined;
+  /**
+   * @deprecated Use {@link GraphViewportOptions.controlsPosition} via the `viewportOptions` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly controlsPosition?: GraphControlsPosition | undefined;
+  /**
+   * @deprecated Use {@link GraphInteractionOptions.marqueeSelectionEnabled} via the `interaction` prop instead.
+   * Flat props take precedence over grouped options when both are set.
+   */
   readonly marqueeSelectionEnabled?: boolean | undefined;
   readonly focusedNodeId?: string | null | undefined;
   readonly defaultFocusedNodeId?: string | null | undefined;
@@ -280,4 +353,6 @@ export interface GraphProps<
     | undefined;
   readonly onNodeClick?: ((node: TNode) => void) | undefined;
   readonly onEdgeClick?: ((edge: TEdge) => void) | undefined;
+  /** Accessible label for the SVG element. Defaults to `"Graph"`. Expose when rendering multiple graphs on a page. */
+  readonly ariaLabel?: string | undefined;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated -- useGraphController destructures deprecated flat props from GraphProps to bridge them to the new grouped-options API via resolveGraphProps. */
 import { normalizeGraphConfig } from '@graph-render/core';
 import { NodeSizingMode } from '@graph-render/types';
 import type { GraphHandle, GraphProps, GraphRenderContext } from '@graph-render/types/react';
@@ -22,16 +23,14 @@ import { normalizeZoomRange } from '../utils/viewport';
 import { useGraphCollapse } from './useGraphCollapse';
 import { useGraphCollapseHandlers } from './useGraphCollapseHandlers';
 import { useGraphCulling } from './useGraphCulling';
-import { useGraphHover } from './useGraphHover';
-import { useGraphHoverHandlers } from './useGraphHoverHandlers';
+import { useGraphHoverEngine } from './useGraphHoverEngine';
 import { useGraphKeyboardNavigation } from './useGraphKeyboardNavigation';
 import { useGraphModel } from './useGraphModel';
 import { useGraphPointerInteractions } from './useGraphPointerInteractions';
 import { useGraphRenderBindings } from './useGraphRenderBindings';
-import { useGraphSelectionHandlers } from './useGraphSelectionHandlers';
+import { useGraphSelectionEngine } from './useGraphSelectionEngine';
 import { useGraphViewportController } from './useGraphViewportController';
 import { useGraphViewState } from './useGraphViewState';
-import { useGraphVisibleSelection } from './useGraphVisibleSelection';
 import { useGraphWheelZoomListener } from './useGraphWheelZoomListener';
 import { useStableConfig } from './useStableConfig';
 
@@ -101,6 +100,7 @@ export const useGraphController = (
     onEdgeHoverChange,
     onNodeClick,
     onEdgeClick,
+    ariaLabel,
   } = props;
 
   const { panEnabled, zoomEnabled, pinchZoomEnabled, keyboardNavigation, marqueeSelectionEnabled } =
@@ -222,16 +222,27 @@ export const useGraphController = (
     updateCollapsedNodeIds,
   });
 
-  const { effectiveFocusedNodeId, effectiveSelection, selectedEdgeSet, selectedNodeSet } =
-    useGraphVisibleSelection({
-      focusedNodeId,
-      selection,
-      selectionRef,
-      updateFocusedNode,
-      updateSelection,
-      visibleEdges,
-      visibleNodes: visibleNodesWithMeasuredSize,
-    });
+  const {
+    effectiveFocusedNodeId,
+    effectiveSelection,
+    selectedEdgeSet,
+    selectedNodeSet,
+    handleEdgeSelection,
+    handleNodeSelection,
+  } = useGraphSelectionEngine({
+    focusedNodeId,
+    selection,
+    selectionRef,
+    updateFocusedNode,
+    updateSelection,
+    visibleEdges,
+    visibleNodes: visibleNodesWithMeasuredSize,
+    edgeSelectionEnabled,
+    nodeSelectionEnabled,
+    onEdgeClick,
+    onNodeClick,
+    selectionMode,
+  });
 
   const positionedNodeMap = useMemo(
     () => new Map(positionedNodes.map((n) => [n.id, n])),
@@ -244,15 +255,18 @@ export const useGraphController = (
 
   const { centerOnNode, fitView, getViewportDimensions } = useGraphViewportController({
     cfg,
+    collapsedIds,
     fitViewOnMount,
     fitViewPadding,
     graph,
+    pendingExpansionNodeSet,
     positionedEdges,
     positionedNodeMap,
     positionedNodes,
     ref,
     safeMaxZoom,
     safeMinZoom,
+    selectionRef,
     svgRef,
     updateSelection,
     updateViewport,
@@ -261,16 +275,28 @@ export const useGraphController = (
   });
 
   const {
-    hoveredEdgeId,
-    setHoveredEdgeId,
-    hoveredNodeId,
-    setHoveredNodeId,
+    edgeRenderStates,
     focusedPath,
     setFocusedPath,
     pathHighlight,
     hoveredNodeStates,
     edgesForRender,
-  } = useGraphHover(positionedNodes, positionedEdges, cfg.hoverHighlight);
+    handleEdgeHoverChange,
+    handleNodeMouseEnter,
+    handleNodeMouseLeave,
+    handlePathHover,
+    handlePathLeave,
+  } = useGraphHoverEngine({
+    hoverHighlight: cfg.hoverHighlight,
+    positionedNodes,
+    positionedEdges,
+    positionedNodeMap,
+    positionedEdgeMap,
+    selection: effectiveSelection,
+    viewport,
+    onNodeHoverChange,
+    onEdgeHoverChange,
+  });
 
   const renderContext = useMemo<GraphRenderContext>(
     () => ({
@@ -297,16 +323,6 @@ export const useGraphController = (
       selection: selectionRef.current,
     });
   }, [cfg, graph, positionedEdges, positionedNodes, selectionRef, viewportRef]);
-
-  const { handleEdgeSelection, handleNodeSelection } = useGraphSelectionHandlers({
-    edgeSelectionEnabled,
-    nodeSelectionEnabled,
-    onEdgeClick,
-    onNodeClick,
-    selectionMode,
-    updateFocusedNode,
-    updateSelection,
-  });
 
   const {
     handlePointerCancel,
@@ -370,25 +386,6 @@ export const useGraphController = (
     zoomStep,
   });
 
-  const {
-    handleEdgeHoverChange,
-    handleNodeMouseEnter,
-    handleNodeMouseLeave,
-    handlePathHover,
-    handlePathLeave,
-  } = useGraphHoverHandlers({
-    hoverHighlight: cfg.hoverHighlight,
-    onEdgeHoverChange,
-    onNodeHoverChange,
-    positionedEdgeMap,
-    positionedNodeMap,
-    selection: effectiveSelection,
-    setFocusedPath,
-    setHoveredEdgeId,
-    setHoveredNodeId,
-    viewport,
-  });
-
   const renderBindings = useGraphRenderBindings({
     cfg,
     edgeSelectionColor,
@@ -436,6 +433,7 @@ export const useGraphController = (
     renderBackground,
     renderOverlay,
     renderContext,
+    onRenderPropError: onError,
     showArrows: renderBindings.showArrows,
     arrowMarkerId: renderBindings.arrowMarkerId,
     hoverArrowMarkerId: renderBindings.hoverArrowMarkerId,
@@ -447,9 +445,7 @@ export const useGraphController = (
     culledEdgesForRender,
     culledNodes,
     positionedNodes,
-    hoveredEdgeId,
-    hoveredNodeId,
-    pathHighlightEdges: pathHighlight?.edges,
+    edgeRenderStates,
     selectedEdgeSet,
     edgeSelectionEnabled,
     edgeInteractive: edgeSelectionEnabled || Boolean(onEdgeClick),
@@ -506,5 +502,6 @@ export const useGraphController = (
     handlePointerUp,
     handlePointerCancel,
     handleKeyDown,
+    ariaLabel,
   };
 };

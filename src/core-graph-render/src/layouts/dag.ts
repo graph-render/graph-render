@@ -1,6 +1,7 @@
 import {
   type EdgeData,
   LayoutDirection,
+  makePositionedNode,
   type NodeData,
   type PositionedNode,
 } from '@graph-render/types';
@@ -66,13 +67,10 @@ export const dagLayout = (
         baseX +
         layerIndex * stepX +
         (direction === LayoutDirection.RTL ? maxNodeWidth - nodeWidth : 0);
-      const positioned = {
-        ...node,
-        position: {
-          x: layers.length > 1 ? x : pad + Math.max(0, (contentWidth - nodeWidth) / 2),
-          y,
-        },
-      } as PositionedNode;
+      const positioned = makePositionedNode(node, {
+        x: layers.length > 1 ? x : pad + Math.max(0, (contentWidth - nodeWidth) / 2),
+        y,
+      });
 
       y +=
         (node.size?.height ?? DEFAULT_NODE_SIZE.height) +

@@ -35,12 +35,6 @@ interface GraphNodesLayerProps {
   readonly onNodeMouseLeave: () => void;
   readonly onPathHover: (nodeId: string, sourceIndex: number, pathKey?: string) => void;
   readonly onPathLeave: () => void;
-  readonly nodeFill: string;
-  readonly nodeStroke: string;
-  readonly nodeTextColor: string;
-  readonly nodeTextSize: number;
-  readonly nodeRadius: number;
-  readonly fontFamily: string;
 }
 
 export const GraphNodesLayer = React.memo(function GraphNodesLayer({
@@ -71,12 +65,6 @@ export const GraphNodesLayer = React.memo(function GraphNodesLayer({
   onNodeMouseLeave,
   onPathHover,
   onPathLeave,
-  nodeFill,
-  nodeStroke,
-  nodeTextColor,
-  nodeTextSize,
-  nodeRadius,
-  fontFamily,
 }: GraphNodesLayerProps) {
   return (
     <g aria-label="nodes">
@@ -115,12 +103,6 @@ export const GraphNodesLayer = React.memo(function GraphNodesLayer({
             onNodeMouseLeave={onNodeMouseLeave}
             onPathHover={onPathHover}
             onPathLeave={onPathLeave}
-            nodeFill={nodeFill}
-            nodeStroke={nodeStroke}
-            nodeTextColor={nodeTextColor}
-            nodeTextSize={nodeTextSize}
-            nodeRadius={nodeRadius}
-            fontFamily={fontFamily}
           />
         );
       })}

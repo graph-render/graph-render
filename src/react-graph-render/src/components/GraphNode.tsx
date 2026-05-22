@@ -3,6 +3,7 @@ import type { VertexComponent } from '@graph-render/types/react';
 import React, { useCallback } from 'react';
 
 import { DEFAULT_NODE_HEIGHT, DEFAULT_NODE_WIDTH } from '../constants/graph';
+import { useGraphTheme } from '../contexts/GraphThemeContext';
 import { useGraphNodeMeasurement } from '../hooks/useGraphNodeMeasurement';
 import { getGraphNodeFrameState } from '../utils/graphNodeFrame';
 import type { NodeMeasurementScheduler } from '../utils/nodeMeasurementScheduler';
@@ -38,12 +39,6 @@ interface GraphNodeProps {
   readonly onNodeMouseLeave: () => void;
   readonly onPathHover: (nodeId: string, sourceIndex: number, playerKey?: string) => void;
   readonly onPathLeave: () => void;
-  readonly nodeFill: string;
-  readonly nodeStroke: string;
-  readonly nodeTextColor: string;
-  readonly nodeTextSize: number;
-  readonly nodeRadius: number;
-  readonly fontFamily: string;
 }
 
 export const GraphNode = React.memo<GraphNodeProps>(
@@ -77,13 +72,9 @@ export const GraphNode = React.memo<GraphNodeProps>(
     onNodeMouseLeave,
     onPathHover,
     onPathLeave,
-    nodeFill,
-    nodeStroke,
-    nodeTextColor,
-    nodeTextSize,
-    nodeRadius,
-    fontFamily,
   }) => {
+    const { nodeFill, nodeStroke, nodeTextColor, nodeTextSize, nodeRadius, fontFamily } =
+      useGraphTheme();
     const width = node.size?.width ?? DEFAULT_NODE_WIDTH;
     const height = node.size?.height ?? DEFAULT_NODE_HEIGHT;
     const radius = nodeRadius;
