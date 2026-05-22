@@ -1,9 +1,20 @@
-import { act, renderHook } from '@testing-library/react';
+/* eslint-disable testing-library/no-manual-cleanup -- this suite must unmount MutationObserver subscribers before resetting document theme classes. */
+import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { useDocumentDarkMode } from '../useDocumentDarkMode';
 
+const flushMutationObservers = async () => new Promise((resolve) => setTimeout(resolve, 10));
+
+const setDocumentDarkMode = async (enabled: boolean) => {
+  await act(async () => {
+    document.documentElement.classList.toggle('dark', enabled);
+    await flushMutationObservers();
+  });
+};
+
 afterEach(() => {
+  cleanup();
   document.documentElement.classList.remove('dark');
   document.body.classList.remove('dark');
 });
@@ -14,8 +25,8 @@ describe('useDocumentDarkMode', () => {
     expect(result.current.isDarkMode).toBe(false);
   });
 
-  it('initializes with isDarkMode=true when html element already has dark class', () => {
-    document.documentElement.classList.add('dark');
+  it('initializes with isDarkMode=true when html element already has dark class', async () => {
+    await setDocumentDarkMode(true);
     const { result } = renderHook(() => useDocumentDarkMode());
     expect(result.current.isDarkMode).toBe(true);
   });
@@ -24,43 +35,42 @@ describe('useDocumentDarkMode', () => {
     const { result } = renderHook(() => useDocumentDarkMode());
     expect(result.current.isDarkMode).toBe(false);
 
+    await setDocumentDarkMode(true);
+
+    expect(result.current.isDarkMode).toBe(true);
+  });
+
+  it('toggleDarkMode switches from false to true', async () => {
+    const { result } = renderHook(() => useDocumentDarkMode());
+    expect(result.current.isDarkMode).toBe(false);
+
     await act(async () => {
-      document.documentElement.classList.add('dark');
-      // Allow MutationObserver microtask to fire
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      result.current.toggleDarkMode();
+      await flushMutationObservers();
     });
 
     expect(result.current.isDarkMode).toBe(true);
   });
 
-  it('toggleDarkMode switches from false to true', () => {
-    const { result } = renderHook(() => useDocumentDarkMode());
-    expect(result.current.isDarkMode).toBe(false);
-
-    act(() => {
-      result.current.toggleDarkMode();
-    });
-
-    expect(result.current.isDarkMode).toBe(true);
-  });
-
-  it('toggleDarkMode switches from true to false', () => {
-    document.documentElement.classList.add('dark');
+  it('toggleDarkMode switches from true to false', async () => {
+    await setDocumentDarkMode(true);
     const { result } = renderHook(() => useDocumentDarkMode());
     expect(result.current.isDarkMode).toBe(true);
 
-    act(() => {
+    await act(async () => {
       result.current.toggleDarkMode();
+      await flushMutationObservers();
     });
 
     expect(result.current.isDarkMode).toBe(false);
   });
 
-  it('toggleDarkMode updates the html element class when syncToDocument is enabled', () => {
+  it('toggleDarkMode updates the html element class when syncToDocument is enabled', async () => {
     const { result } = renderHook(() => useDocumentDarkMode({ syncToDocument: true }));
 
-    act(() => {
+    await act(async () => {
       result.current.toggleDarkMode();
+      await flushMutationObservers();
     });
 
     expect(document.documentElement).toHaveClass('dark');

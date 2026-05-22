@@ -7,7 +7,6 @@
     { "path": "./src/react-tournament-tree" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@graph-render/types": ["./src/types/src"],
       "@graph-render/types/*": ["./src/types/src/*"],

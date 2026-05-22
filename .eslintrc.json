@@ -143,6 +143,8 @@
           "**/*.test.tsx",
           "**/*.spec.ts",
           "**/*.spec.tsx",
+          "**/*.bench.ts",
+          "**/*.bench.tsx",
           ".storybook/**/*"
         ],
         "optionalDependencies": false,
@@ -198,7 +200,14 @@
       }
     },
     {
-      "files": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.bench.ts",
+        "**/*.bench.tsx"
+      ],
       "extends": ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       "rules": {
         "functional/immutable-data": "off",

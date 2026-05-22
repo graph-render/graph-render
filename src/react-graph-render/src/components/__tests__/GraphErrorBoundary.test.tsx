@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GraphErrorBoundary } from '../GraphErrorBoundary';
 
@@ -12,6 +12,14 @@ const ThrowingChild = ({ shouldThrow }: { readonly shouldThrow: boolean }) => {
 };
 
 describe('GraphErrorBoundary', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('reports render errors and shows the default fallback', () => {
     const onError = vi.fn();
 

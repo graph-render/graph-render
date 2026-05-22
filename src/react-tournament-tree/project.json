@@ -66,6 +66,13 @@
         "command": "vitest run",
         "cwd": "{projectRoot}"
       }
+    },
+    "bench": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest bench --run",
+        "cwd": "{projectRoot}"
+      }
     }
   },
   "tags": ["type:library", "framework:react"]
