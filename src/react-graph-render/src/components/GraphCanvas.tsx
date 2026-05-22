@@ -19,6 +19,7 @@ import React, { useMemo } from 'react';
 import type { GraphNodeTheme } from '../contexts/GraphThemeContext';
 import { GraphThemeProvider } from '../contexts/GraphThemeContext';
 import type { Rect } from '../models/domain';
+import type { EdgeRenderState } from '../utils/edgeRenderState';
 import type { NodeMeasurementScheduler } from '../utils/nodeMeasurementScheduler';
 import { GraphEdgesLayer } from './GraphEdgesLayer';
 import { GraphLabels } from './GraphLabels';
@@ -52,9 +53,8 @@ export interface GraphCanvasProps {
   readonly culledEdgesForRender: readonly PositionedEdge[];
   readonly culledNodes: readonly PositionedNode[];
   readonly positionedNodes: readonly PositionedNode[];
-  readonly hoveredEdgeId: string | null;
-  readonly hoveredNodeId: string | null;
-  readonly pathHighlightEdges: ReadonlySet<string> | undefined;
+  /** Pre-computed per-edge hover/path state produced by useGraphHoverEngine. */
+  readonly edgeRenderStates: ReadonlyMap<string, EdgeRenderState>;
   readonly selectedEdgeSet: ReadonlySet<string>;
   readonly edgeSelectionEnabled: boolean;
   readonly edgeInteractive: boolean;
@@ -156,9 +156,7 @@ export const GraphCanvas = React.memo(function GraphCanvas({
   culledEdgesForRender,
   culledNodes,
   positionedNodes,
-  hoveredEdgeId,
-  hoveredNodeId,
-  pathHighlightEdges,
+  edgeRenderStates,
   selectedEdgeSet,
   edgeSelectionEnabled,
   edgeInteractive,
@@ -286,9 +284,7 @@ export const GraphCanvas = React.memo(function GraphCanvas({
             hoverIncomingArrowMarkerId={hoverIncomingArrowMarkerId}
             selectionArrowMarkerId={selectionArrowMarkerId}
             hoverHighlight={cfg.hoverHighlight}
-            hoveredEdgeId={hoveredEdgeId}
-            hoveredNodeId={hoveredNodeId}
-            pathHighlightEdges={pathHighlightEdges}
+            edgeRenderStates={edgeRenderStates}
             selectedEdgeSet={selectedEdgeSet}
             edgeSelectionEnabled={edgeSelectionEnabled}
             edgeInteractive={edgeInteractive}

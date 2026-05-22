@@ -2,7 +2,9 @@ import type { PositionedEdge } from '@graph-render/types';
 import type { EdgeComponent } from '@graph-render/types/react';
 import React, { useCallback } from 'react';
 
-import { getEdgeRenderState } from '../utils/edgeRenderState';
+import type { EdgeRenderState } from '../utils/edgeRenderState';
+
+const FALLBACK_RENDER_STATE: EdgeRenderState = { edgeHovered: false, isIncomingToHovered: false };
 
 interface GraphEdgesLayerProps {
   readonly edges: readonly PositionedEdge[];
@@ -17,10 +19,10 @@ interface GraphEdgesLayerProps {
   readonly hoverArrowMarkerId: string;
   readonly hoverIncomingArrowMarkerId: string;
   readonly selectionArrowMarkerId: string;
+  /** Pre-computed per-edge hover/path state. Produced by useGraphHoverEngine. */
+  readonly edgeRenderStates: ReadonlyMap<string, EdgeRenderState>;
+  /** Whether hover highlighting is enabled (from config). Controls EdgeComponent event handlers. */
   readonly hoverHighlight: boolean;
-  readonly hoveredEdgeId: string | null;
-  readonly hoveredNodeId: string | null;
-  readonly pathHighlightEdges?: ReadonlySet<string> | undefined;
   readonly selectedEdgeSet: ReadonlySet<string>;
   readonly edgeSelectionEnabled: boolean;
   readonly edgeInteractive: boolean;
@@ -123,10 +125,8 @@ export const GraphEdgesLayer = React.memo(function GraphEdgesLayer({
   hoverArrowMarkerId,
   hoverIncomingArrowMarkerId,
   selectionArrowMarkerId,
+  edgeRenderStates,
   hoverHighlight,
-  hoveredEdgeId,
-  hoveredNodeId,
-  pathHighlightEdges,
   selectedEdgeSet,
   edgeSelectionEnabled,
   edgeInteractive,
@@ -141,12 +141,8 @@ export const GraphEdgesLayer = React.memo(function GraphEdgesLayer({
   return (
     <g aria-label="edges">
       {edges.map((edge) => {
-        const { edgeHovered, isIncomingToHovered } = getEdgeRenderState(edge, {
-          hoverHighlight,
-          hoveredEdgeId,
-          hoveredNodeId,
-          pathHighlightEdges,
-        });
+        const { edgeHovered, isIncomingToHovered } =
+          edgeRenderStates.get(edge.id) ?? FALLBACK_RENDER_STATE;
 
         return (
           <GraphEdgeItem

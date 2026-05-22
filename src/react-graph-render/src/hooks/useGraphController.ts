@@ -275,8 +275,7 @@ export const useGraphController = (
   });
 
   const {
-    hoveredEdgeId,
-    hoveredNodeId,
+    edgeRenderStates,
     focusedPath,
     setFocusedPath,
     pathHighlight,
@@ -446,9 +445,7 @@ export const useGraphController = (
     culledEdgesForRender,
     culledNodes,
     positionedNodes,
-    hoveredEdgeId,
-    hoveredNodeId,
-    pathHighlightEdges: pathHighlight?.edges,
+    edgeRenderStates,
     selectedEdgeSet,
     edgeSelectionEnabled,
     edgeInteractive: edgeSelectionEnabled || Boolean(onEdgeClick),

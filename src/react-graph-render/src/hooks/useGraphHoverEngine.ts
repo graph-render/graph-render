@@ -1,6 +1,9 @@
 import type { PositionedEdge, PositionedNode } from '@graph-render/types';
 import type { GraphHoverMeta, GraphSelection, GraphViewport } from '@graph-render/types/react';
+import { useMemo } from 'react';
 
+import type { EdgeRenderState } from '../utils/edgeRenderState';
+import { getEdgeRenderState } from '../utils/edgeRenderState';
 import { useGraphHover } from './useGraphHover';
 import { useGraphHoverHandlers } from './useGraphHoverHandlers';
 
@@ -71,6 +74,22 @@ export const useGraphHoverEngine = ({
   });
 
   return {
+    // Pre-computed per-edge render state map — GraphEdgesLayer does O(1) lookup per edge
+    edgeRenderStates: useMemo<ReadonlyMap<string, EdgeRenderState>>(() => {
+      const map = new Map<string, EdgeRenderState>();
+      for (const edge of edgesForRender) {
+        map.set(
+          edge.id,
+          getEdgeRenderState(edge, {
+            hoverHighlight,
+            hoveredEdgeId,
+            hoveredNodeId,
+            pathHighlightEdges: pathHighlight?.edges,
+          })
+        );
+      }
+      return map;
+    }, [edgesForRender, hoverHighlight, hoveredEdgeId, hoveredNodeId, pathHighlight]),
     // State exposed for downstream consumers (e.g. edge culling, keyboard nav)
     hoveredEdgeId,
     hoveredNodeId,

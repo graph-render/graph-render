@@ -2,6 +2,7 @@ import { EdgeType } from '@graph-render/types';
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import type { EdgeRenderState } from '../../utils/edgeRenderState';
 import { GraphEdgesLayer } from '../GraphEdgesLayer';
 
 const makeEdge = (id: string) =>
@@ -42,8 +43,7 @@ const baseProps = {
   hoverIncomingArrowMarkerId: 'hover-in',
   selectionArrowMarkerId: 'sel-arrow',
   hoverHighlight: true,
-  hoveredEdgeId: null,
-  hoveredNodeId: null,
+  edgeRenderStates: new Map<string, EdgeRenderState>(),
   selectedEdgeSet: new Set<string>(),
   edgeSelectionEnabled: true,
   edgeInteractive: true,
@@ -153,10 +153,13 @@ describe('GraphEdgesLayer', () => {
     expect(onEdgeSelection).not.toHaveBeenCalled();
   });
 
-  it('passes isHovered=true when edge id matches hoveredEdgeId', () => {
+  it('passes isHovered=true when edge id is in edgeRenderStates with edgeHovered=true', () => {
+    const hoveredStates = new Map<string, EdgeRenderState>([
+      ['e1', { edgeHovered: true, isIncomingToHovered: false }],
+    ]);
     const { getByTestId } = render(
       <svg>
-        <GraphEdgesLayer {...baseProps} edges={[makeEdge('e1')]} hoveredEdgeId="e1" />
+        <GraphEdgesLayer {...baseProps} edges={[makeEdge('e1')]} edgeRenderStates={hoveredStates} />
       </svg>
     );
     expect(getByTestId('edge-e1').dataset['hovered']).toBe('true');
