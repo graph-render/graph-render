@@ -84,11 +84,15 @@ export function BracketGraphCanvas({
         vertexComponent={vertexComponent}
         config={config}
         defaultViewport={defaultViewport}
-        panEnabled={panEnabled ?? !isNavigationMode}
-        zoomEnabled={zoomEnabled ?? !isNavigationMode}
-        pinchZoomEnabled={pinchZoomEnabled ?? !isNavigationMode}
-        translateExtent={isNavigationMode ? undefined : translateExtent}
-        showControls={showViewportControls}
+        interaction={{
+          panEnabled: panEnabled ?? !isNavigationMode,
+          zoomEnabled: zoomEnabled ?? !isNavigationMode,
+          pinchZoomEnabled: pinchZoomEnabled ?? !isNavigationMode,
+        }}
+        viewportOptions={{
+          translateExtent: isNavigationMode ? undefined : translateExtent,
+          showControls: showViewportControls,
+        }}
         onNodeClick={handleMatchClick}
         onLayoutChange={handleLayoutChange}
         routeEdgesOverride={routeBracketEdges}
