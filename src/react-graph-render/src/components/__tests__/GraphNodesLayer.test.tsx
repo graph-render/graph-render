@@ -1,6 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { GraphThemeProvider } from '../../contexts/GraphThemeContext';
 import { createNodeMeasurementScheduler } from '../../utils/nodeMeasurementScheduler';
 import { GraphNodesLayer } from '../GraphNodesLayer';
 
@@ -16,6 +17,15 @@ const makeNode = (id: string, overrides: Record<string, unknown> = {}) =>
     size: { width: 180, height: 72 },
     ...overrides,
   }) as any;
+
+const testTheme = {
+  nodeFill: 'white',
+  nodeStroke: '#d7dbe3',
+  nodeTextColor: '#111827',
+  nodeTextSize: 14,
+  nodeRadius: 8,
+  fontFamily: 'system-ui, sans-serif',
+};
 
 const baseProps = {
   Vertex: StubVertex,
@@ -40,56 +50,43 @@ const baseProps = {
   onNodeMouseLeave: vi.fn(),
   onPathHover: vi.fn(),
   onPathLeave: vi.fn(),
-  nodeFill: 'white',
-  nodeStroke: '#d7dbe3',
-  nodeTextColor: '#111827',
-  nodeTextSize: 14,
-  nodeRadius: 8,
-  fontFamily: 'system-ui, sans-serif',
 };
+
+const renderInTheme = (ui: React.ReactElement) =>
+  render(
+    <GraphThemeProvider theme={testTheme}>
+      <svg>{ui}</svg>
+    </GraphThemeProvider>
+  );
 
 describe('GraphNodesLayer', () => {
   it('renders a group with aria-label="nodes"', () => {
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[]} />
-      </svg>
-    );
+    const { container } = renderInTheme(<GraphNodesLayer {...baseProps} nodes={[]} />);
     expect(container.querySelector('g[aria-label="nodes"]')).not.toBeNull();
   });
 
   it('renders nothing when nodes is empty', () => {
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[]} />
-      </svg>
-    );
+    const { container } = renderInTheme(<GraphNodesLayer {...baseProps} nodes={[]} />);
     expect(container.querySelectorAll('[data-graph-node-interactive]')).toHaveLength(0);
   });
 
   it('renders one node group per node', () => {
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[makeNode('n1'), makeNode('n2')]} />
-      </svg>
+    const { container } = renderInTheme(
+      <GraphNodesLayer {...baseProps} nodes={[makeNode('n1'), makeNode('n2')]} />
     );
     expect(container.querySelectorAll('[data-graph-node-interactive]')).toHaveLength(2);
   });
 
   it('renders vertex for each node', () => {
-    const { getAllByTestId } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[makeNode('n1'), makeNode('n2')]} />
-      </svg>
+    const { getAllByTestId } = renderInTheme(
+      <GraphNodesLayer {...baseProps} nodes={[makeNode('n1'), makeNode('n2')]} />
     );
     expect(getAllByTestId(/^vertex-/)).toHaveLength(2);
   });
 
   it('renders focused rect for focused node', () => {
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[makeNode('n1')]} focusedNodeId="n1" />
-      </svg>
+    const { container } = renderInTheme(
+      <GraphNodesLayer {...baseProps} nodes={[makeNode('n1')]} focusedNodeId="n1" />
     );
     // GraphNodeFrame renders 2 rects when focused
     expect(container.querySelectorAll('rect').length).toBeGreaterThanOrEqual(2);
@@ -97,10 +94,8 @@ describe('GraphNodesLayer', () => {
 
   it('calls onNodeClick when a node is clicked', () => {
     const onNodeClick = vi.fn();
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer {...baseProps} nodes={[makeNode('n1')]} onNodeClick={onNodeClick} />
-      </svg>
+    const { container } = renderInTheme(
+      <GraphNodesLayer {...baseProps} nodes={[makeNode('n1')]} onNodeClick={onNodeClick} />
     );
     const nodeGroup = container.querySelector('[data-graph-node-interactive]');
     fireEvent.click(nodeGroup!);
@@ -109,14 +104,12 @@ describe('GraphNodesLayer', () => {
 
   it('calls onNodeMouseEnter when a node is hovered', () => {
     const onNodeMouseEnter = vi.fn();
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer
-          {...baseProps}
-          nodes={[makeNode('n1')]}
-          onNodeMouseEnter={onNodeMouseEnter}
-        />
-      </svg>
+    const { container } = renderInTheme(
+      <GraphNodesLayer
+        {...baseProps}
+        nodes={[makeNode('n1')]}
+        onNodeMouseEnter={onNodeMouseEnter}
+      />
     );
     const nodeGroup = container.querySelector('[data-graph-node-interactive]');
     fireEvent.mouseEnter(nodeGroup!);
@@ -125,14 +118,12 @@ describe('GraphNodesLayer', () => {
 
   it('calls onNodeMouseLeave when a node is un-hovered', () => {
     const onNodeMouseLeave = vi.fn();
-    const { container } = render(
-      <svg>
-        <GraphNodesLayer
-          {...baseProps}
-          nodes={[makeNode('n1')]}
-          onNodeMouseLeave={onNodeMouseLeave}
-        />
-      </svg>
+    const { container } = renderInTheme(
+      <GraphNodesLayer
+        {...baseProps}
+        nodes={[makeNode('n1')]}
+        onNodeMouseLeave={onNodeMouseLeave}
+      />
     );
     const nodeGroup = container.querySelector('[data-graph-node-interactive]');
     fireEvent.mouseLeave(nodeGroup!);

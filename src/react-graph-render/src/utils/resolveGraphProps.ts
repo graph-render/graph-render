@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-deprecated -- This file is a compatibility shim that intentionally reads deprecated flat props to merge them with grouped options. */
 import type {
   GraphInteractionOptions,
   GraphProps,

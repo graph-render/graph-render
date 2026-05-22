@@ -3,7 +3,7 @@ import type { GraphViewport } from '@graph-render/types/react';
 
 import { DEFAULT_NODE_HEIGHT, DEFAULT_NODE_WIDTH } from '../constants/graph';
 
-const DEFAULT_PADDING = 96;
+const CULLING_OVERSCAN_PADDING = 96;
 
 export interface ViewportWorldBounds {
   readonly minX: number;
@@ -16,7 +16,7 @@ export const getViewportWorldBounds = (
   viewport: GraphViewport,
   width: number,
   height: number,
-  padding = DEFAULT_PADDING
+  padding = CULLING_OVERSCAN_PADDING
 ): ViewportWorldBounds => {
   const minX = (-viewport.x - padding) / viewport.zoom;
   const minY = (-viewport.y - padding) / viewport.zoom;
@@ -87,7 +87,7 @@ export const filterNodesInViewport = (
   viewport: GraphViewport,
   width: number,
   height: number,
-  padding = DEFAULT_PADDING
+  padding = CULLING_OVERSCAN_PADDING
 ): readonly PositionedNode[] => {
   if (nodes.length === 0 || width <= 0 || height <= 0) {
     return nodes;
@@ -109,7 +109,7 @@ export const filterEdgesInViewport = (
   viewport: GraphViewport,
   width: number,
   height: number,
-  padding = DEFAULT_PADDING
+  padding = CULLING_OVERSCAN_PADDING
 ): readonly PositionedEdge[] => {
   if (edges.length === 0) {
     return edges;

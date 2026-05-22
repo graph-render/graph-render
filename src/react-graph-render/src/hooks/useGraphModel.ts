@@ -1,7 +1,7 @@
 import { fromTypedNxGraph, normalizeEdges } from '@graph-render/core';
-import type { PositionedEdge, PositionedNode, Size } from '@graph-render/types';
+import type { NodeData, PositionedEdge, PositionedNode, Size } from '@graph-render/types';
 import { GraphFailureBehavior, NodeSizingMode } from '@graph-render/types';
-import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useReducer, useRef } from 'react';
 
 import type { GraphModelResult, UseGraphModelOptions } from '../models/graph';
 import { resolvePositionedNodes } from '../utils/graphModelLayout';
@@ -12,6 +12,36 @@ import { useGraphSearchState } from './useGraphSearchState';
 import { useLatestRef } from './useLatestRef';
 
 export type { GraphModelResult, UseGraphModelOptions } from '../models/graph';
+
+// ---------------------------------------------------------------------------
+// Reducer for measured node sizes (eliminates the extra render from useEffect)
+// ---------------------------------------------------------------------------
+
+type MeasuredSizesState = Record<string, Size>;
+
+type MeasuredSizesAction =
+  | { readonly type: 'PRUNE'; readonly activeNodes: readonly NodeData[] }
+  | { readonly type: 'UPDATE_SIZE'; readonly nodeId: string; readonly size: Size };
+
+const measuredSizesReducer = (
+  state: MeasuredSizesState,
+  action: MeasuredSizesAction
+): MeasuredSizesState => {
+  switch (action.type) {
+    case 'PRUNE': {
+      return pruneMeasuredNodeSizes(state, action.activeNodes);
+    }
+    case 'UPDATE_SIZE': {
+      const previous = state[action.nodeId];
+      if (previous?.width === action.size.width && previous?.height === action.size.height) {
+        return state;
+      }
+      return { ...state, [action.nodeId]: action.size };
+    }
+  }
+};
+
+// ---------------------------------------------------------------------------
 
 export const useGraphModel = ({
   graph,
@@ -30,7 +60,10 @@ export const useGraphModel = ({
   routeEdgesOverride,
   onError,
 }: UseGraphModelOptions): GraphModelResult => {
-  const [measuredNodeSizes, setMeasuredNodeSizes] = useState<Record<string, Size>>({});
+  const [measuredNodeSizes, dispatchMeasuredSizes] = useReducer(
+    measuredSizesReducer,
+    {} as MeasuredSizesState
+  );
   const onErrorRef = useLatestRef(onError);
   const reportedErrorsRef = useRef<WeakSet<Error>>(new WeakSet());
   const deferredSearchQuery = useDeferredValue(searchQuery);
@@ -50,8 +83,9 @@ export const useGraphModel = ({
     [measuredNodeSizes, sourceNodes]
   );
 
-  useEffect(() => {
-    setMeasuredNodeSizes((current) => pruneMeasuredNodeSizes(current, sourceNodes));
+  // Prune stale measured sizes in the same render pass as topology changes (no extra render).
+  useMemo(() => {
+    dispatchMeasuredSizes({ type: 'PRUNE', activeNodes: sourceNodes });
   }, [sourceNodes]);
 
   const normalizedEdges = useMemo(
@@ -80,15 +114,19 @@ export const useGraphModel = ({
     visibleNodes,
   } = searchState;
 
+  // Defer layout computation so search/collapse interactions stay interactive.
+  const deferredVisibleNodes = useDeferredValue(visibleNodes);
+  const deferredVisibleEdges = useDeferredValue(visibleEdges);
+
   const layoutOptions = useMemo(
     () =>
       buildGraphLayoutOptions({
         config,
-        edges: visibleEdges,
+        edges: deferredVisibleEdges,
         mergedTheme,
-        nodes: visibleNodes,
+        nodes: deferredVisibleNodes,
       }),
-    [config, mergedTheme, visibleEdges, visibleNodes]
+    [config, mergedTheme, deferredVisibleEdges, deferredVisibleNodes]
   );
 
   const handleNodeMeasure = useCallback(
@@ -97,14 +135,7 @@ export const useGraphModel = ({
         return;
       }
 
-      setMeasuredNodeSizes((current) => {
-        const previous = current[nodeId];
-        if (previous?.width === size.width && previous?.height === size.height) {
-          return current;
-        }
-
-        return { ...current, [nodeId]: size };
-      });
+      dispatchMeasuredSizes({ type: 'UPDATE_SIZE', nodeId, size });
     },
     [config.nodeSizing]
   );
@@ -116,9 +147,9 @@ export const useGraphModel = ({
         graph,
         layoutNodesOverride,
         layoutOptions,
-        visibleNodes,
+        visibleNodes: deferredVisibleNodes,
       }),
-    [allowDegradedGraph, graph, layoutNodesOverride, layoutOptions, visibleNodes]
+    [allowDegradedGraph, graph, layoutNodesOverride, layoutOptions, deferredVisibleNodes]
   );
   const positionedNodes: readonly PositionedNode[] = positionedNodeResult.nodes;
 
@@ -142,7 +173,7 @@ export const useGraphModel = ({
         graph,
         positionedNodes,
         routeEdgesOverride,
-        visibleEdges,
+        visibleEdges: deferredVisibleEdges,
       }),
     [
       allowDegradedGraph,
@@ -150,7 +181,7 @@ export const useGraphModel = ({
       graph,
       positionedNodes,
       routeEdgesOverride,
-      visibleEdges,
+      deferredVisibleEdges,
     ]
   );
   const positionedEdges: readonly PositionedEdge[] = positionedEdgeResult.edges;
@@ -172,7 +203,7 @@ export const useGraphModel = ({
     handleNodeMeasure,
     positionedEdges,
     positionedNodes,
-    visibleEdges,
-    visibleNodesWithMeasuredSize: visibleNodes,
+    visibleEdges: deferredVisibleEdges,
+    visibleNodesWithMeasuredSize: deferredVisibleNodes,
   };
 };

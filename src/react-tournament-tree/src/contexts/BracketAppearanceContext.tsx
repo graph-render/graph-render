@@ -10,20 +10,26 @@ const BracketAppearanceContext = React.createContext<ResolvedBracketAppearance |
 
 export interface BracketAppearanceProviderProps {
   readonly appearance?: TournamentBracketAppearance | undefined;
-  readonly isDarkMode: boolean;
-  readonly compact: boolean;
+  readonly isDarkMode?: boolean | undefined;
+  readonly compact?: boolean | undefined;
+  /**
+   * Pass a pre-resolved appearance to skip an extra `resolveBracketAppearance` call.
+   * When provided, `appearance`, `isDarkMode`, and `compact` are ignored.
+   */
+  readonly resolvedAppearance?: ResolvedBracketAppearance | undefined;
   readonly children: React.ReactNode;
 }
 
 export const BracketAppearanceProvider: React.FC<BracketAppearanceProviderProps> = ({
   appearance,
-  isDarkMode,
-  compact,
+  isDarkMode = false,
+  compact = true,
+  resolvedAppearance,
   children,
 }) => {
   const value = React.useMemo(
-    () => resolveBracketAppearance(appearance, isDarkMode, compact),
-    [appearance, compact, isDarkMode]
+    () => resolvedAppearance ?? resolveBracketAppearance(appearance, isDarkMode, compact),
+    [appearance, compact, isDarkMode, resolvedAppearance]
   );
 
   return (

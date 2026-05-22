@@ -1,5 +1,6 @@
 import { fromTypedNxGraph } from '@graph-render/core';
 import { LayoutDirection, LayoutType, RoutingStyle } from '@graph-render/types';
+import type { VertexComponent } from '@graph-render/types/react';
 import { SelectionMode } from '@graph-render/types/react';
 import { fireEvent, render } from '@testing-library/react';
 import React from 'react';
@@ -67,8 +68,8 @@ vi.mock('@graph-render/core', () => ({
   normalizeEdges: vi.fn((edges: unknown[]) => edges),
 }));
 
-const StubVertex = ({ node }: any) => (
-  <text data-testid={`vertex-${node.id}`}>{node.label ?? node.id}</text>
+const StubVertex: VertexComponent = ({ node }) => (
+  <text data-testid={`vertex-${node.id}`}>{node.label != null ? String(node.label) : node.id}</text>
 );
 
 const emptyGraph = makeEmptyNxGraph();
@@ -86,7 +87,11 @@ describe('Graph', () => {
 
   it('uses role="figure" when keyboard navigation is disabled', () => {
     const { container } = render(
-      <Graph graph={emptyGraph} vertexComponent={StubVertex} keyboardNavigation={false} />
+      <Graph
+        graph={emptyGraph}
+        vertexComponent={StubVertex}
+        interaction={{ keyboardNavigation: false }}
+      />
     );
     expect(container.querySelector('svg[role="figure"]')).not.toBeNull();
   });
@@ -118,7 +123,11 @@ describe('Graph', () => {
 
   it('renders viewport controls when showControls is true', () => {
     const { container } = render(
-      <Graph graph={emptyGraph} vertexComponent={StubVertex} showControls />
+      <Graph
+        graph={emptyGraph}
+        vertexComponent={StubVertex}
+        viewportOptions={{ showControls: true }}
+      />
     );
     expect(container.querySelector('g[aria-label="viewport-controls"]')).not.toBeNull();
   });

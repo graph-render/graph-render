@@ -1,9 +1,11 @@
-import type {
-  EdgeData,
-  LayoutDirection,
-  NodeData,
-  PositionedNode,
-  TreeMetrics,
+import {
+  type EdgeData,
+  isPositionedNode,
+  type LayoutDirection,
+  makePositionedNode,
+  type NodeData,
+  type PositionedNode,
+  type TreeMetrics,
 } from '@graph-render/types';
 
 import { DEFAULT_NODE_SIZE } from '../utils';
@@ -22,7 +24,7 @@ export const positionNodesInLevels = (
   direction: LayoutDirection
 ): readonly PositionedNode[] => {
   return nodes.map((node) => {
-    if (node.position) return node as PositionedNode;
+    if (isPositionedNode(node)) return node;
 
     const level = levelMap.get(node.id) ?? 0;
     const levelNodes = levels[level] ?? [];
@@ -91,10 +93,7 @@ export const alignNodesToParents = (
 
       const h = node.size?.height ?? DEFAULT_NODE_SIZE.height;
       const newY = avgCenterY - h / 2;
-      const updated = {
-        ...node,
-        position: { ...node.position, y: newY },
-      } as PositionedNode;
+      const updated = makePositionedNode(node, { ...node.position, y: newY });
       posMap.set(id, updated);
     }
   }

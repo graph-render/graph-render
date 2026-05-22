@@ -1,4 +1,9 @@
-import type { NodeData, Point, PositionedNode } from '@graph-render/types';
+import {
+  isPositionedNode,
+  type NodeData,
+  type Point,
+  type PositionedNode,
+} from '@graph-render/types';
 
 import { DEFAULT_NODE_GAP, DEFAULT_NODE_SIZE, DEFAULT_PADDING } from '../utils';
 
@@ -40,7 +45,7 @@ export const gridLayout = (
   const cols = calculateGridColumns(count);
 
   return nodes.map((node, idx) => {
-    if (node.position) return node as PositionedNode;
+    if (isPositionedNode(node)) return node;
 
     const nodeWidth = node.size?.width ?? DEFAULT_NODE_SIZE.width;
     const nodeHeight = node.size?.height ?? DEFAULT_NODE_SIZE.height;

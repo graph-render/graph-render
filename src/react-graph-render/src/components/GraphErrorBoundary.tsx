@@ -3,6 +3,8 @@ import React from 'react';
 export interface GraphErrorBoundaryProps {
   readonly children: React.ReactNode;
   readonly fallback?: React.ReactNode;
+  readonly fallbackClassName?: string | undefined;
+  readonly fallbackStyle?: React.CSSProperties | undefined;
   readonly onError?: ((error: Error, errorInfo: React.ErrorInfo) => void) | undefined;
   readonly resetKeys?: readonly unknown[] | undefined;
 }
@@ -42,6 +44,7 @@ export class GraphErrorBoundary extends React.Component<
       return (
         <div
           role="alert"
+          className={this.props.fallbackClassName}
           style={{
             padding: 16,
             borderRadius: 8,
@@ -50,6 +53,7 @@ export class GraphErrorBoundary extends React.Component<
             color: '#991b1b',
             fontFamily: 'system-ui, sans-serif',
             fontSize: 14,
+            ...this.props.fallbackStyle,
           }}
         >
           Graph failed to render: {this.state.error.message}

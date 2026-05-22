@@ -195,6 +195,12 @@ export interface UseGraphViewportControllerOptions {
   readonly updateViewport: GraphHandle['setViewport'];
   readonly viewport: GraphViewport;
   readonly zoomStep: number;
+  /** Ref to the current selection — read without causing re-renders. */
+  readonly selectionRef: React.RefObject<GraphSelection>;
+  /** Current collapsed node IDs (from useGraphCollapse). */
+  readonly collapsedIds: readonly string[];
+  /** Current in-flight expansion node set (from useGraphCollapse). */
+  readonly pendingExpansionNodeSet: ReadonlySet<string>;
 }
 
 // ── useGraphViewState ────────────────────────────────────────────────────────

@@ -1,4 +1,9 @@
-import type { NodeData, Point, PositionedNode } from '@graph-render/types';
+import {
+  isPositionedNode,
+  type NodeData,
+  type Point,
+  type PositionedNode,
+} from '@graph-render/types';
 
 import { DEFAULT_NODE_SIZE, DEFAULT_PADDING, getMaxNodeDimensions } from '../utils';
 import { gridLayout } from './grid';
@@ -77,7 +82,7 @@ export const centeredLayout = (
   const count = nodes.length;
 
   if (count === 0) {
-    return [] as PositionedNode[];
+    return [];
   }
 
   const { x: centerX, y: centerY } = getContainerCenter(width, height);
@@ -95,9 +100,7 @@ export const centeredLayout = (
   }
 
   return nodes.map((node, index) => {
-    if (node.position) {
-      return node as PositionedNode;
-    }
+    if (isPositionedNode(node)) return node;
 
     const nodeWidth = node.size?.width ?? DEFAULT_NODE_SIZE.width;
     const nodeHeight = node.size?.height ?? DEFAULT_NODE_SIZE.height;

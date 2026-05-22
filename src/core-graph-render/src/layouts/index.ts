@@ -1,4 +1,5 @@
 import {
+  isPositionedNode,
   LayoutDirection,
   type LayoutOptions,
   LayoutType,
@@ -131,7 +132,7 @@ export const layoutNodes = (options: LayoutOptions): readonly PositionedNode[] =
   const missingPositions = sizedNodes.some((node) => !node.position);
 
   if (!missingPositions) {
-    return sizedNodes as PositionedNode[];
+    return sizedNodes.filter((n): n is PositionedNode => isPositionedNode(n));
   }
 
   const fixedNodes = sizedNodes.filter((node): node is PositionedNode => Boolean(node.position));
@@ -159,7 +160,11 @@ export const layoutNodes = (options: LayoutOptions): readonly PositionedNode[] =
 export { centeredLayout } from './centered';
 export { compactBracketLayout } from './compactBracket';
 export { dagLayout } from './dag';
-export { forceDirectedLayout } from './forceDirected';
+export {
+  createForceLayoutCache,
+  forceDirectedLayout,
+  type ForceLayoutCache,
+} from './forceDirected';
 export { gridLayout } from './grid';
 export { orthogonalFlowLayout } from './orthogonalFlow';
 export { radialTreeLayout } from './radialTree';

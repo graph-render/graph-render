@@ -8,12 +8,16 @@ import { RoutingStyle } from '@graph-render/types';
 import type {
   EdgeComponent,
   GraphControlsPosition,
+  GraphErrorContext,
   GraphRenderContext,
   GraphViewport,
   VertexComponent,
 } from '@graph-render/types/react';
-import React from 'react';
+import { GraphErrorPhase } from '@graph-render/types/react';
+import React, { useMemo } from 'react';
 
+import type { GraphNodeTheme } from '../contexts/GraphThemeContext';
+import { GraphThemeProvider } from '../contexts/GraphThemeContext';
 import type { Rect } from '../models/domain';
 import type { NodeMeasurementScheduler } from '../utils/nodeMeasurementScheduler';
 import { GraphEdgesLayer } from './GraphEdgesLayer';
@@ -36,6 +40,7 @@ export interface GraphCanvasProps {
   readonly renderBackground?: ((context: GraphRenderContext) => React.ReactNode) | undefined;
   readonly renderOverlay?: ((context: GraphRenderContext) => React.ReactNode) | undefined;
   readonly renderContext: GraphRenderContext;
+  readonly onRenderPropError?: ((error: Error, context: GraphErrorContext) => void) | undefined;
   readonly showArrows: boolean;
   readonly arrowMarkerId: string;
   readonly hoverArrowMarkerId: string;
@@ -108,7 +113,23 @@ export interface GraphCanvasProps {
   readonly handlePointerUp: (event: React.PointerEvent<SVGSVGElement>) => void;
   readonly handlePointerCancel: (event: React.PointerEvent<SVGSVGElement>) => void;
   readonly handleKeyDown: (event: React.KeyboardEvent<SVGSVGElement>) => void;
+  readonly ariaLabel?: string | undefined;
 }
+
+const safeCallRenderProp = (
+  fn: ((context: GraphRenderContext) => React.ReactNode) | undefined,
+  context: GraphRenderContext,
+  onError: ((error: Error, ctx: GraphErrorContext) => void) | undefined
+): React.ReactNode => {
+  if (!fn) return null;
+  try {
+    return fn(context);
+  } catch (error_) {
+    const error = error_ instanceof Error ? error_ : new Error(String(error_));
+    onError?.(error, { graph: context.graph, phase: GraphErrorPhase.Render });
+    return null;
+  }
+};
 
 export const GraphCanvas = React.memo(function GraphCanvas({
   svgRef,
@@ -123,6 +144,7 @@ export const GraphCanvas = React.memo(function GraphCanvas({
   renderBackground,
   renderOverlay,
   renderContext,
+  onRenderPropError,
   showArrows,
   arrowMarkerId,
   hoverArrowMarkerId,
@@ -193,14 +215,19 @@ export const GraphCanvas = React.memo(function GraphCanvas({
   handlePointerUp,
   handlePointerCancel,
   handleKeyDown,
+  ariaLabel = 'Graph',
 }: GraphCanvasProps) {
+  const nodeTheme = useMemo<GraphNodeTheme>(
+    () => ({ nodeFill, nodeStroke, nodeTextColor, nodeTextSize, nodeRadius, fontFamily }),
+    [nodeFill, nodeStroke, nodeTextColor, nodeTextSize, nodeRadius, fontFamily]
+  );
   return (
     <svg
       ref={svgRef}
       width={cfg.width}
       height={cfg.height}
       role={svgRole}
-      aria-label="Graph"
+      aria-label={ariaLabel}
       aria-describedby={svgDescId}
       tabIndex={0}
       style={svgStyle}
@@ -231,7 +258,7 @@ export const GraphCanvas = React.memo(function GraphCanvas({
 
       <g transform={`translate(${viewport.x}, ${viewport.y}) scale(${viewport.zoom})`}>
         <g ref={contentRef}>
-          {renderBackground?.(renderContext)}
+          {safeCallRenderProp(renderBackground, renderContext, onRenderPropError)}
 
           <GraphLabels
             positionedNodes={positionedNodes}
@@ -274,43 +301,39 @@ export const GraphCanvas = React.memo(function GraphCanvas({
             onEdgeSelection={handleEdgeSelection}
           />
 
-          <GraphNodesLayer
-            nodes={culledNodes}
-            Vertex={Vertex}
-            selectedNodeSet={selectedNodeSet}
-            nodeSelectionEnabled={nodeSelectionEnabled}
-            focusedNodeId={effectiveFocusedNodeId}
-            highlightedNodeSet={effectiveHighlightedNodeSet}
-            activePathKey={focusedPathKey}
-            activePathNodeIds={activePathNodeIds}
-            highlightColor={highlightColor}
-            selectionColor={selectionColor}
-            nodeBorderColor={nodeBorderColor}
-            nodeBorderWidth={nodeBorderWidth}
-            hoverNodeBorderColor={hoverNodeBorderColor}
-            hoverNodeBothColor={hoverNodeBothColor}
-            hoverNodeInColor={hoverNodeInColor}
-            hoverNodeOutColor={hoverNodeOutColor}
-            hoverNodeHighlight={hoverNodeHighlight}
-            hoveredNodeStates={hoveredNodeStates ?? undefined}
-            measurementScheduler={measurementScheduler}
-            onNodeMeasure={handleNodeMeasure}
-            onNodeFocus={updateFocusedNode}
-            onNodeClick={handleNodeSelection}
-            onNodeDoubleClick={handleNodeDoubleClick}
-            onNodeMouseEnter={handleNodeMouseEnter}
-            onNodeMouseLeave={handleNodeMouseLeave}
-            onPathHover={handlePathHover}
-            onPathLeave={handlePathLeave}
-            nodeFill={nodeFill}
-            nodeStroke={nodeStroke}
-            nodeTextColor={nodeTextColor}
-            nodeTextSize={nodeTextSize}
-            nodeRadius={nodeRadius}
-            fontFamily={fontFamily}
-          />
+          <GraphThemeProvider theme={nodeTheme}>
+            <GraphNodesLayer
+              nodes={culledNodes}
+              Vertex={Vertex}
+              selectedNodeSet={selectedNodeSet}
+              nodeSelectionEnabled={nodeSelectionEnabled}
+              focusedNodeId={effectiveFocusedNodeId}
+              highlightedNodeSet={effectiveHighlightedNodeSet}
+              activePathKey={focusedPathKey}
+              activePathNodeIds={activePathNodeIds}
+              highlightColor={highlightColor}
+              selectionColor={selectionColor}
+              nodeBorderColor={nodeBorderColor}
+              nodeBorderWidth={nodeBorderWidth}
+              hoverNodeBorderColor={hoverNodeBorderColor}
+              hoverNodeBothColor={hoverNodeBothColor}
+              hoverNodeInColor={hoverNodeInColor}
+              hoverNodeOutColor={hoverNodeOutColor}
+              hoverNodeHighlight={hoverNodeHighlight}
+              hoveredNodeStates={hoveredNodeStates ?? undefined}
+              measurementScheduler={measurementScheduler}
+              onNodeMeasure={handleNodeMeasure}
+              onNodeFocus={updateFocusedNode}
+              onNodeClick={handleNodeSelection}
+              onNodeDoubleClick={handleNodeDoubleClick}
+              onNodeMouseEnter={handleNodeMouseEnter}
+              onNodeMouseLeave={handleNodeMouseLeave}
+              onPathHover={handlePathHover}
+              onPathLeave={handlePathLeave}
+            />
+          </GraphThemeProvider>
 
-          {renderOverlay?.(renderContext)}
+          {safeCallRenderProp(renderOverlay, renderContext, onRenderPropError)}
         </g>
       </g>
 

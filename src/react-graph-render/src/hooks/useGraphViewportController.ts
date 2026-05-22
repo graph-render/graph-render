@@ -56,6 +56,9 @@ export const useGraphViewportController = ({
   updateViewport,
   viewport,
   zoomStep,
+  selectionRef,
+  collapsedIds,
+  pendingExpansionNodeSet,
 }: UseGraphViewportControllerOptions) => {
   const hasAppliedInitialFitViewRef = useRef(false);
   const contentBounds = useMemo(
@@ -105,8 +108,21 @@ export const useGraphViewportController = ({
       getViewport: () => viewport,
       setViewport: updateViewport,
       clearSelection: () => updateSelection({ nodeIds: [], edgeIds: [] }),
+      getSelection: () => selectionRef.current,
+      getCollapsedNodeIds: () => collapsedIds,
+      getPendingExpansionNodeIds: () => pendingExpansionNodeSet,
     }),
-    [centerOnNode, fitView, updateSelection, updateViewport, viewport, zoomStep]
+    [
+      centerOnNode,
+      collapsedIds,
+      fitView,
+      pendingExpansionNodeSet,
+      selectionRef,
+      updateSelection,
+      updateViewport,
+      viewport,
+      zoomStep,
+    ]
   );
 
   useEffect(() => {
