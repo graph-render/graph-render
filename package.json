@@ -56,7 +56,6 @@
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
-    
     "@nx/js": "^22.7.2",
     "@nx/vite": "^22.7.2",
     "@nx/workspace": "^22.3.3",

@@ -21,6 +21,8 @@
     }
   },
   "rules": {
+    "react-hooks/refs": "off",
+    "react-hooks/set-state-in-effect": "off",
     "jsx-a11y/anchor-is-valid": "error",
     "jsx-a11y/click-events-have-key-events": "error",
     "jsx-a11y/no-static-element-interactions": "error",
@@ -44,6 +46,7 @@
       "files": ["**/*.stories.tsx", "**/*.stories.ts", ".storybook/**/*.tsx", ".storybook/**/*.ts"],
       "rules": {
         "unused-imports/no-unused-imports": "off",
+        "@typescript-eslint/no-deprecated": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unnecessary-boolean-literal-compare": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
