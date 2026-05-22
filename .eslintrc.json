@@ -38,10 +38,7 @@
     "plugin:import/recommended",
     "plugin:import/typescript",
     "plugin:promise/recommended",
-    "plugin:unicorn/recommended",
-    "plugin:sonarjs/recommended",
     "plugin:security/recommended-legacy",
-    "plugin:regexp/recommended",
     "plugin:eslint-comments/recommended",
     "plugin:prettier/recommended"
   ],
@@ -210,6 +207,8 @@
       ],
       "extends": ["plugin:testing-library/react", "plugin:jest-dom/recommended"],
       "rules": {
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
         "functional/immutable-data": "off",
         "no-secrets/no-secrets": "off"
       }

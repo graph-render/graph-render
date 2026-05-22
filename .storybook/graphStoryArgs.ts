@@ -1,4 +1,4 @@
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
 
 /**
  * Explicit spies for Graph callbacks that may run during mount (effects / layout).
