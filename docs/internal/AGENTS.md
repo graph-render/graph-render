@@ -1,3 +1,7 @@
+---
+render_with_liquid: false
+---
+
 # React Best Practices
 
 **Version 1.0.0**  
