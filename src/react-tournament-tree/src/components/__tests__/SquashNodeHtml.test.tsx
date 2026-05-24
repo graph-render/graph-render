@@ -21,6 +21,8 @@ const baseVariantProps = {
   normalizedActivePathKey: null as string | null,
   isNodeInActivePath: false,
   isTBD: false,
+  ariaLabel:
+    'QF match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One.',
   meta: MOCK_META,
   setWins: { p1: 2, p2: 1 } as SetWins,
   winnerIndex: 0 as number | null,
@@ -47,6 +49,45 @@ describe('SquashNodeHtml', () => {
     );
     expect(screen.getByText('Player One')).toBeInTheDocument();
     expect(screen.getByText('Player Two')).toBeInTheDocument();
+  });
+
+  it('exposes an accessible match summary', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeHtml {...baseVariantProps} />
+      </svg>
+    );
+    expect(
+      screen.getByRole('button', { name: /QF match: Player One versus Player Two/i })
+    ).toHaveAttribute('tabindex', '0');
+  });
+
+  it('renders a third-place match badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeHtml
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, stage: 'Bronze Match', matchType: 'thirdPlace' }}
+          ariaLabel="Third place match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-badge')).toHaveTextContent('Third place');
+    expect(screen.getByRole('button', { name: /Third place match/i })).toBeInTheDocument();
+  });
+
+  it('renders a bracket-section badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeHtml
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, bracketSection: 'losers', stage: 'Losers R1' }}
+          ariaLabel="Losers match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-badge')).toHaveTextContent('Losers');
+    expect(screen.getByRole('button', { name: /Losers match/i })).toBeInTheDocument();
   });
 
   it('does NOT show live indicator for completed matches', () => {

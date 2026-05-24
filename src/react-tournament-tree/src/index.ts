@@ -1,6 +1,11 @@
 'use client';
 
 export { BracketToolbar } from './components/BracketToolbar';
+export {
+  MultiStageTournament,
+  type MultiStageTournamentProps,
+} from './components/MultiStageTournament';
+export { RoundRobinBracket, type RoundRobinBracketProps } from './components/RoundRobinBracket';
 export { SquashNode } from './components/SquashNode';
 export { TournamentBracket } from './components/TournamentBracket';
 export {
@@ -17,17 +22,19 @@ export {
   BracketAppearanceProvider,
   useBracketAppearance,
 } from './contexts/BracketAppearanceContext';
-/* eslint-disable @typescript-eslint/no-deprecated -- legacy theme API kept for backward compatibility */
+/* eslint-disable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
 export { BracketThemeProvider, useBracketTheme } from './contexts/BracketThemeContext';
+/* eslint-enable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
+export { useBracketMatchUpdate } from './contexts/BracketVertexOptionsContext';
 export type {
   TournamentBracketInteractionOptions,
   TournamentBracketProps,
   TournamentBracketThemeOptions,
   TournamentBracketToolbarOptions,
+  TournamentMatchUpdatePayload,
 } from './models/tournamentBracket';
 export { routeBracketEdges } from './utils/bracketRouting';
 export { injectTournamentPathKeys } from './utils/pathKeys';
-/* eslint-enable @typescript-eslint/no-deprecated -- legacy theme API kept for backward compatibility */
 export type {
   ResolvedBracketAppearance,
   ResolvedBracketFrameStyle,
@@ -44,7 +51,44 @@ export {
 } from './utils/roundLabels';
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
+export {
+  applyScoreCorrectionCascade,
+  buildKnockoutBracketFromGroups,
+  type BuildKnockoutFromGroupsOptions,
+  calculateGroupAdvancers,
+  calculateRoundRobinStandings,
+  correctMatchResult,
+  type DoubleEliminationBracketOptions,
+  type DoubleEliminationEdgeMeta,
+  type DoubleEliminationGraph,
+  type EliminationFormat,
+  generateDoubleEliminationBracket,
+  generateRoundRobinSchedule,
+  generateSingleEliminationBracket,
+  type GroupAdvancementRule,
+  groupRoundRobinMatchesByRound,
+  type MatchResultUpdate,
+  nextPowerOfTwo,
+  type ParticipantCascadeChange,
+  type RoundRobinGroup,
+  type RoundRobinMatch,
+  type RoundRobinPointsRule,
+  type RoundRobinStanding,
+  type ScoreCorrectionResult,
+  type SingleEliminationBracketOptions,
+  type SingleEliminationGraph,
+  type SingleEliminationSeeding,
+  type TournamentParticipantInput,
+} from './utils/tournament';
+/* eslint-disable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export type {
+  GameResult,
+  MatchMeta,
+  MatchNodeData,
+  MatchPlayer,
+  MatchPositionedNode,
+  MultiStageTournamentConfig,
+  SeriesFormat,
   SquashMatchMeta,
   SquashNodeData,
   SquashPlayer,
@@ -53,9 +97,15 @@ export type {
   StageView,
   StageViewportResult,
   TournamentBracketAppearance,
+  TournamentMatch,
+  TournamentStage,
+  TournamentThemeColors,
 } from '@graph-render/types/tournament';
+/* eslint-enable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export {
+  BracketSection,
   MatchStatus,
+  MatchType,
   SquashNodeRenderMode,
   VerticalStagePosition,
 } from '@graph-render/types/tournament';

@@ -3,7 +3,13 @@ import { MatchStatus } from '@graph-render/types/tournament';
 import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH } from '../../constants';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
-import { getScoreGroupWidth, getScoreSegments, normalizePlayerKey } from '../../utils/squash';
+import {
+  getMatchBadgeLabel,
+  getMatchScoreSegmentCount,
+  getMatchScoreSegments,
+  getScoreGroupWidth,
+  normalizePlayerKey,
+} from '../../utils/squash';
 import { SquashPlayerHtmlRow } from './SquashPlayerHtmlRow';
 
 export function SquashNodeHtml(props: SquashNodeVariantProps) {
@@ -11,8 +17,9 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
   const { matchCard, typography } = useBracketAppearance();
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
+  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection);
   const scoreGroupWidth = getScoreGroupWidth(
-    Math.max(meta.sets.length, 1),
+    getMatchScoreSegmentCount(meta),
     matchCard.score.segmentWidth,
     matchCard.score.segmentGap
   );
@@ -25,6 +32,10 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
       data-testid="squash-node-html"
     >
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={props.ariaLabel}
+        data-match-card
         style={{
           boxSizing: 'border-box',
           width: '100%',
@@ -39,9 +50,11 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
           transform: 'none',
           overflow: 'hidden',
           position: 'relative',
+          outline: 'none',
         }}
       >
         {meta.status === MatchStatus.Live ? <LiveIndicator color={colors.LIVE_INDICATOR} /> : null}
+        {matchBadgeLabel ? <MatchTypeBadge label={matchBadgeLabel} /> : null}
         <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)' }}>
           {[p1, p2].map((player, playerIndex) => {
             const isWinner = winnerIndex === playerIndex;
@@ -60,7 +73,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
                 isPlayerHovered={props.hoveredPlayerIndex === playerIndex || isPathMatch}
                 playerOpacity={meta.status === MatchStatus.Upcoming ? 0.6 : 1}
                 setCount={playerIndex === 0 ? setWins.p1 : setWins.p2}
-                scoreSegments={getScoreSegments(meta.sets, meta.tiebreaks, playerIndex)}
+                scoreSegments={getMatchScoreSegments(meta, playerIndex)}
                 textColor={isWinner ? colors.FOREGROUND : colors.MUTED_TEXT}
                 nodeHeight={nodeHeight}
                 scoreGroupWidth={scoreGroupWidth}
@@ -73,6 +86,33 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
         </div>
       </div>
     </foreignObject>
+  );
+}
+
+function MatchTypeBadge({ label }: { readonly label: string }) {
+  const { colors, typography } = useBracketAppearance();
+
+  return (
+    <div
+      data-testid="match-type-badge"
+      style={{
+        position: 'absolute',
+        top: 6,
+        left: 8,
+        zIndex: 1,
+        borderRadius: 999,
+        padding: '1px 6px',
+        background: colors.BADGE_BG,
+        color: colors.BADGE_TEXT,
+        fontFamily: typography.bodyFontFamily,
+        fontSize: 8,
+        fontWeight: 800,
+        letterSpacing: '0.04em',
+        textTransform: 'uppercase',
+      }}
+    >
+      {label}
+    </div>
   );
 }
 
@@ -96,6 +136,7 @@ function LiveIndicator({ color }: { readonly color: string }) {
       }}
     >
       <span
+        data-match-status-indicator
         data-squash-live-indicator
         style={{
           width: 10,

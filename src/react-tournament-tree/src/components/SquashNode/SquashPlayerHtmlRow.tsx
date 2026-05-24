@@ -1,6 +1,6 @@
 import type { SquashPlayerRowProps } from '../../types/squashNode';
 import type { ResolvedMatchCardStyle } from '../../utils/resolveBracketAppearance';
-import { getPlayerBadgeText } from '../../utils/squash';
+import { getPlayerBadgeText, getPlayerMetadataText } from '../../utils/squash';
 import { SquashHtmlScoreSegments } from './SquashHtmlScoreSegments';
 
 type SquashPlayerHtmlRowProps = SquashPlayerRowProps & {
@@ -18,6 +18,10 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
   const badgeColor = isWinner ? colors.WINNER_CREST_TEXT : colors.CREST_TEXT;
   const rowBackground = isPlayerHovered ? colors.ROW_HOVER_BG : colors.ROW_BG;
   const badgeRadius = props.compact ? 3 : 6;
+  const metadataText = getPlayerMetadataText(player);
+  const seedText =
+    typeof player.seed === 'number' && Number.isFinite(player.seed) ? `#${player.seed}` : '';
+  const countryText = player.country?.trim().toUpperCase() ?? '';
   const handlePlayerEnter = () => props.onPlayerEnter(playerIndex, player);
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -88,6 +92,27 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
         >
           {player.name}
         </span>
+        {metadataText ? (
+          <span
+            data-testid="player-html-metadata"
+            style={{
+              display: 'flex',
+              gap: props.compact ? 3 : 5,
+              minWidth: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontFamily: props.bodyFontFamily,
+              fontSize: Math.max(7, matchCard.nameFontSize - (props.compact ? 3 : 4)),
+              fontWeight: 700,
+              letterSpacing: '0.02em',
+              lineHeight: 1.1,
+            }}
+          >
+            {seedText ? <span style={{ color: colors.SEED_TEXT }}>{seedText}</span> : null}
+            {countryText ? <span style={{ color: colors.COUNTRY_TEXT }}>{countryText}</span> : null}
+          </span>
+        ) : null}
       </div>
       <SquashHtmlScoreSegments
         nodeId={props.nodeId}

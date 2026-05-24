@@ -1,8 +1,8 @@
 import type { VertexComponentProps } from '@graph-render/types/react';
 import type {
+  MatchPlayer,
   SquashNodeRenderMode,
-  SquashPlayer,
-  SquashThemeColors,
+  TournamentThemeColors,
 } from '@graph-render/types/tournament';
 
 import type { NormalizedSquashMatchMeta, SetWins } from '../models/squash';
@@ -14,7 +14,7 @@ export interface SquashNodeProps extends VertexComponentProps {
 }
 
 export interface PlayerHoverHandlers {
-  readonly onPlayerEnter: (playerIndex: number, player: SquashPlayer) => void;
+  readonly onPlayerEnter: (playerIndex: number, player: MatchPlayer) => void;
   readonly onPlayerLeave: () => void;
 }
 
@@ -28,15 +28,16 @@ export type SquashNodeVariantProps = PlayerHoverHandlers & {
   readonly normalizedActivePathKey: string | null;
   readonly isNodeInActivePath: boolean;
   readonly isTBD: boolean;
+  readonly ariaLabel: string;
   readonly meta: NormalizedSquashMatchMeta;
   readonly setWins: SetWins;
   readonly winnerIndex: number | null;
-  readonly colors: SquashThemeColors;
+  readonly colors: TournamentThemeColors;
 };
 
 export type SquashPlayerRowProps = PlayerHoverHandlers & {
   readonly nodeId: string;
-  readonly player: SquashPlayer;
+  readonly player: MatchPlayer;
   readonly playerIndex: number;
   readonly compact: boolean;
   readonly isTBD: boolean;
@@ -46,7 +47,8 @@ export type SquashPlayerRowProps = PlayerHoverHandlers & {
   readonly setCount: number;
   readonly scoreSegments: readonly string[];
   readonly textColor: string;
-  readonly colors: SquashThemeColors;
+  readonly colors: TournamentThemeColors;
 };
 
-export { type SquashThemeColors } from '@graph-render/types/tournament';
+export type { TournamentThemeColors as SquashThemeColors } from '@graph-render/types/tournament';
+export { type TournamentThemeColors } from '@graph-render/types/tournament';

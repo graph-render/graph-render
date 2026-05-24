@@ -5,7 +5,13 @@ import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH, NODE_DIMENSIONS } from '../../const
 import { getSquashScoreLayout } from '../../constants/squashNode';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
-import { getScoreGroupWidth, getScoreSegments, normalizePlayerKey } from '../../utils/squash';
+import {
+  getMatchBadgeLabel,
+  getMatchScoreSegmentCount,
+  getMatchScoreSegments,
+  getScoreGroupWidth,
+  normalizePlayerKey,
+} from '../../utils/squash';
 import { SquashPlayerSvgRow } from './SquashPlayerSvgRow';
 
 export function SquashNodeSvg(props: SquashNodeVariantProps) {
@@ -16,6 +22,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
     : defaultMatchCard.score;
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
+  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection);
   const {
     insetX,
     badgeSize,
@@ -30,7 +37,11 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const scoreFontSize = scoreLayout.fontSize;
   const matchCountFontSize = scoreLayout.matchCountFontSize;
   const rowHeight = nodeHeight / 2;
-  const scoreSectionWidth = getScoreGroupWidth(Math.max(meta.sets.length, 1), scoreSegW, scoreSegG);
+  const scoreSectionWidth = getScoreGroupWidth(
+    getMatchScoreSegmentCount(meta),
+    scoreSegW,
+    scoreSegG
+  );
   const internalDividerX = nodeWidth - insetX - matchCountWidth - matchCountTrailingGap;
   const scoreGroupRightX = internalDividerX - scoreGroupTrailingGap;
   const matchCountX = nodeWidth - insetX - matchCountWidth / 2;
@@ -45,7 +56,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const clipId = `ds-${sanitizedNodeId}-${stableId}`;
 
   return (
-    <g>
+    <g role="button" tabIndex={0} aria-label={props.ariaLabel} data-match-card>
       <defs>
         <clipPath id={clipId} data-testid="squash-node-svg-clip">
           <rect width={nodeWidth} height={nodeHeight} rx={borderRadius} ry={borderRadius} />
@@ -59,6 +70,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
         fill={props.isHovered ? colors.HOVER_BG : colors.BASE_BG}
         stroke={colors.CARD_BORDER}
         strokeWidth={NODE_BORDER_WIDTH}
+        data-match-card-rect
         data-testid="squash-node-svg-rect"
       />
 
@@ -68,9 +80,35 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
           role="img"
           aria-label="Live match"
           aria-live="polite"
+          data-match-status-indicator
         >
           <title>Live match</title>
           <circle r={4} fill={colors.LIVE_INDICATOR} />
+        </g>
+      ) : null}
+
+      {matchBadgeLabel ? (
+        <g transform="translate(8, 14)" data-testid="match-type-svg-badge">
+          <rect
+            x={0}
+            y={-8}
+            width={Math.max(54, matchBadgeLabel.length * 6)}
+            height={16}
+            rx={8}
+            fill={colors.BADGE_BG}
+          />
+          <text
+            x={Math.max(54, matchBadgeLabel.length * 6) / 2}
+            y={0}
+            textAnchor="middle"
+            dy="0.35em"
+            fontSize={8}
+            fontWeight={800}
+            fill={colors.BADGE_TEXT}
+            fontFamily={typography.bodyFontFamily}
+          >
+            {matchBadgeLabel.toUpperCase()}
+          </text>
         </g>
       ) : null}
 
@@ -93,7 +131,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
               isPlayerHovered={props.hoveredPlayerIndex === playerIndex || isPathMatch}
               playerOpacity={meta.status === MatchStatus.Upcoming ? 0.6 : 1}
               setCount={playerIndex === 0 ? setWins.p1 : setWins.p2}
-              scoreSegments={getScoreSegments(meta.sets, meta.tiebreaks, playerIndex)}
+              scoreSegments={getMatchScoreSegments(meta, playerIndex)}
               textColor={textColor}
               rowY={playerIndex * rowHeight}
               rowHeight={rowHeight}

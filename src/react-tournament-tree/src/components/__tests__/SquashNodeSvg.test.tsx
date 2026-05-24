@@ -21,6 +21,8 @@ const baseVariantProps = {
   normalizedActivePathKey: null as string | null,
   isNodeInActivePath: false,
   isTBD: false,
+  ariaLabel:
+    'QF match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One.',
   meta: MOCK_META,
   setWins: { p1: 2, p2: 1 } as SetWins,
   winnerIndex: 0 as number | null,
@@ -49,6 +51,45 @@ describe('SquashNodeSvg', () => {
     expect(screen.getByText('PT')).toBeInTheDocument();
   });
 
+  it('exposes an accessible SVG match summary', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg {...baseVariantProps} />
+      </svg>
+    );
+    expect(
+      screen.getByRole('button', { name: /QF match: Player One versus Player Two/i })
+    ).toHaveAttribute('tabindex', '0');
+  });
+
+  it('renders a third-place SVG badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, stage: 'Bronze Match', matchType: 'thirdPlace' }}
+          ariaLabel="Third place match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-svg-badge')).toHaveTextContent('THIRD PLACE');
+    expect(screen.getByRole('button', { name: /Third place match/i })).toBeInTheDocument();
+  });
+
+  it('renders a bracket-section SVG badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, bracketSection: 'winners', stage: 'Winners QF' }}
+          ariaLabel="Winners match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-svg-badge')).toHaveTextContent('WINNERS');
+    expect(screen.getByRole('button', { name: /Winners match/i })).toBeInTheDocument();
+  });
+
   it('renders score values from meta.sets', () => {
     renderWithAppearance(
       <svg>
@@ -58,6 +99,27 @@ describe('SquashNodeSvg', () => {
     // MOCK_META has sets [[6,4]] → player 0 gets '6', player 1 gets '4'
     expect(screen.getByText('6')).toBeInTheDocument();
     expect(screen.getByText('4')).toBeInTheDocument();
+  });
+
+  it('renders game labels and scores for best-of-N matches', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{
+            ...MOCK_META,
+            games: [
+              { label: 'M1', scores: [13, 11] },
+              { label: 'M2', scores: [8, 13] },
+            ],
+            sets: [],
+          }}
+        />
+      </svg>
+    );
+
+    expect(screen.getByText('M1:13')).toBeInTheDocument();
+    expect(screen.getByText('M2:13')).toBeInTheDocument();
   });
 
   it('renders a clipPath for masking', () => {

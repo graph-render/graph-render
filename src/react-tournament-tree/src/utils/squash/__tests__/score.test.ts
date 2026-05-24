@@ -4,6 +4,10 @@ import { describe, expect, it } from 'vitest';
 import {
   getCompletedWinnerIndex,
   getDisplayScores,
+  getGameScoreSegments,
+  getGameWins,
+  getMatchScoreSegments,
+  getMatchWins,
   getScoreGroupWidth,
   getScoreSegments,
   getSetWins,
@@ -43,6 +47,38 @@ describe('getDisplayScores', () => {
 describe('getScoreSegments', () => {
   it('returns scores when sets exist', () => {
     expect(getScoreSegments(sets, noTiebreaks, 0)).toHaveLength(3);
+  });
+
+  describe('game score helpers', () => {
+    const games = [
+      { label: 'Map 1', scores: [13, 11] },
+      { label: 'Map 2', scores: [8, 13], winner: 1 },
+      { scores: [16, 14] },
+    ] as const;
+
+    it('renders labeled game score segments', () => {
+      expect(getGameScoreSegments(games, 0)).toEqual(['Map 1:13', 'Map 2:8', 'G3:16']);
+      expect(getGameScoreSegments(games, 1)).toEqual(['Map 1:11', 'Map 2:13', 'G3:14']);
+    });
+
+    it('counts game wins with explicit winners', () => {
+      expect(getGameWins(games, MatchStatus.Completed, 0)).toEqual({ p1: 2, p2: 1 });
+    });
+
+    it('prefers game scores when present on normalized meta', () => {
+      const meta = {
+        currentSet: 0,
+        games,
+        players: [{ name: 'A' }, { name: 'B' }],
+        sets,
+        stage: 'Final',
+        status: MatchStatus.Completed,
+        tiebreaks: noTiebreaks,
+      } as const;
+
+      expect(getMatchScoreSegments(meta, 0)[0]).toBe('Map 1:13');
+      expect(getMatchWins(meta)).toEqual({ p1: 2, p2: 1 });
+    });
   });
 
   it('returns ["—"] for empty sets', () => {

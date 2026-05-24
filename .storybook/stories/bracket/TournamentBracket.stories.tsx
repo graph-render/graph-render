@@ -1,11 +1,90 @@
-import { TournamentBracket } from '@graph-render/tournament-tree';
+import {
+  generateSingleEliminationBracket,
+  MatchStatus,
+  TournamentBracket,
+} from '@graph-render/tournament-tree';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useMemo, useState } from 'react';
 
 import { bracketGraph } from './data/bracket';
 import { bracketGraphLive } from './data/bracket_live';
 import { bracketGraphQF } from './data/bracket_qf';
 import { bracketGraphR16 } from './data/bracket_r8';
 import { bracketGraphR64 } from './data/bracket_r64';
+
+const generatedBracket = generateSingleEliminationBracket(
+  [
+    { name: 'Nour El Sherbini', seed: 1, country: 'EGY' },
+    { name: 'Hania El Hammamy', seed: 8, country: 'EGY' },
+    { name: 'Nouran Gohar', seed: 4, country: 'EGY' },
+    { name: 'Amanda Sobhy', seed: 5, country: 'USA' },
+    { name: 'Nour El Tayeb', seed: 2, country: 'EGY' },
+    { name: 'Camille Serme', seed: 7, country: 'FRA' },
+    { name: 'Raneem El Welily', seed: 3, country: 'EGY' },
+    { name: 'Joelle King', seed: 6, country: 'NZL' },
+  ],
+  { seeded: true }
+);
+const generatedBracketWithByes = generateSingleEliminationBracket(
+  [
+    { name: 'Seed 1', seed: 1, country: 'EGY' },
+    { name: 'Seed 2', seed: 2, country: 'USA' },
+    { name: 'Seed 3', seed: 3, country: 'NZL' },
+    { name: 'Seed 4', seed: 4, country: 'FRA' },
+    { name: 'Seed 5', seed: 5, country: 'ENG' },
+    { name: 'Seed 6', seed: 6, country: 'WAL' },
+  ],
+  { seeding: 'standard', byeLabel: 'BYE' }
+);
+const bestOfSeriesGraph = {
+  nodes: {
+    final: {
+      meta: {
+        games: [
+          { label: 'Map 1', scores: [13, 11] },
+          { label: 'Map 2', scores: [8, 13], winner: 1 },
+          { label: 'Map 3', scores: [16, 14] },
+        ],
+        players: [
+          { name: 'Alpha Esports', seed: 1, country: 'USA' },
+          { name: 'Bravo Gaming', seed: 2, country: 'CAN' },
+        ],
+        seriesFormat: { bestOf: 3, label: 'BO3' },
+        status: 'completed',
+      },
+    },
+  },
+  adj: { final: {} },
+};
+
+function ControlledLiveUpdateExample() {
+  const [score, setScore] = useState(4);
+  const graph = useMemo(
+    () => ({
+      nodes: {
+        live: {
+          meta: {
+            currentSet: 0,
+            players: [{ name: 'Live Alpha' }, { name: 'Live Bravo' }],
+            sets: [[score, 3]],
+            status: score >= 11 ? MatchStatus.Completed : MatchStatus.Live,
+          },
+        },
+      },
+      adj: { live: {} },
+    }),
+    [score]
+  );
+
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <button type="button" onClick={() => setScore((value) => Math.min(11, value + 1))}>
+        Simulate score update
+      </button>
+      <TournamentBracket graph={graph} title="Controlled Live Updates" />
+    </div>
+  );
+}
 
 const meta: Meta<typeof TournamentBracket> = {
   title: 'Tournament/Bracket',
@@ -58,6 +137,38 @@ export const RoundOf64: Story = {
   },
 };
 
+export const GeneratedSingleElimination: Story = {
+  name: 'Generated — single elimination',
+  args: {
+    graph: generatedBracket,
+    title: 'Generated Draw',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Uses generateSingleEliminationBracket() to create a ready-to-render bracket from participants.',
+      },
+    },
+  },
+};
+
+export const GeneratedWithByes: Story = {
+  name: 'Generated — seeded draw with byes',
+  args: {
+    graph: generatedBracketWithByes,
+    title: 'Generated Seeded Draw',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Shows a non-power-of-two draw rounded to the next bracket size with explicit bye rows and automatic advancement metadata.',
+      },
+    },
+  },
+};
+
 // ── Live / in-progress ────────────────────────────────────────────────────
 
 export const Live: Story = {
@@ -72,6 +183,34 @@ export const Live: Story = {
       description: {
         story:
           'Shows live match indicators (pulsing dot, blue border), tiebreak score display, winning player highlighting, and upcoming match styling.',
+      },
+    },
+  },
+};
+
+export const BestOfSeries: Story = {
+  name: 'Best-of series — BO3 maps',
+  args: {
+    graph: bestOfSeriesGraph,
+    title: 'Best-of Series',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Renders labeled game/map scores and computes the winner from game results.',
+      },
+    },
+  },
+};
+
+export const ControlledLiveUpdates: Story = {
+  name: 'Live — controlled updates',
+  render: () => <ControlledLiveUpdateExample />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates consumer-owned live score state. The bracket receives a new graph; no transport dependency is included.',
       },
     },
   },

@@ -1,6 +1,8 @@
 import type { StageView, VerticalStagePosition } from '@graph-render/types/tournament';
+import { useEffect } from 'react';
 
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
+import { ensureTournamentPrintStyles } from '../../utils/printStyles';
 import { BracketHeader } from './BracketHeader';
 import { FloatingToolbarButton } from './FloatingToolbarButton';
 import { StageLabelBar } from './StageLabelBar';
@@ -55,8 +57,14 @@ export function BracketFrame({
   const canGoPrev = activeStageIndex > 0;
   const canGoNext = activeStageIndex < stageViews.length - 1;
 
+  useEffect(() => {
+    ensureTournamentPrintStyles();
+  }, []);
+
   return (
     <div
+      data-tournament-bracket-frame
+      data-testid="tournament-bracket-frame"
       style={{
         width: '100%',
         maxWidth: frame.maxWidth,
@@ -89,6 +97,8 @@ export function BracketFrame({
       />
       <div
         ref={contentViewportRef}
+        data-tournament-bracket-content
+        data-testid="tournament-bracket-content"
         style={{
           position: 'relative',
           padding: frame.contentPadding,

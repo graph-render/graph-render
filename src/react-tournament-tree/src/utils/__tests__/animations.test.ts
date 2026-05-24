@@ -34,6 +34,8 @@ describe('ensureSquashNodeAnimations', () => {
     ensureSquashNodeAnimations();
     const styleTag = document.head.querySelector(STYLE_SELECTOR);
     expect(styleTag?.textContent).toContain('prefers-reduced-motion');
+    expect(styleTag?.textContent).toContain('[data-score-segment]');
+    expect(styleTag?.textContent).toContain('[data-match-status-indicator]');
   });
 
   it('is idempotent — calling twice inserts only one style tag', () => {

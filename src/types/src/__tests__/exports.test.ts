@@ -3,7 +3,13 @@ import { describe, expect, it } from 'vitest';
 import * as rootTypes from '../index';
 import { isPositionedNode, makePositionedNode } from '../node';
 import * as reactTypes from '../react';
-import { MatchStatus, SquashNodeRenderMode, VerticalStagePosition } from '../tournament';
+import {
+  BracketSection,
+  MatchStatus,
+  MatchType,
+  SquashNodeRenderMode,
+  VerticalStagePosition,
+} from '../tournament';
 
 describe('@graph-render/types public exports', () => {
   it('exports core graph enums from the root entry', () => {
@@ -51,6 +57,15 @@ describe('isPositionedNode', () => {
 });
 
 describe('tournament.ts enums', () => {
+  it('generic tournament enums have expected values', () => {
+    expect(MatchType.Standard).toBe('standard');
+    expect(MatchType.ThirdPlace).toBe('thirdPlace');
+    expect(MatchType.GrandFinal).toBe('grandFinal');
+    expect(BracketSection.Winners).toBe('winners');
+    expect(BracketSection.Losers).toBe('losers');
+    expect(BracketSection.GrandFinal).toBe('grandFinal');
+  });
+
   it('MatchStatus has expected values', () => {
     expect(MatchStatus.Completed).toBe('completed');
     expect(MatchStatus.Live).toBe('live');

@@ -1,8 +1,16 @@
+import { MatchStatus } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
-import { getPlayerBadgeText, truncateText } from '../text';
+import {
+  getBracketSectionLabel,
+  getMatchAriaLabel,
+  getMatchBadgeLabel,
+  getMatchTypeLabel,
+  getPlayerBadgeText,
+  getPlayerMetadataText,
+  truncateText,
+} from '../text';
 
-// ── truncateText ──────────────────────────────────────────────────────────────
 describe('truncateText', () => {
   it('returns text unchanged when within the limit', () => {
     expect(truncateText('hello', 10)).toBe('hello');
@@ -19,7 +27,6 @@ describe('truncateText', () => {
   });
 
   it('keeps the correct number of characters before the ellipsis', () => {
-    // maxLength=5 → 4 chars + '…'
     expect(truncateText('abcdefgh', 5)).toBe('abcd…');
   });
 
@@ -32,7 +39,6 @@ describe('truncateText', () => {
   });
 });
 
-// ── getPlayerBadgeText ────────────────────────────────────────────────────────
 describe('getPlayerBadgeText', () => {
   it('returns initials from a full name', () => {
     expect(getPlayerBadgeText({ name: 'John Doe' })).toBe('JD');
@@ -56,5 +62,96 @@ describe('getPlayerBadgeText', () => {
 
   it('uppercases initials', () => {
     expect(getPlayerBadgeText({ name: 'alice bob' })).toBe('AB');
+  });
+});
+
+describe('getPlayerMetadataText', () => {
+  it('combines seed and country', () => {
+    expect(getPlayerMetadataText({ name: 'Alice', seed: 1, country: 'eg' })).toBe('#1 · EG');
+  });
+
+  it('renders only seed when country is absent', () => {
+    expect(getPlayerMetadataText({ name: 'Alice', seed: 3 })).toBe('#3');
+  });
+
+  it('renders only country when seed is absent', () => {
+    expect(getPlayerMetadataText({ name: 'Alice', country: 'us' })).toBe('US');
+  });
+
+  it('returns empty text when metadata is absent', () => {
+    expect(getPlayerMetadataText({ name: 'Alice' })).toBe('');
+  });
+});
+
+describe('getMatchAriaLabel', () => {
+  it('summarizes stage, players, status, score, winner, and venue', () => {
+    expect(
+      getMatchAriaLabel({
+        currentSet: 0,
+        players: [
+          { name: 'Alice', seed: 1 },
+          { name: 'Bob', seed: 2 },
+        ],
+        setWins: { p1: 2, p2: 1 },
+        stage: 'Final',
+        status: MatchStatus.Completed,
+        venue: 'Court 1',
+        winnerIndex: 0,
+      })
+    ).toBe(
+      'Final match: Alice versus Bob. Status completed. Score Alice 2 sets, Bob 1 sets. Winner Alice. Venue Court 1.'
+    );
+  });
+
+  it('describes third-place matches semantically', () => {
+    expect(
+      getMatchAriaLabel({
+        currentSet: 0,
+        matchType: 'thirdPlace',
+        players: [{ name: 'Alice' }, { name: 'Bob' }],
+        setWins: { p1: 0, p2: 0 },
+        stage: 'Bronze',
+        status: MatchStatus.Upcoming,
+        winnerIndex: null,
+      })
+    ).toContain('Third place match: Alice versus Bob');
+  });
+
+  it('describes bracket sections semantically', () => {
+    expect(
+      getMatchAriaLabel({
+        bracketSection: 'losers',
+        currentSet: 0,
+        players: [{ name: 'Alice' }, { name: 'Bob' }],
+        setWins: { p1: 0, p2: 0 },
+        stage: 'Losers R1',
+        status: MatchStatus.Upcoming,
+        winnerIndex: null,
+      })
+    ).toContain('Losers match: Alice versus Bob');
+  });
+});
+
+describe('getMatchTypeLabel', () => {
+  it('returns labels for semantic match types', () => {
+    expect(getMatchTypeLabel('thirdPlace')).toBe('Third place');
+    expect(getMatchTypeLabel('grandFinal')).toBe('Grand final');
+    expect(getMatchTypeLabel(undefined)).toBe('');
+  });
+});
+
+describe('getBracketSectionLabel', () => {
+  it('returns labels for bracket sections', () => {
+    expect(getBracketSectionLabel('winners')).toBe('Winners');
+    expect(getBracketSectionLabel('losers')).toBe('Losers');
+    expect(getBracketSectionLabel('grandFinal')).toBe('Grand final');
+    expect(getBracketSectionLabel(undefined)).toBe('');
+  });
+});
+
+describe('getMatchBadgeLabel', () => {
+  it('prefers semantic match type labels over bracket sections', () => {
+    expect(getMatchBadgeLabel('grandFinal', 'winners')).toBe('Grand final');
+    expect(getMatchBadgeLabel(undefined, 'winners')).toBe('Winners');
   });
 });

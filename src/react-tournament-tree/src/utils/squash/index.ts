@@ -5,8 +5,21 @@ export type { SetWins } from './score';
 export {
   getCompletedWinnerIndex,
   getDisplayScores,
+  getGameScoreSegments,
+  getGameWins,
+  getMatchScoreSegmentCount,
+  getMatchScoreSegments,
+  getMatchWins,
   getScoreGroupWidth,
   getScoreSegments,
   getSetWins,
 } from './score';
-export { getPlayerBadgeText, truncateText } from './text';
+export {
+  getBracketSectionLabel,
+  getMatchAriaLabel,
+  getMatchBadgeLabel,
+  getMatchTypeLabel,
+  getPlayerBadgeText,
+  getPlayerMetadataText,
+  truncateText,
+} from './text';

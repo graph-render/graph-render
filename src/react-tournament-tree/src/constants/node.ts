@@ -1,4 +1,4 @@
-import type { SquashPlayer } from '@graph-render/types/tournament';
+import type { MatchPlayer } from '@graph-render/types/tournament';
 
 export const NODE_DIMENSIONS = {
   WIDTH: 280,
@@ -15,7 +15,7 @@ export const NODE_DIMENSIONS_STAGE_NAV = {
   HEIGHT: 44,
 } as const;
 
-export const DEFAULT_PLAYERS: readonly SquashPlayer[] = [
+export const DEFAULT_PLAYERS: readonly MatchPlayer[] = [
   { name: 'TBD', seed: 0 },
   { name: 'TBD', seed: 0 },
 ];

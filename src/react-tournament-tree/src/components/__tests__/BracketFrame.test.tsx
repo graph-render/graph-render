@@ -43,6 +43,16 @@ describe('BracketFrame', () => {
     expect(screen.getByTestId('child')).toBeInTheDocument();
   });
 
+  it('marks frame and content for print styles', () => {
+    renderWithAppearance(<BracketFrame {...baseProps}>content</BracketFrame>);
+    expect(screen.getByTestId('tournament-bracket-frame')).toHaveAttribute(
+      'data-tournament-bracket-frame'
+    );
+    expect(screen.getByTestId('tournament-bracket-content')).toHaveAttribute(
+      'data-tournament-bracket-content'
+    );
+  });
+
   it('renders stage labels', () => {
     renderWithAppearance(<BracketFrame {...baseProps}>content</BracketFrame>);
     expect(screen.getByText('QF')).toBeInTheDocument();

@@ -9,15 +9,20 @@ export interface BracketVertexOptions {
   readonly compact: boolean | undefined;
   readonly nodeRenderMode: TournamentBracketProps['nodeRenderMode'];
   readonly onInvalidNode: TournamentBracketProps['onInvalidNode'];
+  readonly onMatchUpdate?: TournamentBracketProps['onMatchUpdate'];
 }
 
 const DEFAULT_VERTEX_OPTIONS: BracketVertexOptions = {
   compact: true,
   nodeRenderMode: SquashNodeRenderMode.Export,
   onInvalidNode: undefined,
+  onMatchUpdate: undefined,
 };
 
 const BracketVertexOptionsContext = createContext<BracketVertexOptions>(DEFAULT_VERTEX_OPTIONS);
+
+export const useBracketMatchUpdate = (): TournamentBracketProps['onMatchUpdate'] =>
+  useContext(BracketVertexOptionsContext).onMatchUpdate;
 
 interface BracketVertexOptionsProviderProps {
   readonly children: ReactNode;

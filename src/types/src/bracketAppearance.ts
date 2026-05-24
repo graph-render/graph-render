@@ -18,6 +18,8 @@ export interface SquashThemeColors {
   readonly HOVER_BG: string;
   readonly CREST_BG: string;
   readonly CREST_TEXT: string;
+  readonly SEED_TEXT: string;
+  readonly COUNTRY_TEXT: string;
   readonly WINNER_CREST_BG: string;
   readonly WINNER_CREST_TEXT: string;
   readonly ROW_BG: string;
@@ -44,11 +46,13 @@ export interface SquashThemeColors {
   readonly CARD_SHADOW: string;
 }
 
+export type TournamentThemeColors = SquashThemeColors;
 export type SquashThemeColorsOverrides = Partial<SquashThemeColors>;
+export type TournamentThemeColorsOverrides = Partial<TournamentThemeColors>;
 
 export interface BracketColorsAppearance {
-  readonly light?: SquashThemeColorsOverrides | undefined;
-  readonly dark?: SquashThemeColorsOverrides | undefined;
+  readonly light?: TournamentThemeColorsOverrides | undefined;
+  readonly dark?: TournamentThemeColorsOverrides | undefined;
 }
 
 export interface BracketTypographyAppearance {

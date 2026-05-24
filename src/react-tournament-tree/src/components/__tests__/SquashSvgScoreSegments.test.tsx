@@ -49,13 +49,13 @@ describe('SquashSvgScoreSegments', () => {
     expect(screen.queryAllByTestId('score-divider')).toHaveLength(0);
   });
 
-  it('truncates segments longer than 4 characters', () => {
+  it('truncates segments longer than 6 characters', () => {
     render(
       <svg>
-        <SquashSvgScoreSegments {...defaultProps} scoreSegments={['12345']} />
+        <SquashSvgScoreSegments {...defaultProps} scoreSegments={['1234567']} />
       </svg>
     );
-    expect(screen.getByText('123\u2026')).toBeInTheDocument();
+    expect(screen.getByText('12345\u2026')).toBeInTheDocument();
   });
 
   it('renders for player index 1', () => {

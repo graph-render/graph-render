@@ -15,6 +15,7 @@ describe('BracketToolbar', () => {
   it('renders three buttons', () => {
     render(<BracketToolbar {...baseProps} />);
     expect(screen.getAllByRole('button')).toHaveLength(3);
+    expect(screen.getByTestId('bracket-toolbar')).toHaveAttribute('data-print-hidden');
   });
 
   it('dark-mode button shows "Switch to Dark Mode" label in light mode', () => {

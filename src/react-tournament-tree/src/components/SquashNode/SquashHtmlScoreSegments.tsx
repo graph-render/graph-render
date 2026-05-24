@@ -37,6 +37,7 @@ export function SquashHtmlScoreSegments({
         width: '100%',
         gap: scoreSegG,
       }}
+      data-score-segment
     >
       {scoreSegments.map((segment, segmentIndex) => (
         <React.Fragment key={`${nodeId}-html-score-${playerIndex}-${segmentIndex}`}>
@@ -51,7 +52,7 @@ export function SquashHtmlScoreSegments({
               flexShrink: 0,
             }}
           >
-            {truncateText(segment, 4)}
+            {truncateText(segment, 6)}
           </span>
           {segmentIndex < scoreSegments.length - 1 ? (
             <span

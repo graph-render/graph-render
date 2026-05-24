@@ -104,4 +104,17 @@ describe('TournamentBracket', () => {
       )
     ).not.toThrow();
   });
+
+  it('accepts onMatchUpdate for controlled editable match cards', () => {
+    const onMatchUpdate = vi.fn();
+    expect(() =>
+      render(
+        <TournamentBracket
+          graph={MINIMAL_GRAPH}
+          onMatchUpdate={onMatchUpdate}
+          vertexComponent={() => null}
+        />
+      )
+    ).not.toThrow();
+  });
 });

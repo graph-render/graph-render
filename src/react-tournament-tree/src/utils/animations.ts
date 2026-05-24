@@ -23,6 +23,25 @@ export function ensureSquashNodeAnimations(): void {
       [data-squash-live-indicator] {
         animation: none !important;
       }
+
+       [data-score-segment],
+       [data-match-status-indicator] {
+         transition: none !important;
+       }
+    }
+
+    [data-score-segment],
+    [data-match-status-indicator] {
+       transition: color 160ms ease, fill 160ms ease, opacity 160ms ease;
+    }
+
+    [data-match-card]:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+
+    g[data-match-card]:focus-visible [data-match-card-rect] {
+      stroke-width: 3px;
     }
   `;
   document.head.append(styleTag);

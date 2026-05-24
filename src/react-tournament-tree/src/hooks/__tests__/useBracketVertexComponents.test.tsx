@@ -17,6 +17,7 @@ const BASE_PROPS = {
   compact: true,
   nodeRenderMode: SquashNodeRenderMode.Html,
   onInvalidNode: undefined,
+  onMatchUpdate: undefined,
   vertexComponent: undefined,
 };
 
@@ -78,6 +79,23 @@ describe('useBracketVertexComponents', () => {
     rerender({ ...BASE_PROPS, nodeRenderMode: SquashNodeRenderMode.Svg });
     expect(result.current.vertexOptions.nodeRenderMode).toBe(SquashNodeRenderMode.Svg);
     expect(result.current.resolvedVertexComponent).toBe(firstComponent);
+  });
+
+  it('passes onMatchUpdate through vertex options for custom editable cards', () => {
+    const onMatchUpdate = vi.fn();
+    const { result } = renderHook(() =>
+      useBracketVertexComponents({ ...BASE_PROPS, onMatchUpdate })
+    );
+
+    result.current.vertexOptions.onMatchUpdate?.({
+      matchId: 'm1',
+      update: { sets: [[11, 8]] },
+    });
+
+    expect(onMatchUpdate).toHaveBeenCalledWith({
+      matchId: 'm1',
+      update: { sets: [[11, 8]] },
+    });
   });
 
   it('components render without throwing (smoke test)', () => {

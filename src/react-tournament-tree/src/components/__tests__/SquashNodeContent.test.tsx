@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { SquashNodeContent } from '../SquashNode/SquashNodeContent';
-import { MOCK_META, MOCK_META_LIVE, renderWithAppearance } from './testUtils';
+import { MOCK_META, MOCK_META_LIVE, renderWithAppearance, withAppearance } from './testUtils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test fixture needs to accept arbitrary meta values including null
 const makeNode = (meta: unknown = MOCK_META): any => ({
@@ -79,6 +79,61 @@ describe('SquashNodeContent', () => {
       </svg>
     );
     expect(screen.getByRole('status', { name: 'Live match' })).toBeInTheDocument();
+  });
+
+  it('uses game results for best-of-N score and winner summaries', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeContent
+          node={makeNode({
+            ...MOCK_META,
+            games: [
+              { label: 'M1', scores: [13, 11] },
+              { label: 'M2', scores: [8, 13], winner: 1 },
+              { label: 'M3', scores: [16, 14] },
+            ],
+            seriesFormat: { bestOf: 3, label: 'BO3' },
+            sets: [],
+          })}
+          renderMode={SquashNodeRenderMode.Html}
+        />
+      </svg>
+    );
+
+    expect(screen.getByText('M1:13')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Score Player One 2 games/i })).toBeInTheDocument();
+  });
+
+  it('updates live scores from controlled graph data without remounting the card', () => {
+    const { rerender } = renderWithAppearance(
+      <svg>
+        <SquashNodeContent
+          node={makeNode({ ...MOCK_META_LIVE, sets: [[3, 2]] })}
+          renderMode={SquashNodeRenderMode.Html}
+        />
+      </svg>
+    );
+
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByRole('status', { name: 'Live match' })).toBeInTheDocument();
+
+    rerender(
+      withAppearance(
+        <svg>
+          <SquashNodeContent
+            node={makeNode({
+              ...MOCK_META_LIVE,
+              sets: [[11, 8]],
+              status: 'completed',
+            })}
+            renderMode={SquashNodeRenderMode.Html}
+          />
+        </svg>
+      )
+    );
+
+    expect(screen.getByText('11')).toBeInTheDocument();
+    expect(screen.queryByRole('status', { name: 'Live match' })).not.toBeInTheDocument();
   });
 
   it('uses default Export renderMode when not specified', () => {

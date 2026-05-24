@@ -1,5 +1,5 @@
 import type { SquashPlayerRowProps } from '../../types/squashNode';
-import { getPlayerBadgeText, truncateText } from '../../utils/squash';
+import { getPlayerBadgeText, getPlayerMetadataText, truncateText } from '../../utils/squash';
 import { SquashSvgScoreSegments } from './SquashSvgScoreSegments';
 
 type SquashPlayerSvgRowProps = SquashPlayerRowProps & {
@@ -30,6 +30,7 @@ export function SquashPlayerSvgRow(props: SquashPlayerSvgRowProps) {
   const rowFill = isPlayerHovered ? colors.ROW_HOVER_BG : colors.ROW_BG;
   const badgeFill = isWinner ? colors.WINNER_CREST_BG : colors.CREST_BG;
   const badgeTextColor = isWinner ? colors.WINNER_CREST_TEXT : colors.CREST_TEXT;
+  const metadataText = getPlayerMetadataText(player);
   const handlePlayerEnter = () => props.onPlayerEnter(playerIndex, player);
   const handleKeyDown = (event: React.KeyboardEvent<SVGGElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -83,17 +84,33 @@ export function SquashPlayerSvgRow(props: SquashPlayerSvgRowProps) {
       >
         {getPlayerBadgeText(player)}
       </text>
-      <text
-        x={props.playerTextX}
-        y={props.rowHeight / 2}
-        dy="0.35em"
-        fontSize={props.nameFontSize}
-        fontWeight={isWinner ? 600 : 500}
-        fill={props.textColor}
-        fontFamily={props.bodyFontFamily}
-      >
-        {truncateText(player.name, props.maxNameLength)}
-      </text>
+      <g>
+        <text
+          x={props.playerTextX}
+          y={metadataText ? props.rowHeight / 2 - props.nameFontSize * 0.35 : props.rowHeight / 2}
+          dy="0.35em"
+          fontSize={props.nameFontSize}
+          fontWeight={isWinner ? 600 : 500}
+          fill={props.textColor}
+          fontFamily={props.bodyFontFamily}
+        >
+          {truncateText(player.name, props.maxNameLength)}
+        </text>
+        {metadataText ? (
+          <text
+            x={props.playerTextX}
+            y={props.rowHeight / 2 + props.nameFontSize * 0.55}
+            dy="0.35em"
+            fontSize={Math.max(6, props.nameFontSize - (props.compact ? 3 : 4))}
+            fontWeight={700}
+            fill={player.seed == null ? colors.COUNTRY_TEXT : colors.SEED_TEXT}
+            fontFamily={props.bodyFontFamily}
+            data-testid="player-svg-metadata"
+          >
+            {truncateText(metadataText, props.compact ? 8 : 14)}
+          </text>
+        ) : null}
+      </g>
       <line
         x1={props.internalDividerX}
         y1={props.rowHeight / 2 - 8}

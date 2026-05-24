@@ -89,7 +89,7 @@ export default function App() {
 | Input                  | Type                                    | Required  | Role                                                      |
 | ---------------------- | --------------------------------------- | --------- | --------------------------------------------------------- |
 | `graph`                | `NxGraphInput`                          | yes       | Bracket structure + match metadata on each node           |
-| `graph.nodes[id].meta` | `SquashMatchMeta`                       | per match | Players, scores, status, tiebreaks                        |
+| `graph.nodes[id].meta` | `MatchMeta`                             | per match | Players, scores, status, tiebreaks, schedule, venue       |
 | `graph.adj`            | adjacency map                           | yes       | Parent → child links between matches                      |
 | `config`               | `Partial<GraphConfig>`                  | no        | Layout engine: tree layout, canvas size, `nodeGap`, edges |
 | `appearance`           | `TournamentBracketAppearance`           | no        | Visual styling: colors, fonts, card size, chrome          |
@@ -97,13 +97,13 @@ export default function App() {
 
 ### Outputs (what you get back)
 
-| Output                     | Type                   | When                                                 |
-| -------------------------- | ---------------------- | ---------------------------------------------------- |
-| Rendered bracket UI        | React tree             | Always — header, stage labels, graph canvas, toolbar |
-| `onMatchClick(node)`       | `SquashPositionedNode` | User clicks a built-in match card                    |
-| `onInvalidNode(id, error)` | `string`, `Error`      | Custom or built-in node fails to render              |
-| SVG export                 | file download          | User clicks export in toolbar (built-in handler)     |
-| Dark mode                  | document / toolbar     | Toggles `document` dark class via built-in control   |
+| Output                     | Type                  | When                                                 |
+| -------------------------- | --------------------- | ---------------------------------------------------- |
+| Rendered bracket UI        | React tree            | Always — header, stage labels, graph canvas, toolbar |
+| `onMatchClick(node)`       | `MatchPositionedNode` | User clicks a built-in match card                    |
+| `onInvalidNode(id, error)` | `string`, `Error`     | Custom or built-in node fails to render              |
+| SVG export                 | file download         | User clicks export in toolbar (built-in handler)     |
+| Dark mode                  | document / toolbar    | Toggles `document` dark class via built-in control   |
 
 For custom integrations, use `useBracketAppearance()` inside children of `BracketAppearanceProvider`, or call `resolveBracketAppearance(appearance, isDarkMode, compact)` to get the merged style object without rendering.
 
@@ -254,6 +254,7 @@ Override theme tokens per color mode. Keys are merged on top of built-in light/d
 | `ICON_BG` / `ICON_FG`                    | Trophy icon badge                                     |
 | `BADGE_BG` / `BADGE_TEXT` / `BADGE_DOT`  | Header status badge                                   |
 | `CREST_BG` / `CREST_TEXT`                | Player initials badge                                 |
+| `SEED_TEXT` / `COUNTRY_TEXT`             | Seed and country metadata in match cards              |
 | `WINNER_CREST_BG` / `WINNER_CREST_TEXT`  | Winner initials badge                                 |
 | `ROW_BG` / `ROW_HOVER_BG`                | Player row backgrounds                                |
 | `FOREGROUND` / `MUTED_TEXT`              | Primary / secondary text                              |
@@ -345,46 +346,61 @@ Applied when `compact={false}` or `compact={true}` respectively.
 
 ## Component props
 
-| Prop                    | Type                                   | Default                  | Description                                     |
-| ----------------------- | -------------------------------------- | ------------------------ | ----------------------------------------------- |
-| `graph`                 | `NxGraphInput`                         | required                 | Bracket nodes + edges                           |
-| `config`                | `Partial<GraphConfig>`                 | tournament defaults      | Layout, canvas, routing                         |
-| `appearance`            | `TournamentBracketAppearance`          | built-in theme           | Visual styling overrides                        |
-| `defaultViewport`       | `Partial<GraphViewport>`               | auto fit                 | Initial pan/zoom (`x`, `y`, `zoom`)             |
-| `vertexComponent`       | `VertexComponent`                      | built-in card            | Replace match card renderer                     |
-| `nodeRenderMode`        | `SquashNodeRenderMode`                 | `'export'`               | `'svg'` \| `'html'` \| `'export'` \| `'server'` |
-| `title`                 | `string`                               | `'Tournament Bracket'`   | Header title                                    |
-| `badgeText`             | `string`                               | auto from graph          | Header badge text                               |
-| `showToolbar`           | `boolean`                              | `true`                   | Show toolbar actions                            |
-| `showViewportControls`  | `boolean`                              | `false`                  | Show zoom controls on canvas                    |
-| `defaultNavigationMode` | `boolean`                              | `true`                   | Start in per-stage navigation                   |
-| `panEnabled`            | `boolean`                              | `true` (off in nav mode) | Allow panning                                   |
-| `zoomEnabled`           | `boolean`                              | `true` (off in nav mode) | Allow zoom                                      |
-| `pinchZoomEnabled`      | `boolean`                              | `true` (off in nav mode) | Allow pinch zoom                                |
-| `compact`               | `boolean`                              | `true`                   | Use compact match-card preset                   |
-| `onMatchClick`          | `(node: SquashPositionedNode) => void` | —                        | Match click handler                             |
-| `onInvalidNode`         | `(id, error) => void`                  | —                        | Node render error handler                       |
+| Prop                    | Type                                  | Default                  | Description                                     |
+| ----------------------- | ------------------------------------- | ------------------------ | ----------------------------------------------- |
+| `graph`                 | `NxGraphInput`                        | required                 | Bracket nodes + edges                           |
+| `config`                | `Partial<GraphConfig>`                | tournament defaults      | Layout, canvas, routing                         |
+| `appearance`            | `TournamentBracketAppearance`         | built-in theme           | Visual styling overrides                        |
+| `defaultViewport`       | `Partial<GraphViewport>`              | auto fit                 | Initial pan/zoom (`x`, `y`, `zoom`)             |
+| `vertexComponent`       | `VertexComponent`                     | built-in card            | Replace match card renderer                     |
+| `nodeRenderMode`        | `SquashNodeRenderMode`                | `'export'`               | `'svg'` \| `'html'` \| `'export'` \| `'server'` |
+| `title`                 | `string`                              | `'Tournament Bracket'`   | Header title                                    |
+| `badgeText`             | `string`                              | auto from graph          | Header badge text                               |
+| `showToolbar`           | `boolean`                             | `true`                   | Show toolbar actions                            |
+| `showViewportControls`  | `boolean`                             | `false`                  | Show zoom controls on canvas                    |
+| `defaultNavigationMode` | `boolean`                             | `true`                   | Start in per-stage navigation                   |
+| `panEnabled`            | `boolean`                             | `true` (off in nav mode) | Allow panning                                   |
+| `zoomEnabled`           | `boolean`                             | `true` (off in nav mode) | Allow zoom                                      |
+| `pinchZoomEnabled`      | `boolean`                             | `true` (off in nav mode) | Allow pinch zoom                                |
+| `compact`               | `boolean`                             | `true`                   | Use compact match-card preset                   |
+| `onMatchClick`          | `(node: MatchPositionedNode) => void` | —                        | Match click handler                             |
+| `onInvalidNode`         | `(id, error) => void`                 | —                        | Node render error handler                       |
 
 ---
 
-## Match data input (`SquashMatchMeta`)
+## Match data input (`MatchMeta`)
 
 Each node in `graph.nodes` can include `meta`:
 
 ```ts
-interface SquashMatchMeta {
-  players?: Array<{
-    name: string;
-    seed?: number;
-    country?: string;
-  }>;
+interface MatchPlayer {
+  id?: string;
+  name: string;
+  seed?: number;
+  country?: string;
+  avatarUrl?: string;
+  teamName?: string;
+  isBye?: boolean;
+}
+
+interface MatchMeta {
+  players?: MatchPlayer[];
   sets?: number[][]; // e.g. [[11, 8], [9, 11], [11, 7]]
   tiebreaks?: number[][]; // optional tiebreak per set
   status?: MatchStatus; // Completed | Live | Upcoming
   currentSet?: number; // live: index of set in progress
   stage?: string; // optional label override
+  matchType?: 'standard' | 'thirdPlace' | 'grandFinal' | 'bye' | 'walkover';
+  bracketSection?: 'winners' | 'losers' | 'grandFinal';
+  scheduledAt?: string;
+  timezone?: string;
+  venue?: string;
+  seriesFormat?: string | { bestOf?: number; label?: string };
+  games?: { label?: string; scores: readonly [number, number]; winner?: 0 | 1 }[];
 }
 ```
+
+`SquashPlayer`, `SquashMatchMeta`, `SquashNodeData`, and `SquashPositionedNode` remain exported as deprecated aliases for existing integrations. New code should prefer `MatchPlayer`, `MatchMeta`, `MatchNodeData`, and `MatchPositionedNode`.
 
 ### `MatchStatus`
 
@@ -417,6 +433,266 @@ const graph = {
 
 ---
 
+## Generate a single-elimination bracket
+
+Use `generateSingleEliminationBracket()` when you want a ready-to-render graph from participants instead of hand-writing adjacency maps.
+
+```tsx
+import { generateSingleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
+
+const graph = generateSingleEliminationBracket(
+  [
+    { name: 'Seed 1', seed: 1 },
+    { name: 'Seed 4', seed: 4 },
+    { name: 'Seed 2', seed: 2 },
+    { name: 'Seed 3', seed: 3 },
+  ],
+  {
+    seeding: 'standard',
+    includeThirdPlace: true,
+    thirdPlaceLabel: 'Bronze Match',
+    byeLabel: 'BYE',
+  }
+);
+
+<TournamentBracket graph={graph} />;
+```
+
+The generator accepts participant strings or `MatchPlayer` objects, creates stable match IDs, fills non-power-of-two draws with explicit bye slots, advances players over byes in downstream metadata, and returns the same `NxGraphInput` shape accepted by `TournamentBracket`.
+
+When `includeThirdPlace` is enabled, semifinal loser feeds are connected to a semantic `matchType: 'thirdPlace'` node. Use `thirdPlaceLabel` to customize the displayed stage label.
+
+Supported draw modes:
+
+| Option                | Behavior                                      |
+| --------------------- | --------------------------------------------- |
+| `seeding: 'none'`     | Preserve participant order                    |
+| `seeding: 'standard'` | Place seeds using standard bracket positions  |
+| `seeding: 'manual'`   | Use `seedOrder` to control seed-rank order    |
+| `seeding: 'random'`   | Shuffle entrants; pass `shuffle` for testing  |
+| `seeded: true`        | Backward-compatible shortcut for `'standard'` |
+
+---
+
+## Generate a double-elimination bracket
+
+Use `generateDoubleEliminationBracket()` for esports-style draws with winners bracket, losers bracket, grand final, and an optional reset final.
+
+```tsx
+import { generateDoubleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
+
+const graph = generateDoubleEliminationBracket(
+  Array.from({ length: 16 }, (_, index) => ({
+    name: `Team ${index + 1}`,
+    seed: index + 1,
+  })),
+  {
+    includeBracketReset: true,
+    grandFinalLabel: 'Championship Match',
+    bracketResetLabel: 'Reset Final',
+  }
+);
+
+<TournamentBracket
+  graph={graph}
+  title="Double Elimination"
+  config={{
+    labels: [
+      'Winners R1',
+      'Winners QF',
+      'Winners SF',
+      'Winners Final',
+      'Losers Bracket',
+      'Grand Final',
+    ],
+  }}
+/>;
+```
+
+The generator supports 8-, 16-, and 32-player draws. It returns standard `NxGraphInput` nodes with `bracketSection: 'winners' | 'losers' | 'grandFinal'`; grand-final nodes also use `matchType: 'grandFinal'`. Winners-bracket loser drops are encoded on edge metadata as `{ sourceResult: 'loser', bracketDrop: true }`, so custom match cards and edge renderers can distinguish drop paths from normal winner advancement.
+
+Generated nodes include fixed positions that place the winners bracket above the losers bracket and grand-final nodes to the right. You can still pass a custom `vertexComponent` because all tournament semantics live in node/edge metadata rather than in the built-in card renderer.
+
+---
+
+## Render a round-robin group
+
+Round robin is rendered as standings plus a schedule, not through the graph layout engine.
+
+```tsx
+import {
+  generateRoundRobinSchedule,
+  MatchStatus,
+  RoundRobinBracket,
+} from '@graph-render/tournament-tree';
+
+const participants = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
+const schedule = generateRoundRobinSchedule(participants);
+const matches = schedule.map((match) =>
+  match.id === 'rr-r1-m1' ? { ...match, scores: [2, 1], status: MatchStatus.Completed } : match
+);
+
+<RoundRobinBracket
+  participants={participants}
+  matches={matches}
+  points={{ win: 3, draw: 1, loss: 0 }}
+  title="Group A"
+/>;
+```
+
+`calculateRoundRobinStandings(participants, matches, points)` derives table rows from completed match results. Equal scores are represented as draws, upcoming/live matches are ignored for standings until completed, and sorting uses points, score difference, score for, wins, then player name. Odd-sized groups are supported by the schedule generator without rendering bye matches.
+
+---
+
+## Compose groups and knockout stages
+
+Use `MultiStageTournament` when a tournament starts with round-robin groups and advances players into a knockout bracket.
+
+```tsx
+import {
+  buildKnockoutBracketFromGroups,
+  MatchStatus,
+  MultiStageTournament,
+} from '@graph-render/tournament-tree';
+
+const groups = [
+  {
+    id: 'a',
+    name: 'Group A',
+    participants: [{ name: 'Alpha' }, { name: 'Bravo' }, { name: 'Charlie' }, { name: 'Delta' }],
+    matches: [
+      {
+        id: 'a-r1-m1',
+        round: 1,
+        players: [{ name: 'Alpha' }, { name: 'Bravo' }],
+        scores: [2, 0],
+        status: MatchStatus.Completed,
+      },
+    ],
+  },
+  // Group B...
+];
+
+const knockout = buildKnockoutBracketFromGroups(groups, {
+  advancement: { topPerGroup: 2 },
+});
+
+<MultiStageTournament
+  stages={[
+    { type: 'groups', name: 'Groups', groups, advancement: { topPerGroup: 2 } },
+    { type: 'elimination', name: 'Semifinals', bracket: knockout },
+  ]}
+/>;
+```
+
+Computed advancement uses `calculateGroupAdvancers(groups, { topPerGroup })`, which reads each group's completed round-robin standings. Use `manualAdvancers` when tournament officials override standings, then pass those players to `generateSingleEliminationBracket()` or a provided `bracket` for full manual control.
+
+---
+
+## Render best-of-N series scores
+
+Use `seriesFormat` and `games` when a match is a BO3/BO5/BO7 series with map- or game-level scores.
+
+```ts
+const graph = {
+  nodes: {
+    final: {
+      meta: {
+        players: [{ name: 'Alpha' }, { name: 'Bravo' }],
+        status: MatchStatus.Completed,
+        seriesFormat: { bestOf: 5, label: 'BO5' },
+        games: [
+          { label: 'Map 1', scores: [13, 11] },
+          { label: 'Map 2', scores: [8, 13], winner: 1 },
+          { label: 'Map 3', scores: [16, 14] },
+        ],
+      },
+    },
+  },
+  adj: { final: {} },
+};
+```
+
+When `games` are present, the default match card renders labeled game segments and computes the highlighted winner from game winners/scores. Existing `sets` and `tiebreaks` rendering remains unchanged for squash-style inputs.
+
+---
+
+## Correct match scores safely
+
+Use `correctMatchResult()` when a completed score changes after downstream matches have already been generated.
+
+```ts
+import { applyScoreCorrectionCascade, correctMatchResult } from '@graph-render/tournament-tree';
+
+const correction = correctMatchResult(graph, 'r1-m1', {
+  sets: [
+    [8, 11],
+    [9, 11],
+  ],
+});
+
+console.log(correction.winnerChanged);
+console.log(correction.affectedMatches);
+console.log(correction.participantChanges);
+
+// Optional: consumers explicitly decide when to apply downstream replacements.
+const nextGraph = applyScoreCorrectionCascade(correction.updatedGraph, correction);
+```
+
+The correction result includes the updated source match, original/corrected winner indexes, affected downstream match IDs, and participant replacements/removals. The input graph is not mutated, and downstream cascade is never applied unless you call `applyScoreCorrectionCascade()`.
+
+---
+
+## Live update patterns
+
+`TournamentBracket` is controlled: keep match state in your app, pass the latest `graph`, and re-render when polling or socket messages arrive. The library does not include WebSocket/server transport.
+
+```tsx
+function LiveBracket() {
+  const [graph, setGraph] = useState(initialGraph);
+
+  useEffect(() => {
+    const timer = window.setInterval(async () => {
+      const nextGraph = await fetch('/api/bracket').then((response) => response.json());
+      setGraph(nextGraph);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <TournamentBracket graph={graph} title="Live bracket" />;
+}
+```
+
+For WebSocket-style integrations, update the same controlled graph from your own subscription:
+
+```tsx
+socket.on('match:update', (message) => {
+  setGraph((graph) => patchMatch(graph, message.matchId, message.update));
+});
+```
+
+Custom editable cards can use `onMatchUpdate` as a typed callback channel without the bracket owning persistence:
+
+```tsx
+<TournamentBracket
+  graph={graph}
+  vertexComponent={EditableCard}
+  onMatchUpdate={({ matchId, update }) => saveScore(matchId, update)}
+/>
+```
+
+Score and status changes use lightweight CSS transitions, and live indicators respect `prefers-reduced-motion`.
+
+---
+
+## Printing brackets
+
+`TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.
+
+For large draws, use landscape orientation and reduce browser print scale until all rounds fit. For venue posters or very large brackets, export SVG from the toolbar and print the SVG from a design or browser tool for more control.
+
+---
+
 ## Advanced: hooks and exports
 
 ### `useBracketAppearance()`
@@ -438,17 +714,17 @@ Merge user `appearance` with defaults without rendering — useful for Storybook
 
 ### Re-exports
 
-| Export                                                                    | Description                      |
-| ------------------------------------------------------------------------- | -------------------------------- |
-| `TournamentBracket`                                                       | Main component                   |
-| `SquashNode`                                                              | Standalone match card            |
-| `BracketAppearanceProvider`, `useBracketAppearance`                       | Appearance context               |
-| `resolveBracketAppearance`                                                | Merge `appearance` with defaults |
-| `TournamentBracketAppearance`, `ResolvedBracketAppearance`, …             | Types                            |
-| `NODE_DIMENSIONS`, `NODE_DIMENSIONS_COMPACT`, `NODE_DIMENSIONS_STAGE_NAV` | Default sizes                    |
-| `DEFAULT_TOURNAMENT_CONFIG`, `COMPACT_TOURNAMENT_CONFIG`, …               | Default `config` presets         |
-| `MatchStatus`, `SquashNodeRenderMode`, `VerticalStagePosition`            | Enums                            |
-| `getStageViewport`, `buildStageViews`, `roundLabelsForGraph`              | Utilities                        |
+| Export                                                                                        | Description                      |
+| --------------------------------------------------------------------------------------------- | -------------------------------- |
+| `TournamentBracket`                                                                           | Main component                   |
+| `SquashNode`                                                                                  | Standalone match card            |
+| `BracketAppearanceProvider`, `useBracketAppearance`                                           | Appearance context               |
+| `resolveBracketAppearance`                                                                    | Merge `appearance` with defaults |
+| `MatchPlayer`, `MatchMeta`, `MatchPositionedNode`, `TournamentBracketAppearance`, …           | Types                            |
+| `NODE_DIMENSIONS`, `NODE_DIMENSIONS_COMPACT`, `NODE_DIMENSIONS_STAGE_NAV`                     | Default sizes                    |
+| `DEFAULT_TOURNAMENT_CONFIG`, `COMPACT_TOURNAMENT_CONFIG`, …                                   | Default `config` presets         |
+| `MatchStatus`, `MatchType`, `BracketSection`, `SquashNodeRenderMode`, `VerticalStagePosition` | Enums                            |
+| `getStageViewport`, `buildStageViews`, `roundLabelsForGraph`                                  | Utilities                        |
 
 ---
 
@@ -458,10 +734,11 @@ Replace the built-in card with your own renderer (styling is then your responsib
 
 ```tsx
 import { TournamentBracket } from '@graph-render/tournament-tree';
-import type { SquashMatchMeta, VertexComponentProps } from '@graph-render/types';
+import type { MatchMeta } from '@graph-render/tournament-tree';
+import type { VertexComponentProps } from '@graph-render/types/react';
 
 function MyMatchCard({ node }: VertexComponentProps) {
-  const meta = node.meta as SquashMatchMeta;
+  const meta = node.meta as MatchMeta;
   return (
     <foreignObject width={node.size?.width} height={node.size?.height}>
       <div className="my-match-card">
