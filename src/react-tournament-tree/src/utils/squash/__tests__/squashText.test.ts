@@ -1,11 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPlayerBadgeText, truncateText } from '../text';
+import { getPlayerBadgeText, getPlayerMetadataText, truncateText } from '../text';
 
 // ── truncateText ──────────────────────────────────────────────────────────────
 describe('truncateText', () => {
   it('returns text unchanged when within the limit', () => {
     expect(truncateText('hello', 10)).toBe('hello');
+  });
+
+  describe('getPlayerMetadataText', () => {
+    it('combines seed and country', () => {
+      expect(getPlayerMetadataText({ name: 'Alice', seed: 1, country: 'eg' })).toBe('#1 · EG');
+    });
+
+    it('renders only seed when country is absent', () => {
+      expect(getPlayerMetadataText({ name: 'Alice', seed: 3 })).toBe('#3');
+    });
+
+    it('renders only country when seed is absent', () => {
+      expect(getPlayerMetadataText({ name: 'Alice', country: 'us' })).toBe('US');
+    });
+
+    it('returns empty text when metadata is absent', () => {
+      expect(getPlayerMetadataText({ name: 'Alice' })).toBe('');
+    });
   });
 
   it('returns text unchanged when equal to the limit', () => {

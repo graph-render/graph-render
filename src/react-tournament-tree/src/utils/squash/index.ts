@@ -9,4 +9,4 @@ export {
   getScoreSegments,
   getSetWins,
 } from './score';
-export { getPlayerBadgeText, truncateText } from './text';
+export { getPlayerBadgeText, getPlayerMetadataText, truncateText } from './text';

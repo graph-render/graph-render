@@ -18,3 +18,12 @@ export const getPlayerBadgeText = (player: MatchPlayer): string => {
 
   return initials || '–';
 };
+
+export const getPlayerMetadataText = (player: MatchPlayer): string => {
+  const parts = [
+    typeof player.seed === 'number' && Number.isFinite(player.seed) ? `#${player.seed}` : '',
+    player.country?.trim().toUpperCase() ?? '',
+  ].filter(Boolean);
+
+  return parts.join(' · ');
+};

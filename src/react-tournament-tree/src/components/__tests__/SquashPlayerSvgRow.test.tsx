@@ -6,7 +6,7 @@ import { MOCK_COLORS } from './testUtils';
 
 const baseProps = {
   nodeId: 'n1',
-  player: { name: 'Player One', seed: 1 },
+  player: { name: 'Player One', seed: 1, country: 'eg' },
   playerIndex: 0,
   compact: false,
   isTBD: false,
@@ -97,7 +97,11 @@ describe('SquashPlayerSvgRow', () => {
       </svg>
     );
     fireEvent.mouseEnter(screen.getByTestId('player-svg-row'));
-    expect(onPlayerEnter).toHaveBeenCalledWith(0, { name: 'Player One', seed: 1 });
+    expect(onPlayerEnter).toHaveBeenCalledWith(0, {
+      name: 'Player One',
+      seed: 1,
+      country: 'eg',
+    });
   });
 
   it('calls onPlayerLeave on mouseLeave', () => {
@@ -123,5 +127,23 @@ describe('SquashPlayerSvgRow', () => {
       </svg>
     );
     expect(screen.getByText('PT')).toBeInTheDocument();
+  });
+
+  it('renders seed and country metadata as SVG text', () => {
+    render(
+      <svg>
+        <SquashPlayerSvgRow {...baseProps} />
+      </svg>
+    );
+    expect(screen.getByTestId('player-svg-metadata')).toHaveTextContent('#1 · EG');
+  });
+
+  it('omits SVG metadata when seed and country are absent', () => {
+    render(
+      <svg>
+        <SquashPlayerSvgRow {...baseProps} player={{ name: 'Player Three' }} />
+      </svg>
+    );
+    expect(screen.queryByTestId('player-svg-metadata')).not.toBeInTheDocument();
   });
 });

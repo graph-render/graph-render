@@ -11,7 +11,7 @@ const PLAYER_ONE_NAME = 'Player One';
 
 const baseProps = {
   nodeId: 'n1',
-  player: { name: PLAYER_ONE_NAME, seed: 1 },
+  player: { name: PLAYER_ONE_NAME, seed: 1, country: 'eg' },
   playerIndex: 0,
   compact: false,
   isTBD: false,
@@ -57,7 +57,11 @@ describe('SquashPlayerHtmlRow', () => {
     const onPlayerEnter = vi.fn();
     render(<SquashPlayerHtmlRow {...baseProps} onPlayerEnter={onPlayerEnter} />);
     fireEvent.mouseEnter(screen.getByTestId('player-html-row'));
-    expect(onPlayerEnter).toHaveBeenCalledWith(0, { name: PLAYER_ONE_NAME, seed: 1 });
+    expect(onPlayerEnter).toHaveBeenCalledWith(0, {
+      name: PLAYER_ONE_NAME,
+      seed: 1,
+      country: 'eg',
+    });
   });
 
   it('calls onPlayerLeave when mouse leaves', () => {
@@ -89,5 +93,16 @@ describe('SquashPlayerHtmlRow', () => {
     );
     expect(screen.getByText('Player Two')).toBeInTheDocument();
     expect(screen.getByLabelText('crest-Player Two')).toHaveTextContent('PT');
+  });
+
+  it('renders seed and country metadata', () => {
+    render(<SquashPlayerHtmlRow {...baseProps} />);
+    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent('#1');
+    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent('EG');
+  });
+
+  it('omits metadata when seed and country are absent', () => {
+    render(<SquashPlayerHtmlRow {...baseProps} player={{ name: 'Player Three' }} />);
+    expect(screen.queryByTestId('player-html-metadata')).not.toBeInTheDocument();
   });
 });

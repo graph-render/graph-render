@@ -18,6 +18,8 @@ export interface SquashThemeColors {
   readonly HOVER_BG: string;
   readonly CREST_BG: string;
   readonly CREST_TEXT: string;
+  readonly SEED_TEXT: string;
+  readonly COUNTRY_TEXT: string;
   readonly WINNER_CREST_BG: string;
   readonly WINNER_CREST_TEXT: string;
   readonly ROW_BG: string;

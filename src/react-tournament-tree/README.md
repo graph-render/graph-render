@@ -254,6 +254,7 @@ Override theme tokens per color mode. Keys are merged on top of built-in light/d
 | `ICON_BG` / `ICON_FG`                    | Trophy icon badge                                     |
 | `BADGE_BG` / `BADGE_TEXT` / `BADGE_DOT`  | Header status badge                                   |
 | `CREST_BG` / `CREST_TEXT`                | Player initials badge                                 |
+| `SEED_TEXT` / `COUNTRY_TEXT`             | Seed and country metadata in match cards              |
 | `WINNER_CREST_BG` / `WINNER_CREST_TEXT`  | Winner initials badge                                 |
 | `ROW_BG` / `ROW_HOVER_BG`                | Player row backgrounds                                |
 | `FOREGROUND` / `MUTED_TEXT`              | Primary / secondary text                              |
