@@ -1,5 +1,6 @@
 exclude:
   - AGENTS.md
+  - docs/internal/AGENTS.md
   - '*.ts'
   - '*.tsx'
   - '*.js'
