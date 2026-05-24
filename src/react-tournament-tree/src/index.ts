@@ -50,10 +50,12 @@ export {
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
 export {
+  applyScoreCorrectionCascade,
   buildKnockoutBracketFromGroups,
   type BuildKnockoutFromGroupsOptions,
   calculateGroupAdvancers,
   calculateRoundRobinStandings,
+  correctMatchResult,
   type DoubleEliminationBracketOptions,
   type DoubleEliminationEdgeMeta,
   type DoubleEliminationGraph,
@@ -63,11 +65,14 @@ export {
   generateSingleEliminationBracket,
   type GroupAdvancementRule,
   groupRoundRobinMatchesByRound,
+  type MatchResultUpdate,
   nextPowerOfTwo,
+  type ParticipantCascadeChange,
   type RoundRobinGroup,
   type RoundRobinMatch,
   type RoundRobinPointsRule,
   type RoundRobinStanding,
+  type ScoreCorrectionResult,
   type SingleEliminationBracketOptions,
   type SingleEliminationGraph,
   type SingleEliminationSeeding,

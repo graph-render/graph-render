@@ -617,6 +617,32 @@ When `games` are present, the default match card renders labeled game segments a
 
 ---
 
+## Correct match scores safely
+
+Use `correctMatchResult()` when a completed score changes after downstream matches have already been generated.
+
+```ts
+import { applyScoreCorrectionCascade, correctMatchResult } from '@graph-render/tournament-tree';
+
+const correction = correctMatchResult(graph, 'r1-m1', {
+  sets: [
+    [8, 11],
+    [9, 11],
+  ],
+});
+
+console.log(correction.winnerChanged);
+console.log(correction.affectedMatches);
+console.log(correction.participantChanges);
+
+// Optional: consumers explicitly decide when to apply downstream replacements.
+const nextGraph = applyScoreCorrectionCascade(correction.updatedGraph, correction);
+```
+
+The correction result includes the updated source match, original/corrected winner indexes, affected downstream match IDs, and participant replacements/removals. The input graph is not mutated, and downstream cascade is never applied unless you call `applyScoreCorrectionCascade()`.
+
+---
+
 ## Printing brackets
 
 `TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.

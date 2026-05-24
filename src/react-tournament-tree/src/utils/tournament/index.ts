@@ -21,6 +21,13 @@ export {
   type RoundRobinStanding,
 } from './roundRobin';
 export {
+  applyScoreCorrectionCascade,
+  correctMatchResult,
+  type MatchResultUpdate,
+  type ParticipantCascadeChange,
+  type ScoreCorrectionResult,
+} from './scoreCorrection';
+export {
   generateSingleEliminationBracket,
   nextPowerOfTwo,
   type SingleEliminationBracketOptions,

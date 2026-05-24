@@ -1,13 +1,14 @@
 import type {
   BracketSection,
   GameResult,
+  MatchMeta,
   MatchPlayer,
   MatchStatus,
   MatchType,
   SeriesFormat,
 } from '@graph-render/types/tournament';
 
-export interface NormalizedSquashMatchMeta {
+export interface NormalizedSquashMatchMeta extends MatchMeta {
   readonly stage: string;
   readonly players: readonly [MatchPlayer, MatchPlayer];
   readonly sets: ReadonlyArray<readonly number[]>;
