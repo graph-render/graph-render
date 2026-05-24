@@ -1,4 +1,4 @@
-import type { SquashPlayer } from '@graph-render/types/tournament';
+import type { MatchPlayer } from '@graph-render/types/tournament';
 
 export const truncateText = (value: string, maxLength: number): string => {
   if (value.length <= maxLength) {
@@ -8,7 +8,7 @@ export const truncateText = (value: string, maxLength: number): string => {
   return `${value.slice(0, Math.max(0, maxLength - 1))}…`;
 };
 
-export const getPlayerBadgeText = (player: SquashPlayer): string => {
+export const getPlayerBadgeText = (player: MatchPlayer): string => {
   const initials = player.name
     .split(/\s+/)
     .filter(Boolean)

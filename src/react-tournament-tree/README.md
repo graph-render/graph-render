@@ -89,7 +89,7 @@ export default function App() {
 | Input                  | Type                                    | Required  | Role                                                      |
 | ---------------------- | --------------------------------------- | --------- | --------------------------------------------------------- |
 | `graph`                | `NxGraphInput`                          | yes       | Bracket structure + match metadata on each node           |
-| `graph.nodes[id].meta` | `SquashMatchMeta`                       | per match | Players, scores, status, tiebreaks                        |
+| `graph.nodes[id].meta` | `MatchMeta`                             | per match | Players, scores, status, tiebreaks, schedule, venue       |
 | `graph.adj`            | adjacency map                           | yes       | Parent → child links between matches                      |
 | `config`               | `Partial<GraphConfig>`                  | no        | Layout engine: tree layout, canvas size, `nodeGap`, edges |
 | `appearance`           | `TournamentBracketAppearance`           | no        | Visual styling: colors, fonts, card size, chrome          |
@@ -97,13 +97,13 @@ export default function App() {
 
 ### Outputs (what you get back)
 
-| Output                     | Type                   | When                                                 |
-| -------------------------- | ---------------------- | ---------------------------------------------------- |
-| Rendered bracket UI        | React tree             | Always — header, stage labels, graph canvas, toolbar |
-| `onMatchClick(node)`       | `SquashPositionedNode` | User clicks a built-in match card                    |
-| `onInvalidNode(id, error)` | `string`, `Error`      | Custom or built-in node fails to render              |
-| SVG export                 | file download          | User clicks export in toolbar (built-in handler)     |
-| Dark mode                  | document / toolbar     | Toggles `document` dark class via built-in control   |
+| Output                     | Type                  | When                                                 |
+| -------------------------- | --------------------- | ---------------------------------------------------- |
+| Rendered bracket UI        | React tree            | Always — header, stage labels, graph canvas, toolbar |
+| `onMatchClick(node)`       | `MatchPositionedNode` | User clicks a built-in match card                    |
+| `onInvalidNode(id, error)` | `string`, `Error`     | Custom or built-in node fails to render              |
+| SVG export                 | file download         | User clicks export in toolbar (built-in handler)     |
+| Dark mode                  | document / toolbar    | Toggles `document` dark class via built-in control   |
 
 For custom integrations, use `useBracketAppearance()` inside children of `BracketAppearanceProvider`, or call `resolveBracketAppearance(appearance, isDarkMode, compact)` to get the merged style object without rendering.
 
@@ -345,46 +345,59 @@ Applied when `compact={false}` or `compact={true}` respectively.
 
 ## Component props
 
-| Prop                    | Type                                   | Default                  | Description                                     |
-| ----------------------- | -------------------------------------- | ------------------------ | ----------------------------------------------- |
-| `graph`                 | `NxGraphInput`                         | required                 | Bracket nodes + edges                           |
-| `config`                | `Partial<GraphConfig>`                 | tournament defaults      | Layout, canvas, routing                         |
-| `appearance`            | `TournamentBracketAppearance`          | built-in theme           | Visual styling overrides                        |
-| `defaultViewport`       | `Partial<GraphViewport>`               | auto fit                 | Initial pan/zoom (`x`, `y`, `zoom`)             |
-| `vertexComponent`       | `VertexComponent`                      | built-in card            | Replace match card renderer                     |
-| `nodeRenderMode`        | `SquashNodeRenderMode`                 | `'export'`               | `'svg'` \| `'html'` \| `'export'` \| `'server'` |
-| `title`                 | `string`                               | `'Tournament Bracket'`   | Header title                                    |
-| `badgeText`             | `string`                               | auto from graph          | Header badge text                               |
-| `showToolbar`           | `boolean`                              | `true`                   | Show toolbar actions                            |
-| `showViewportControls`  | `boolean`                              | `false`                  | Show zoom controls on canvas                    |
-| `defaultNavigationMode` | `boolean`                              | `true`                   | Start in per-stage navigation                   |
-| `panEnabled`            | `boolean`                              | `true` (off in nav mode) | Allow panning                                   |
-| `zoomEnabled`           | `boolean`                              | `true` (off in nav mode) | Allow zoom                                      |
-| `pinchZoomEnabled`      | `boolean`                              | `true` (off in nav mode) | Allow pinch zoom                                |
-| `compact`               | `boolean`                              | `true`                   | Use compact match-card preset                   |
-| `onMatchClick`          | `(node: SquashPositionedNode) => void` | —                        | Match click handler                             |
-| `onInvalidNode`         | `(id, error) => void`                  | —                        | Node render error handler                       |
+| Prop                    | Type                                  | Default                  | Description                                     |
+| ----------------------- | ------------------------------------- | ------------------------ | ----------------------------------------------- |
+| `graph`                 | `NxGraphInput`                        | required                 | Bracket nodes + edges                           |
+| `config`                | `Partial<GraphConfig>`                | tournament defaults      | Layout, canvas, routing                         |
+| `appearance`            | `TournamentBracketAppearance`         | built-in theme           | Visual styling overrides                        |
+| `defaultViewport`       | `Partial<GraphViewport>`              | auto fit                 | Initial pan/zoom (`x`, `y`, `zoom`)             |
+| `vertexComponent`       | `VertexComponent`                     | built-in card            | Replace match card renderer                     |
+| `nodeRenderMode`        | `SquashNodeRenderMode`                | `'export'`               | `'svg'` \| `'html'` \| `'export'` \| `'server'` |
+| `title`                 | `string`                              | `'Tournament Bracket'`   | Header title                                    |
+| `badgeText`             | `string`                              | auto from graph          | Header badge text                               |
+| `showToolbar`           | `boolean`                             | `true`                   | Show toolbar actions                            |
+| `showViewportControls`  | `boolean`                             | `false`                  | Show zoom controls on canvas                    |
+| `defaultNavigationMode` | `boolean`                             | `true`                   | Start in per-stage navigation                   |
+| `panEnabled`            | `boolean`                             | `true` (off in nav mode) | Allow panning                                   |
+| `zoomEnabled`           | `boolean`                             | `true` (off in nav mode) | Allow zoom                                      |
+| `pinchZoomEnabled`      | `boolean`                             | `true` (off in nav mode) | Allow pinch zoom                                |
+| `compact`               | `boolean`                             | `true`                   | Use compact match-card preset                   |
+| `onMatchClick`          | `(node: MatchPositionedNode) => void` | —                        | Match click handler                             |
+| `onInvalidNode`         | `(id, error) => void`                 | —                        | Node render error handler                       |
 
 ---
 
-## Match data input (`SquashMatchMeta`)
+## Match data input (`MatchMeta`)
 
 Each node in `graph.nodes` can include `meta`:
 
 ```ts
-interface SquashMatchMeta {
-  players?: Array<{
-    name: string;
-    seed?: number;
-    country?: string;
-  }>;
+interface MatchPlayer {
+  id?: string;
+  name: string;
+  seed?: number;
+  country?: string;
+  avatarUrl?: string;
+  teamName?: string;
+}
+
+interface MatchMeta {
+  players?: MatchPlayer[];
   sets?: number[][]; // e.g. [[11, 8], [9, 11], [11, 7]]
   tiebreaks?: number[][]; // optional tiebreak per set
   status?: MatchStatus; // Completed | Live | Upcoming
   currentSet?: number; // live: index of set in progress
   stage?: string; // optional label override
+  matchType?: 'standard' | 'thirdPlace' | 'grandFinal' | 'bye' | 'walkover';
+  bracketSection?: 'winners' | 'losers' | 'grandFinal';
+  scheduledAt?: string;
+  timezone?: string;
+  venue?: string;
+  seriesFormat?: string | { bestOf?: number; label?: string };
 }
 ```
+
+`SquashPlayer`, `SquashMatchMeta`, `SquashNodeData`, and `SquashPositionedNode` remain exported as deprecated aliases for existing integrations. New code should prefer `MatchPlayer`, `MatchMeta`, `MatchNodeData`, and `MatchPositionedNode`.
 
 ### `MatchStatus`
 
@@ -438,17 +451,17 @@ Merge user `appearance` with defaults without rendering — useful for Storybook
 
 ### Re-exports
 
-| Export                                                                    | Description                      |
-| ------------------------------------------------------------------------- | -------------------------------- |
-| `TournamentBracket`                                                       | Main component                   |
-| `SquashNode`                                                              | Standalone match card            |
-| `BracketAppearanceProvider`, `useBracketAppearance`                       | Appearance context               |
-| `resolveBracketAppearance`                                                | Merge `appearance` with defaults |
-| `TournamentBracketAppearance`, `ResolvedBracketAppearance`, …             | Types                            |
-| `NODE_DIMENSIONS`, `NODE_DIMENSIONS_COMPACT`, `NODE_DIMENSIONS_STAGE_NAV` | Default sizes                    |
-| `DEFAULT_TOURNAMENT_CONFIG`, `COMPACT_TOURNAMENT_CONFIG`, …               | Default `config` presets         |
-| `MatchStatus`, `SquashNodeRenderMode`, `VerticalStagePosition`            | Enums                            |
-| `getStageViewport`, `buildStageViews`, `roundLabelsForGraph`              | Utilities                        |
+| Export                                                                                        | Description                      |
+| --------------------------------------------------------------------------------------------- | -------------------------------- |
+| `TournamentBracket`                                                                           | Main component                   |
+| `SquashNode`                                                                                  | Standalone match card            |
+| `BracketAppearanceProvider`, `useBracketAppearance`                                           | Appearance context               |
+| `resolveBracketAppearance`                                                                    | Merge `appearance` with defaults |
+| `MatchPlayer`, `MatchMeta`, `MatchPositionedNode`, `TournamentBracketAppearance`, …           | Types                            |
+| `NODE_DIMENSIONS`, `NODE_DIMENSIONS_COMPACT`, `NODE_DIMENSIONS_STAGE_NAV`                     | Default sizes                    |
+| `DEFAULT_TOURNAMENT_CONFIG`, `COMPACT_TOURNAMENT_CONFIG`, …                                   | Default `config` presets         |
+| `MatchStatus`, `MatchType`, `BracketSection`, `SquashNodeRenderMode`, `VerticalStagePosition` | Enums                            |
+| `getStageViewport`, `buildStageViews`, `roundLabelsForGraph`                                  | Utilities                        |
 
 ---
 
@@ -458,10 +471,11 @@ Replace the built-in card with your own renderer (styling is then your responsib
 
 ```tsx
 import { TournamentBracket } from '@graph-render/tournament-tree';
-import type { SquashMatchMeta, VertexComponentProps } from '@graph-render/types';
+import type { MatchMeta } from '@graph-render/tournament-tree';
+import type { VertexComponentProps } from '@graph-render/types/react';
 
 function MyMatchCard({ node }: VertexComponentProps) {
-  const meta = node.meta as SquashMatchMeta;
+  const meta = node.meta as MatchMeta;
   return (
     <foreignObject width={node.size?.width} height={node.size?.height}>
       <div className="my-match-card">

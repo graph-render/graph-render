@@ -1,8 +1,8 @@
 import type { GraphConfig, NxGraphInput } from '@graph-render/types';
 import type { GraphViewport, VertexComponent } from '@graph-render/types/react';
 import type {
+  MatchPositionedNode,
   SquashNodeRenderMode,
-  SquashPositionedNode,
   TournamentBracketAppearance,
 } from '@graph-render/types/tournament';
 
@@ -53,7 +53,7 @@ export interface TournamentBracketProps {
   readonly zoomEnabled?: boolean | undefined;
   readonly pinchZoomEnabled?: boolean | undefined;
   readonly compact?: boolean | undefined;
-  readonly onMatchClick?: ((node: SquashPositionedNode) => void) | undefined;
+  readonly onMatchClick?: ((node: MatchPositionedNode) => void) | undefined;
   readonly onInvalidNode?: ((nodeId: string, error: Error) => void) | undefined;
   readonly onExportError?: ((error: Error) => void) | undefined;
 }

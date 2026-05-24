@@ -34,6 +34,23 @@ describe('normalizePlayer', () => {
     expect(player.country).toBe('ES');
   });
 
+  it('accepts generic player metadata', () => {
+    const player = normalizePlayer(
+      {
+        id: 'p-1',
+        name: 'Alice',
+        avatarUrl: 'https://example.com/a.png',
+        teamName: 'Falcons',
+      },
+      'p1'
+    );
+    expect(player).toMatchObject({
+      id: 'p-1',
+      avatarUrl: 'https://example.com/a.png',
+      teamName: 'Falcons',
+    });
+  });
+
   it('throws for non-object input', () => {
     expect(() => normalizePlayer('invalid', 'p1')).toThrow(TypeError);
     expect(() => normalizePlayer(null, 'p1')).toThrow(TypeError);
@@ -73,8 +90,17 @@ describe('normalizePlayers', () => {
     expect(players[1]?.name).toBe('Bob');
   });
 
-  it('throws for array with wrong length', () => {
-    expect(() => normalizePlayers([{ name: 'Alice' }])).toThrow(/exactly two entries/);
+  it('supports one-player bye or walkover matches', () => {
+    const players = normalizePlayers([{ name: 'Alice' }]);
+    expect(players[0]?.name).toBe('Alice');
+    expect(players[1]?.name).toBe('TBD');
+  });
+
+  it('throws for array with unsupported length', () => {
+    expect(() => normalizePlayers([])).toThrow(/one or two entries/);
+    expect(() => normalizePlayers([{ name: 'A' }, { name: 'B' }, { name: 'C' }])).toThrow(
+      /one or two entries/
+    );
   });
 
   it('throws for non-array input', () => {

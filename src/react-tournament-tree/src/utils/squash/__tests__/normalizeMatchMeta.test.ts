@@ -1,4 +1,4 @@
-import { MatchStatus } from '@graph-render/types/tournament';
+import { BracketSection, MatchStatus, MatchType } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
 import { normalizeMatchMeta } from '../normalizeMatchMeta';
@@ -88,5 +88,28 @@ describe('normalizeMatchMeta', () => {
     const meta = normalizeMatchMeta({ players: [{ name: 'Alice' }, { name: 'Bob' }] });
     expect(meta.players[0]?.name).toBe('Alice');
     expect(meta.players[1]?.name).toBe('Bob');
+  });
+
+  it('preserves generic tournament metadata', () => {
+    const meta = normalizeMatchMeta({
+      matchType: MatchType.ThirdPlace,
+      bracketSection: BracketSection.Winners,
+      scheduledAt: '2026-06-01T10:00:00Z',
+      timezone: 'UTC',
+      venue: 'Court 1',
+      seriesFormat: { bestOf: 5, label: 'BO5' },
+    });
+    expect(meta.matchType).toBe(MatchType.ThirdPlace);
+    expect(meta.bracketSection).toBe(BracketSection.Winners);
+    expect(meta.scheduledAt).toBe('2026-06-01T10:00:00Z');
+    expect(meta.timezone).toBe('UTC');
+    expect(meta.venue).toBe('Court 1');
+    expect(meta.seriesFormat).toEqual({ bestOf: 5, label: 'BO5' });
+  });
+
+  it('throws for invalid generic tournament metadata', () => {
+    expect(() => normalizeMatchMeta({ matchType: 'other' })).toThrow(/matchType/);
+    expect(() => normalizeMatchMeta({ bracketSection: 'other' })).toThrow(/bracketSection/);
+    expect(() => normalizeMatchMeta({ venue: ' ' })).toThrow(/venue/);
   });
 });

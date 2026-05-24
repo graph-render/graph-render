@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 
 import type { TournamentBracketProps } from '../../models/tournamentBracket';
 import { routeBracketEdges } from '../../utils/bracketRouting';
-import { toSquashPositionedNode } from '../../utils/isSquashPositionedNode';
+import { toMatchPositionedNode } from '../../utils/isSquashPositionedNode';
 import { buildStageViews } from '../../utils/stageViews';
 
 interface BracketGraphCanvasProps {
@@ -54,16 +54,16 @@ export function BracketGraphCanvas({
         return;
       }
 
-      const squashNode = toSquashPositionedNode(node);
-      if (!squashNode) {
+      const matchNode = toMatchPositionedNode(node);
+      if (!matchNode) {
         onInvalidNode?.(
           node.id,
-          new TypeError(`Node "${node.id}" is not a valid squash match node.`)
+          new TypeError(`Node "${node.id}" is not a valid tournament match node.`)
         );
         return;
       }
 
-      onMatchClick(squashNode);
+      onMatchClick(matchNode);
     },
     [onInvalidNode, onMatchClick]
   );

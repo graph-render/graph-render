@@ -1,4 +1,4 @@
-import type { SquashPlayer } from '@graph-render/types/tournament';
+import type { MatchPlayer } from '@graph-render/types/tournament';
 
 import { DEFAULT_PLAYERS } from './node';
 
@@ -36,5 +36,5 @@ export const SCORE_LAYOUT_DEFAULT: SquashScoreLayout = {
 export const getSquashScoreLayout = (compact: boolean): SquashScoreLayout =>
   compact ? SCORE_LAYOUT_COMPACT : SCORE_LAYOUT_DEFAULT;
 
-export const DEFAULT_PLAYER_ONE: SquashPlayer = DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
-export const DEFAULT_PLAYER_TWO: SquashPlayer = DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
+export const DEFAULT_PLAYER_ONE: MatchPlayer = DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
+export const DEFAULT_PLAYER_TWO: MatchPlayer = DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };

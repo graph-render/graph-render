@@ -3,11 +3,17 @@ import type { GraphViewport } from './viewport';
 
 export type * from './bracketAppearance';
 
-export interface SquashPlayer {
+export interface MatchPlayer {
+  readonly id?: string | undefined;
   readonly name: string;
   readonly seed?: number | undefined;
   readonly country?: string | undefined;
+  readonly avatarUrl?: string | undefined;
+  readonly teamName?: string | undefined;
 }
+
+/** @deprecated Use MatchPlayer. */
+export type SquashPlayer = MatchPlayer;
 
 export enum MatchStatus {
   Completed = 'completed',
@@ -15,17 +21,67 @@ export enum MatchStatus {
   Upcoming = 'upcoming',
 }
 
-export interface SquashMatchMeta {
+export enum MatchType {
+  Standard = 'standard',
+  ThirdPlace = 'thirdPlace',
+  GrandFinal = 'grandFinal',
+  Bye = 'bye',
+  Walkover = 'walkover',
+}
+
+export enum BracketSection {
+  Winners = 'winners',
+  Losers = 'losers',
+  GrandFinal = 'grandFinal',
+}
+
+export interface SeriesFormat {
+  readonly bestOf?: number | undefined;
+  readonly label?: string | undefined;
+}
+
+export interface MatchMeta {
   readonly stage?: string | undefined;
-  readonly players?: readonly SquashPlayer[] | undefined;
+  readonly players?: readonly MatchPlayer[] | undefined;
   readonly sets?: ReadonlyArray<readonly number[]> | undefined;
   readonly tiebreaks?: ReadonlyArray<readonly number[] | null> | undefined;
   readonly status?: MatchStatus | undefined;
   readonly currentSet?: number | undefined;
+  readonly matchType?: MatchType | `${MatchType}` | undefined;
+  readonly bracketSection?: BracketSection | `${BracketSection}` | undefined;
+  readonly scheduledAt?: string | undefined;
+  readonly timezone?: string | undefined;
+  readonly venue?: string | undefined;
+  readonly seriesFormat?: SeriesFormat | string | undefined;
 }
 
-export type SquashNodeData = NodeData<unknown, SquashMatchMeta, string>;
-export type SquashPositionedNode = PositionedNode<unknown, SquashMatchMeta, string>;
+/** @deprecated Use MatchMeta. */
+export type SquashMatchMeta = MatchMeta;
+
+export type MatchNodeData = NodeData<unknown, MatchMeta, string>;
+export type MatchPositionedNode = PositionedNode<unknown, MatchMeta, string>;
+
+/** @deprecated Use MatchNodeData. */
+export type SquashNodeData = MatchNodeData;
+/** @deprecated Use MatchPositionedNode. */
+export type SquashPositionedNode = MatchPositionedNode;
+
+export interface TournamentMatch {
+  readonly id: string;
+  readonly meta: MatchMeta;
+}
+
+export type TournamentStage =
+  | {
+      readonly type: 'elimination';
+      readonly id?: string | undefined;
+      readonly name?: string | undefined;
+    }
+  | {
+      readonly type: 'groups';
+      readonly id?: string | undefined;
+      readonly name?: string | undefined;
+    };
 
 export enum SquashNodeRenderMode {
   Svg = 'svg',

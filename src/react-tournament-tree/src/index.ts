@@ -44,7 +44,13 @@ export {
 } from './utils/roundLabels';
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
+/* eslint-disable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export type {
+  MatchMeta,
+  MatchNodeData,
+  MatchPlayer,
+  MatchPositionedNode,
+  SeriesFormat,
   SquashMatchMeta,
   SquashNodeData,
   SquashPlayer,
@@ -53,9 +59,15 @@ export type {
   StageView,
   StageViewportResult,
   TournamentBracketAppearance,
+  TournamentMatch,
+  TournamentStage,
+  TournamentThemeColors,
 } from '@graph-render/types/tournament';
+/* eslint-enable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export {
+  BracketSection,
   MatchStatus,
+  MatchType,
   SquashNodeRenderMode,
   VerticalStagePosition,
 } from '@graph-render/types/tournament';
