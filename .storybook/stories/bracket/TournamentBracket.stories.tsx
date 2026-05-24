@@ -20,6 +20,17 @@ const generatedBracket = generateSingleEliminationBracket(
   ],
   { seeded: true }
 );
+const generatedBracketWithByes = generateSingleEliminationBracket(
+  [
+    { name: 'Seed 1', seed: 1, country: 'EGY' },
+    { name: 'Seed 2', seed: 2, country: 'USA' },
+    { name: 'Seed 3', seed: 3, country: 'NZL' },
+    { name: 'Seed 4', seed: 4, country: 'FRA' },
+    { name: 'Seed 5', seed: 5, country: 'ENG' },
+    { name: 'Seed 6', seed: 6, country: 'WAL' },
+  ],
+  { seeding: 'standard', byeLabel: 'BYE' }
+);
 
 const meta: Meta<typeof TournamentBracket> = {
   title: 'Tournament/Bracket',
@@ -83,6 +94,22 @@ export const GeneratedSingleElimination: Story = {
       description: {
         story:
           'Uses generateSingleEliminationBracket() to create a ready-to-render bracket from participants.',
+      },
+    },
+  },
+};
+
+export const GeneratedWithByes: Story = {
+  name: 'Generated — seeded draw with byes',
+  args: {
+    graph: generatedBracketWithByes,
+    title: 'Generated Seeded Draw',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Shows a non-power-of-two draw rounded to the next bracket size with explicit bye rows and automatic advancement metadata.',
       },
     },
   },

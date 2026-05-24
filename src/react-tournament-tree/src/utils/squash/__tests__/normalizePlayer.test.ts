@@ -41,6 +41,7 @@ describe('normalizePlayer', () => {
         name: 'Alice',
         avatarUrl: 'https://example.com/a.png',
         teamName: 'Falcons',
+        isBye: true,
       },
       'p1'
     );
@@ -48,6 +49,7 @@ describe('normalizePlayer', () => {
       id: 'p-1',
       avatarUrl: 'https://example.com/a.png',
       teamName: 'Falcons',
+      isBye: true,
     });
   });
 

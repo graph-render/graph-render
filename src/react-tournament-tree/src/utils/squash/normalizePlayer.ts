@@ -43,6 +43,9 @@ export const normalizePlayer = (value: unknown, label: string): MatchPlayer => {
   if (player.seed != null && !isFiniteNumber(player.seed)) {
     throw new TypeError(`Invalid match payload: ${label}.seed must be a finite number.`);
   }
+  if (player.isBye != null && typeof player.isBye !== 'boolean') {
+    throw new TypeError(`Invalid match payload: ${label}.isBye must be a boolean when provided.`);
+  }
 
   const id = normalizeOptionalString(player.id, `${label}.id`);
   const country = normalizeOptionalString(player.country, `${label}.country`);
@@ -55,6 +58,7 @@ export const normalizePlayer = (value: unknown, label: string): MatchPlayer => {
     ...(country ? { country } : {}),
     ...(avatarUrl ? { avatarUrl } : {}),
     ...(teamName ? { teamName } : {}),
+    ...(player.isBye !== undefined ? { isBye: player.isBye } : {}),
   };
 };
 

@@ -379,6 +379,7 @@ interface MatchPlayer {
   country?: string;
   avatarUrl?: string;
   teamName?: string;
+  isBye?: boolean;
 }
 
 interface MatchMeta {
@@ -445,7 +446,7 @@ const graph = generateSingleEliminationBracket(
     { name: 'Seed 3', seed: 3 },
   ],
   {
-    seeded: true,
+    seeding: 'standard',
     includeThirdPlace: true,
     byeLabel: 'BYE',
   }
@@ -454,7 +455,17 @@ const graph = generateSingleEliminationBracket(
 <TournamentBracket graph={graph} />;
 ```
 
-The generator accepts participant strings or `MatchPlayer` objects, creates stable match IDs, fills non-power-of-two draws with byes, and returns the same `NxGraphInput` shape accepted by `TournamentBracket`.
+The generator accepts participant strings or `MatchPlayer` objects, creates stable match IDs, fills non-power-of-two draws with explicit bye slots, advances players over byes in downstream metadata, and returns the same `NxGraphInput` shape accepted by `TournamentBracket`.
+
+Supported draw modes:
+
+| Option                | Behavior                                      |
+| --------------------- | --------------------------------------------- |
+| `seeding: 'none'`     | Preserve participant order                    |
+| `seeding: 'standard'` | Place seeds using standard bracket positions  |
+| `seeding: 'manual'`   | Use `seedOrder` to control seed-rank order    |
+| `seeding: 'random'`   | Shuffle entrants; pass `shuffle` for testing  |
+| `seeded: true`        | Backward-compatible shortcut for `'standard'` |
 
 ---
 

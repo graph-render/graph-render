@@ -89,8 +89,70 @@ describe('generateSingleEliminationBracket', () => {
     );
     expect(graph.nodes?.['r1-m1']?.meta?.players?.map((player) => player.name)).toEqual([
       'Seed 1',
-      'Seed 2',
+      'Seed 4',
     ]);
+  });
+
+  it('places standard seeded byes against top seeds', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(6), {
+      seeding: 'standard',
+    });
+    expect(graph.nodes?.['r1-m1']?.meta?.players?.map((player) => player.name)).toEqual([
+      'Player 1',
+      'BYE',
+    ]);
+    expect(graph.nodes?.['r1-m3']?.meta?.players?.map((player) => player.name)).toEqual([
+      'Player 2',
+      'BYE',
+    ]);
+    expect(graph.nodes?.['r2-m1']?.meta?.players?.[0]?.name).toBe('Player 1');
+    expect(graph.nodes?.['r2-m2']?.meta?.players?.[0]?.name).toBe('Player 2');
+  });
+
+  it('supports manual seed order', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(4), {
+      seeding: 'manual',
+      seedOrder: [1, 4, 2, 3],
+    });
+    expect(graph.nodes?.['r1-m1']?.meta?.players?.map((player) => player.name)).toEqual([
+      'Player 1',
+      'Player 4',
+    ]);
+  });
+
+  it('supports deterministic random draw injection', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(4), {
+      seeding: 'random',
+      shuffle: (participants) => [...participants].reverse(),
+    });
+    expect(graph.nodes?.['r1-m1']?.meta?.players?.map((player) => player.name)).toEqual([
+      'Player 4',
+      'Player 3',
+    ]);
+  });
+
+  it('marks bye matches explicitly', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(3), {
+      seeding: 'standard',
+    });
+    expect(graph.nodes?.['r1-m1']?.meta?.matchType).toBe('bye');
+    expect(graph.nodes?.['r1-m1']?.meta?.status).toBe('completed');
+    expect(graph.nodes?.['r1-m1']?.meta?.players?.[1]?.isBye).toBe(true);
+  });
+
+  it('rejects invalid manual seed orders', () => {
+    expect(() =>
+      generateSingleEliminationBracket(namedParticipants(4), {
+        seeding: 'manual',
+        seedOrder: [1, 1, 2, 3],
+      })
+    ).toThrow(/duplicates/);
+    expect(() =>
+      generateSingleEliminationBracket(namedParticipants(4), {
+        seeding: 'manual',
+        seedOrder: [1, 2],
+      })
+    ).toThrow(/exactly one entry/);
   });
 
   it('can include a third-place placeholder match', () => {

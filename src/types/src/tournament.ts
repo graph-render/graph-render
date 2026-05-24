@@ -10,6 +10,7 @@ export interface MatchPlayer {
   readonly country?: string | undefined;
   readonly avatarUrl?: string | undefined;
   readonly teamName?: string | undefined;
+  readonly isBye?: boolean | undefined;
 }
 
 /** @deprecated Use MatchPlayer. */
