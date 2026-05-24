@@ -3,7 +3,12 @@ import { MatchStatus } from '@graph-render/types/tournament';
 import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH } from '../../constants';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
-import { getScoreGroupWidth, getScoreSegments, normalizePlayerKey } from '../../utils/squash';
+import {
+  getMatchTypeLabel,
+  getScoreGroupWidth,
+  getScoreSegments,
+  normalizePlayerKey,
+} from '../../utils/squash';
 import { SquashPlayerHtmlRow } from './SquashPlayerHtmlRow';
 
 export function SquashNodeHtml(props: SquashNodeVariantProps) {
@@ -11,6 +16,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
   const { matchCard, typography } = useBracketAppearance();
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
+  const matchTypeLabel = getMatchTypeLabel(meta.matchType);
   const scoreGroupWidth = getScoreGroupWidth(
     Math.max(meta.sets.length, 1),
     matchCard.score.segmentWidth,
@@ -47,6 +53,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
         }}
       >
         {meta.status === MatchStatus.Live ? <LiveIndicator color={colors.LIVE_INDICATOR} /> : null}
+        {matchTypeLabel ? <MatchTypeBadge label={matchTypeLabel} /> : null}
         <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)' }}>
           {[p1, p2].map((player, playerIndex) => {
             const isWinner = winnerIndex === playerIndex;
@@ -78,6 +85,33 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
         </div>
       </div>
     </foreignObject>
+  );
+}
+
+function MatchTypeBadge({ label }: { readonly label: string }) {
+  const { colors, typography } = useBracketAppearance();
+
+  return (
+    <div
+      data-testid="match-type-badge"
+      style={{
+        position: 'absolute',
+        top: 6,
+        left: 8,
+        zIndex: 1,
+        borderRadius: 999,
+        padding: '1px 6px',
+        background: colors.BADGE_BG,
+        color: colors.BADGE_TEXT,
+        fontFamily: typography.bodyFontFamily,
+        fontSize: 8,
+        fontWeight: 800,
+        letterSpacing: '0.04em',
+        textTransform: 'uppercase',
+      }}
+    >
+      {label}
+    </div>
   );
 }
 

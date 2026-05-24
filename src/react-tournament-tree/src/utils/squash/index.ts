@@ -9,4 +9,10 @@ export {
   getScoreSegments,
   getSetWins,
 } from './score';
-export { getMatchAriaLabel, getPlayerBadgeText, getPlayerMetadataText, truncateText } from './text';
+export {
+  getMatchAriaLabel,
+  getMatchTypeLabel,
+  getPlayerBadgeText,
+  getPlayerMetadataText,
+  truncateText,
+} from './text';

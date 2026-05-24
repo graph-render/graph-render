@@ -62,6 +62,20 @@ describe('SquashNodeSvg', () => {
     ).toHaveAttribute('tabindex', '0');
   });
 
+  it('renders a third-place SVG badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, stage: 'Bronze Match', matchType: 'thirdPlace' }}
+          ariaLabel="Third place match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-svg-badge')).toHaveTextContent('THIRD PLACE');
+    expect(screen.getByRole('button', { name: /Third place match/i })).toBeInTheDocument();
+  });
+
   it('renders score values from meta.sets', () => {
     renderWithAppearance(
       <svg>

@@ -54,6 +54,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
     isTBD: p1.name === 'TBD' || p2.name === 'TBD',
     ariaLabel: getMatchAriaLabel({
       currentSet: meta.currentSet,
+      matchType: meta.matchType,
       players: meta.players,
       setWins,
       stage: meta.stage,

@@ -32,6 +32,14 @@ export const getPlayerMetadataText = (player: MatchPlayer): string => {
 
 const statusText = (status: MatchStatus): string => status;
 
+export const getMatchTypeLabel = (matchType: string | undefined): string => {
+  if (matchType === 'thirdPlace') return 'Third place';
+  if (matchType === 'grandFinal') return 'Grand final';
+  if (matchType === 'bye') return 'Bye';
+  if (matchType === 'walkover') return 'Walkover';
+  return '';
+};
+
 export const getMatchAriaLabel = ({
   currentSet,
   players,
@@ -40,8 +48,10 @@ export const getMatchAriaLabel = ({
   status,
   venue,
   winnerIndex,
+  matchType,
 }: {
   readonly currentSet: number;
+  readonly matchType?: string | undefined;
   readonly players: readonly [MatchPlayer, MatchPlayer];
   readonly setWins: SetWins;
   readonly stage: string;
@@ -55,8 +65,10 @@ export const getMatchAriaLabel = ({
   const winner = winnerPlayer ? `Winner ${winnerPlayer.name}` : 'No winner yet';
   const liveDetail = statusText(status) === 'live' ? ` Current set ${currentSet + 1}.` : '';
   const venueDetail = venue ? ` Venue ${venue}.` : '';
+  const matchTypeDetail = getMatchTypeLabel(matchType);
+  const prefix = matchTypeDetail ? `${matchTypeDetail} match` : `${stage} match`;
 
-  return `${stage} match: ${playerOne.name} versus ${playerTwo.name}. Status ${statusText(
+  return `${prefix}: ${playerOne.name} versus ${playerTwo.name}. Status ${statusText(
     status
   )}. Score ${score}. ${winner}.${liveDetail}${venueDetail}`;
 };

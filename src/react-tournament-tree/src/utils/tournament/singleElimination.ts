@@ -11,6 +11,7 @@ export interface SingleEliminationBracketOptions {
   readonly seedOrder?: readonly number[] | undefined;
   readonly shuffle?: ((participants: readonly MatchPlayer[]) => readonly MatchPlayer[]) | undefined;
   readonly includeThirdPlace?: boolean | undefined;
+  readonly thirdPlaceLabel?: string | undefined;
   readonly byeLabel?: string | undefined;
 }
 
@@ -274,8 +275,9 @@ export function generateSingleEliminationBracket(
   }
 
   if (options.includeThirdPlace && roundCount >= 3) {
+    const thirdPlaceLabel = options.thirdPlaceLabel?.trim() || 'Third Place';
     nodes['third-place'] = createNode({
-      stage: 'Third Place',
+      stage: thirdPlaceLabel,
       matchType: 'thirdPlace',
       players: [TBD_PLAYER, TBD_PLAYER],
     });

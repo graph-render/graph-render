@@ -11,6 +11,15 @@ const edgeId = (
   return singleEdge?.id;
 };
 
+const edgeMeta = (
+  edge: ReturnType<typeof generateSingleEliminationBracket>['adj'][string][string] | undefined
+) => {
+  const singleEdge = (Array.isArray(edge) ? edge[0] : edge) as
+    | { readonly meta?: Record<string, unknown> | undefined }
+    | undefined;
+  return singleEdge?.meta;
+};
+
 const namedParticipants = (count: number) =>
   Array.from({ length: count }, (_, index) => ({
     name: `Player ${index + 1}`,
@@ -158,10 +167,13 @@ describe('generateSingleEliminationBracket', () => {
   it('can include a third-place placeholder match', () => {
     const graph = generateSingleEliminationBracket(namedParticipants(8), {
       includeThirdPlace: true,
+      thirdPlaceLabel: 'Bronze Match',
     });
     expect(graph.nodes?.['third-place']?.meta?.matchType).toBe('thirdPlace');
+    expect(graph.nodes?.['third-place']?.meta?.stage).toBe('Bronze Match');
     expect(edgeId(graph.adj['r2-m1']?.['third-place'])).toBe('r2-m1-third-place');
     expect(edgeId(graph.adj['r2-m2']?.['third-place'])).toBe('r2-m2-third-place');
+    expect(edgeMeta(graph.adj['r2-m1']?.['third-place'])?.['sourceResult']).toBe('loser');
   });
 
   it('rejects invalid participants', () => {

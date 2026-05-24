@@ -449,6 +449,7 @@ const graph = generateSingleEliminationBracket(
   {
     seeding: 'standard',
     includeThirdPlace: true,
+    thirdPlaceLabel: 'Bronze Match',
     byeLabel: 'BYE',
   }
 );
@@ -457,6 +458,8 @@ const graph = generateSingleEliminationBracket(
 ```
 
 The generator accepts participant strings or `MatchPlayer` objects, creates stable match IDs, fills non-power-of-two draws with explicit bye slots, advances players over byes in downstream metadata, and returns the same `NxGraphInput` shape accepted by `TournamentBracket`.
+
+When `includeThirdPlace` is enabled, semifinal loser feeds are connected to a semantic `matchType: 'thirdPlace'` node. Use `thirdPlaceLabel` to customize the displayed stage label.
 
 Supported draw modes:
 

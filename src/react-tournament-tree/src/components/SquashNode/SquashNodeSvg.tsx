@@ -5,7 +5,12 @@ import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH, NODE_DIMENSIONS } from '../../const
 import { getSquashScoreLayout } from '../../constants/squashNode';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
-import { getScoreGroupWidth, getScoreSegments, normalizePlayerKey } from '../../utils/squash';
+import {
+  getMatchTypeLabel,
+  getScoreGroupWidth,
+  getScoreSegments,
+  normalizePlayerKey,
+} from '../../utils/squash';
 import { SquashPlayerSvgRow } from './SquashPlayerSvgRow';
 
 export function SquashNodeSvg(props: SquashNodeVariantProps) {
@@ -16,6 +21,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
     : defaultMatchCard.score;
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
+  const matchTypeLabel = getMatchTypeLabel(meta.matchType);
   const {
     insetX,
     badgeSize,
@@ -72,6 +78,31 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
         >
           <title>Live match</title>
           <circle r={4} fill={colors.LIVE_INDICATOR} />
+        </g>
+      ) : null}
+
+      {matchTypeLabel ? (
+        <g transform="translate(8, 14)" data-testid="match-type-svg-badge">
+          <rect
+            x={0}
+            y={-8}
+            width={Math.max(54, matchTypeLabel.length * 6)}
+            height={16}
+            rx={8}
+            fill={colors.BADGE_BG}
+          />
+          <text
+            x={Math.max(54, matchTypeLabel.length * 6) / 2}
+            y={0}
+            textAnchor="middle"
+            dy="0.35em"
+            fontSize={8}
+            fontWeight={800}
+            fill={colors.BADGE_TEXT}
+            fontFamily={typography.bodyFontFamily}
+          >
+            {matchTypeLabel.toUpperCase()}
+          </text>
         </g>
       ) : null}
 
