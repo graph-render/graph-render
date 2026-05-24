@@ -32,6 +32,7 @@ export function RoundNavigationButton({
   return (
     <button
       type="button"
+      data-print-hidden
       onClick={onClick}
       disabled={disabled}
       aria-label={label}

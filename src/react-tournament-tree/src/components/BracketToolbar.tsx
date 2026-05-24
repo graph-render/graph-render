@@ -34,6 +34,8 @@ export const BracketToolbar = React.memo<BracketToolbarProps>(function BracketTo
 
   return (
     <div
+      data-print-hidden
+      data-testid="bracket-toolbar"
       style={{
         display: 'flex',
         gap: 8,

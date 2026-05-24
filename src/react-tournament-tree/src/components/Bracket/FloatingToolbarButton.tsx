@@ -24,6 +24,7 @@ export function FloatingToolbarButton({
 
   return (
     <div
+      data-print-hidden
       style={{
         position: 'absolute',
         right: 18,

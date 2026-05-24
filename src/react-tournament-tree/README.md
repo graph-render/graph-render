@@ -470,6 +470,14 @@ Supported draw modes:
 
 ---
 
+## Printing brackets
+
+`TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.
+
+For large draws, use landscape orientation and reduce browser print scale until all rounds fit. For venue posters or very large brackets, export SVG from the toolbar and print the SVG from a design or browser tool for more control.
+
+---
+
 ## Advanced: hooks and exports
 
 ### `useBracketAppearance()`

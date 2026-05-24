@@ -18,6 +18,7 @@ export function StageStepButton({
   return (
     <button
       type="button"
+      data-print-hidden
       onClick={onClick}
       disabled={disabled}
       aria-label={label}
