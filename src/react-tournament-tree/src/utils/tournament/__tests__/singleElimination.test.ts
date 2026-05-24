@@ -1,0 +1,109 @@
+import { describe, expect, it } from 'vitest';
+
+import { generateSingleEliminationBracket, nextPowerOfTwo } from '../singleElimination';
+
+const edgeId = (
+  edge: ReturnType<typeof generateSingleEliminationBracket>['adj'][string][string] | undefined
+) => {
+  const singleEdge = (Array.isArray(edge) ? edge[0] : edge) as
+    | { readonly id?: string | undefined }
+    | undefined;
+  return singleEdge?.id;
+};
+
+const namedParticipants = (count: number) =>
+  Array.from({ length: count }, (_, index) => ({
+    name: `Player ${index + 1}`,
+    seed: index + 1,
+  }));
+
+describe('nextPowerOfTwo', () => {
+  it.each([
+    [2, 2],
+    [3, 4],
+    [6, 8],
+    [10, 16],
+    [32, 32],
+  ])('rounds %i to %i', (input, expected) => {
+    expect(nextPowerOfTwo(input)).toBe(expected);
+  });
+
+  it('throws for fewer than two participants', () => {
+    expect(() => nextPowerOfTwo(1)).toThrow(/at least two/);
+  });
+});
+
+describe('generateSingleEliminationBracket', () => {
+  it.each([
+    [2, 1],
+    [4, 3],
+    [8, 7],
+    [16, 15],
+    [32, 31],
+  ])('generates a %i-player bracket with %i matches', (participantCount, matchCount) => {
+    const graph = generateSingleEliminationBracket(namedParticipants(participantCount));
+    expect(Object.keys(graph.nodes ?? {})).toHaveLength(matchCount);
+    expect(graph.nodes?.['final']).toBeDefined();
+  });
+
+  it.each([
+    [3, 3],
+    [6, 7],
+    [10, 15],
+    [12, 15],
+    [14, 15],
+  ])('generates a %i-player bracket with byes to %i matches', (participantCount, matchCount) => {
+    const graph = generateSingleEliminationBracket(namedParticipants(participantCount), {
+      byeLabel: 'BYE',
+    });
+    expect(Object.keys(graph.nodes ?? {})).toHaveLength(matchCount);
+    expect(
+      Object.values(graph.nodes ?? {}).some((node) =>
+        node.meta?.players?.some((player) => player.name === 'BYE')
+      )
+    ).toBe(true);
+  });
+
+  it('accepts participant strings', () => {
+    const graph = generateSingleEliminationBracket(['Alice', 'Bob']);
+    expect(graph.nodes?.['final']?.meta?.players?.[0]?.name).toBe('Alice');
+    expect(graph.nodes?.['final']?.meta?.players?.[1]?.name).toBe('Bob');
+  });
+
+  it('uses stable round and edge IDs', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(4));
+    expect(Object.keys(graph.nodes ?? {})).toEqual(['r1-m1', 'r1-m2', 'final']);
+    expect(edgeId(graph.adj['r1-m1']?.['final'])).toBe('r1-m1-final');
+    expect(edgeId(graph.adj['r1-m2']?.['final'])).toBe('r1-m2-final');
+  });
+
+  it('sorts seeded participants by seed when requested', () => {
+    const graph = generateSingleEliminationBracket(
+      [
+        { name: 'Seed 4', seed: 4 },
+        { name: 'Seed 1', seed: 1 },
+        { name: 'Seed 2', seed: 2 },
+        { name: 'Seed 3', seed: 3 },
+      ],
+      { seeded: true }
+    );
+    expect(graph.nodes?.['r1-m1']?.meta?.players?.map((player) => player.name)).toEqual([
+      'Seed 1',
+      'Seed 2',
+    ]);
+  });
+
+  it('can include a third-place placeholder match', () => {
+    const graph = generateSingleEliminationBracket(namedParticipants(8), {
+      includeThirdPlace: true,
+    });
+    expect(graph.nodes?.['third-place']?.meta?.matchType).toBe('thirdPlace');
+    expect(edgeId(graph.adj['r2-m1']?.['third-place'])).toBe('r2-m1-third-place');
+    expect(edgeId(graph.adj['r2-m2']?.['third-place'])).toBe('r2-m2-third-place');
+  });
+
+  it('rejects invalid participants', () => {
+    expect(() => generateSingleEliminationBracket(['Alice', ' '])).toThrow(/non-empty/);
+    expect(() => generateSingleEliminationBracket(['Alice'])).toThrow(/at least two/);
+  });
+});

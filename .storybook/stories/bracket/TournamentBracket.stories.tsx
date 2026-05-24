@@ -1,4 +1,4 @@
-import { TournamentBracket } from '@graph-render/tournament-tree';
+import { generateSingleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { bracketGraph } from './data/bracket';
@@ -6,6 +6,20 @@ import { bracketGraphLive } from './data/bracket_live';
 import { bracketGraphQF } from './data/bracket_qf';
 import { bracketGraphR16 } from './data/bracket_r8';
 import { bracketGraphR64 } from './data/bracket_r64';
+
+const generatedBracket = generateSingleEliminationBracket(
+  [
+    { name: 'Nour El Sherbini', seed: 1, country: 'EGY' },
+    { name: 'Hania El Hammamy', seed: 8, country: 'EGY' },
+    { name: 'Nouran Gohar', seed: 4, country: 'EGY' },
+    { name: 'Amanda Sobhy', seed: 5, country: 'USA' },
+    { name: 'Nour El Tayeb', seed: 2, country: 'EGY' },
+    { name: 'Camille Serme', seed: 7, country: 'FRA' },
+    { name: 'Raneem El Welily', seed: 3, country: 'EGY' },
+    { name: 'Joelle King', seed: 6, country: 'NZL' },
+  ],
+  { seeded: true }
+);
 
 const meta: Meta<typeof TournamentBracket> = {
   title: 'Tournament/Bracket',
@@ -55,6 +69,22 @@ export const RoundOf64: Story = {
   args: {
     graph: bracketGraphR64,
     title: 'Round of 64',
+  },
+};
+
+export const GeneratedSingleElimination: Story = {
+  name: 'Generated — single elimination',
+  args: {
+    graph: generatedBracket,
+    title: 'Generated Draw',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Uses generateSingleEliminationBracket() to create a ready-to-render bracket from participants.',
+      },
+    },
   },
 };
 

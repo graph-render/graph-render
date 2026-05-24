@@ -430,6 +430,34 @@ const graph = {
 
 ---
 
+## Generate a single-elimination bracket
+
+Use `generateSingleEliminationBracket()` when you want a ready-to-render graph from participants instead of hand-writing adjacency maps.
+
+```tsx
+import { generateSingleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
+
+const graph = generateSingleEliminationBracket(
+  [
+    { name: 'Seed 1', seed: 1 },
+    { name: 'Seed 4', seed: 4 },
+    { name: 'Seed 2', seed: 2 },
+    { name: 'Seed 3', seed: 3 },
+  ],
+  {
+    seeded: true,
+    includeThirdPlace: true,
+    byeLabel: 'BYE',
+  }
+);
+
+<TournamentBracket graph={graph} />;
+```
+
+The generator accepts participant strings or `MatchPlayer` objects, creates stable match IDs, fills non-power-of-two draws with byes, and returns the same `NxGraphInput` shape accepted by `TournamentBracket`.
+
+---
+
 ## Advanced: hooks and exports
 
 ### `useBracketAppearance()`

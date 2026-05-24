@@ -44,6 +44,14 @@ export {
 } from './utils/roundLabels';
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
+export {
+  generateSingleEliminationBracket,
+  nextPowerOfTwo,
+  type SingleEliminationBracketOptions,
+  type SingleEliminationGraph,
+  type SingleEliminationSeeding,
+  type TournamentParticipantInput,
+} from './utils/tournament';
 /* eslint-disable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export type {
   MatchMeta,
