@@ -2,7 +2,9 @@ import { MatchStatus } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
 import {
+  getBracketSectionLabel,
   getMatchAriaLabel,
+  getMatchBadgeLabel,
   getMatchTypeLabel,
   getPlayerBadgeText,
   getPlayerMetadataText,
@@ -114,6 +116,20 @@ describe('getMatchAriaLabel', () => {
       })
     ).toContain('Third place match: Alice versus Bob');
   });
+
+  it('describes bracket sections semantically', () => {
+    expect(
+      getMatchAriaLabel({
+        bracketSection: 'losers',
+        currentSet: 0,
+        players: [{ name: 'Alice' }, { name: 'Bob' }],
+        setWins: { p1: 0, p2: 0 },
+        stage: 'Losers R1',
+        status: MatchStatus.Upcoming,
+        winnerIndex: null,
+      })
+    ).toContain('Losers match: Alice versus Bob');
+  });
 });
 
 describe('getMatchTypeLabel', () => {
@@ -121,5 +137,21 @@ describe('getMatchTypeLabel', () => {
     expect(getMatchTypeLabel('thirdPlace')).toBe('Third place');
     expect(getMatchTypeLabel('grandFinal')).toBe('Grand final');
     expect(getMatchTypeLabel(undefined)).toBe('');
+  });
+});
+
+describe('getBracketSectionLabel', () => {
+  it('returns labels for bracket sections', () => {
+    expect(getBracketSectionLabel('winners')).toBe('Winners');
+    expect(getBracketSectionLabel('losers')).toBe('Losers');
+    expect(getBracketSectionLabel('grandFinal')).toBe('Grand final');
+    expect(getBracketSectionLabel(undefined)).toBe('');
+  });
+});
+
+describe('getMatchBadgeLabel', () => {
+  it('prefers semantic match type labels over bracket sections', () => {
+    expect(getMatchBadgeLabel('grandFinal', 'winners')).toBe('Grand final');
+    expect(getMatchBadgeLabel(undefined, 'winners')).toBe('Winners');
   });
 });

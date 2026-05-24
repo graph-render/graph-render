@@ -40,7 +40,20 @@ export const getMatchTypeLabel = (matchType: string | undefined): string => {
   return '';
 };
 
+export const getBracketSectionLabel = (bracketSection: string | undefined): string => {
+  if (bracketSection === 'winners') return 'Winners';
+  if (bracketSection === 'losers') return 'Losers';
+  if (bracketSection === 'grandFinal') return 'Grand final';
+  return '';
+};
+
+export const getMatchBadgeLabel = (
+  matchType: string | undefined,
+  bracketSection: string | undefined
+): string => getMatchTypeLabel(matchType) || getBracketSectionLabel(bracketSection);
+
 export const getMatchAriaLabel = ({
+  bracketSection,
   currentSet,
   players,
   setWins,
@@ -50,6 +63,7 @@ export const getMatchAriaLabel = ({
   winnerIndex,
   matchType,
 }: {
+  readonly bracketSection?: string | undefined;
   readonly currentSet: number;
   readonly matchType?: string | undefined;
   readonly players: readonly [MatchPlayer, MatchPlayer];
@@ -65,8 +79,8 @@ export const getMatchAriaLabel = ({
   const winner = winnerPlayer ? `Winner ${winnerPlayer.name}` : 'No winner yet';
   const liveDetail = statusText(status) === 'live' ? ` Current set ${currentSet + 1}.` : '';
   const venueDetail = venue ? ` Venue ${venue}.` : '';
-  const matchTypeDetail = getMatchTypeLabel(matchType);
-  const prefix = matchTypeDetail ? `${matchTypeDetail} match` : `${stage} match`;
+  const semanticLabel = getMatchBadgeLabel(matchType, bracketSection);
+  const prefix = semanticLabel ? `${semanticLabel} match` : `${stage} match`;
 
   return `${prefix}: ${playerOne.name} versus ${playerTwo.name}. Status ${statusText(
     status

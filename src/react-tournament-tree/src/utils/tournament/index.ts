@@ -1,4 +1,10 @@
 export {
+  type DoubleEliminationBracketOptions,
+  type DoubleEliminationEdgeMeta,
+  type DoubleEliminationGraph,
+  generateDoubleEliminationBracket,
+} from './doubleElimination';
+export {
   generateSingleEliminationBracket,
   nextPowerOfTwo,
   type SingleEliminationBracketOptions,

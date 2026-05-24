@@ -76,6 +76,20 @@ describe('SquashNodeHtml', () => {
     expect(screen.getByRole('button', { name: /Third place match/i })).toBeInTheDocument();
   });
 
+  it('renders a bracket-section badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeHtml
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, bracketSection: 'losers', stage: 'Losers R1' }}
+          ariaLabel="Losers match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-badge')).toHaveTextContent('Losers');
+    expect(screen.getByRole('button', { name: /Losers match/i })).toBeInTheDocument();
+  });
+
   it('does NOT show live indicator for completed matches', () => {
     renderWithAppearance(
       <svg>

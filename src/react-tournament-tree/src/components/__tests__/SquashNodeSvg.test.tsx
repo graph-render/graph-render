@@ -76,6 +76,20 @@ describe('SquashNodeSvg', () => {
     expect(screen.getByRole('button', { name: /Third place match/i })).toBeInTheDocument();
   });
 
+  it('renders a bracket-section SVG badge', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{ ...MOCK_META, bracketSection: 'winners', stage: 'Winners QF' }}
+          ariaLabel="Winners match: Player One versus Player Two. Status completed. Score Player One 2 sets, Player Two 1 sets. Winner Player One."
+        />
+      </svg>
+    );
+    expect(screen.getByTestId('match-type-svg-badge')).toHaveTextContent('WINNERS');
+    expect(screen.getByRole('button', { name: /Winners match/i })).toBeInTheDocument();
+  });
+
   it('renders score values from meta.sets', () => {
     renderWithAppearance(
       <svg>

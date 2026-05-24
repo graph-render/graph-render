@@ -10,7 +10,9 @@ export {
   getSetWins,
 } from './score';
 export {
+  getBracketSectionLabel,
   getMatchAriaLabel,
+  getMatchBadgeLabel,
   getMatchTypeLabel,
   getPlayerBadgeText,
   getPlayerMetadataText,

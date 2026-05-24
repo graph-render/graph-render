@@ -45,6 +45,10 @@ export {
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
 export {
+  type DoubleEliminationBracketOptions,
+  type DoubleEliminationEdgeMeta,
+  type DoubleEliminationGraph,
+  generateDoubleEliminationBracket,
   generateSingleEliminationBracket,
   nextPowerOfTwo,
   type SingleEliminationBracketOptions,

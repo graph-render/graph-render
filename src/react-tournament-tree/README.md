@@ -473,6 +473,47 @@ Supported draw modes:
 
 ---
 
+## Generate a double-elimination bracket
+
+Use `generateDoubleEliminationBracket()` for esports-style draws with winners bracket, losers bracket, grand final, and an optional reset final.
+
+```tsx
+import { generateDoubleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
+
+const graph = generateDoubleEliminationBracket(
+  Array.from({ length: 16 }, (_, index) => ({
+    name: `Team ${index + 1}`,
+    seed: index + 1,
+  })),
+  {
+    includeBracketReset: true,
+    grandFinalLabel: 'Championship Match',
+    bracketResetLabel: 'Reset Final',
+  }
+);
+
+<TournamentBracket
+  graph={graph}
+  title="Double Elimination"
+  config={{
+    labels: [
+      'Winners R1',
+      'Winners QF',
+      'Winners SF',
+      'Winners Final',
+      'Losers Bracket',
+      'Grand Final',
+    ],
+  }}
+/>;
+```
+
+The generator supports 8-, 16-, and 32-player draws. It returns standard `NxGraphInput` nodes with `bracketSection: 'winners' | 'losers' | 'grandFinal'`; grand-final nodes also use `matchType: 'grandFinal'`. Winners-bracket loser drops are encoded on edge metadata as `{ sourceResult: 'loser', bracketDrop: true }`, so custom match cards and edge renderers can distinguish drop paths from normal winner advancement.
+
+Generated nodes include fixed positions that place the winners bracket above the losers bracket and grand-final nodes to the right. You can still pass a custom `vertexComponent` because all tournament semantics live in node/edge metadata rather than in the built-in card renderer.
+
+---
+
 ## Printing brackets
 
 `TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.
