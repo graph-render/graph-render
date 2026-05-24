@@ -5,6 +5,15 @@ export {
   generateDoubleEliminationBracket,
 } from './doubleElimination';
 export {
+  calculateRoundRobinStandings,
+  generateRoundRobinSchedule,
+  groupRoundRobinMatchesByRound,
+  type RoundRobinGroup,
+  type RoundRobinMatch,
+  type RoundRobinPointsRule,
+  type RoundRobinStanding,
+} from './roundRobin';
+export {
   generateSingleEliminationBracket,
   nextPowerOfTwo,
   type SingleEliminationBracketOptions,

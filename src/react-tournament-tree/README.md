@@ -514,6 +514,35 @@ Generated nodes include fixed positions that place the winners bracket above the
 
 ---
 
+## Render a round-robin group
+
+Round robin is rendered as standings plus a schedule, not through the graph layout engine.
+
+```tsx
+import {
+  generateRoundRobinSchedule,
+  MatchStatus,
+  RoundRobinBracket,
+} from '@graph-render/tournament-tree';
+
+const participants = ['Alpha', 'Bravo', 'Charlie', 'Delta'];
+const schedule = generateRoundRobinSchedule(participants);
+const matches = schedule.map((match) =>
+  match.id === 'rr-r1-m1' ? { ...match, scores: [2, 1], status: MatchStatus.Completed } : match
+);
+
+<RoundRobinBracket
+  participants={participants}
+  matches={matches}
+  points={{ win: 3, draw: 1, loss: 0 }}
+  title="Group A"
+/>;
+```
+
+`calculateRoundRobinStandings(participants, matches, points)` derives table rows from completed match results. Equal scores are represented as draws, upcoming/live matches are ignored for standings until completed, and sorting uses points, score difference, score for, wins, then player name. Odd-sized groups are supported by the schedule generator without rendering bye matches.
+
+---
+
 ## Printing brackets
 
 `TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.

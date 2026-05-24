@@ -41,6 +41,42 @@ export interface SeriesFormat {
   readonly label?: string | undefined;
 }
 
+export interface RoundRobinPointsRule {
+  readonly win?: number | undefined;
+  readonly draw?: number | undefined;
+  readonly loss?: number | undefined;
+}
+
+export interface RoundRobinMatch {
+  readonly id: string;
+  readonly round: number;
+  readonly players: readonly [MatchPlayer, MatchPlayer];
+  readonly scores?: readonly [number, number] | undefined;
+  readonly status?: MatchStatus | `${MatchStatus}` | undefined;
+  readonly venue?: string | undefined;
+  readonly scheduledAt?: string | undefined;
+}
+
+export interface RoundRobinStanding {
+  readonly player: MatchPlayer;
+  readonly played: number;
+  readonly wins: number;
+  readonly draws: number;
+  readonly losses: number;
+  readonly scoreFor: number;
+  readonly scoreAgainst: number;
+  readonly scoreDifference: number;
+  readonly points: number;
+}
+
+export interface RoundRobinGroup {
+  readonly id: string;
+  readonly name?: string | undefined;
+  readonly participants: readonly MatchPlayer[];
+  readonly matches: readonly RoundRobinMatch[];
+  readonly points?: RoundRobinPointsRule | undefined;
+}
+
 export interface MatchMeta {
   readonly stage?: string | undefined;
   readonly players?: readonly MatchPlayer[] | undefined;

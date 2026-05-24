@@ -1,6 +1,7 @@
 'use client';
 
 export { BracketToolbar } from './components/BracketToolbar';
+export { RoundRobinBracket, type RoundRobinBracketProps } from './components/RoundRobinBracket';
 export { SquashNode } from './components/SquashNode';
 export { TournamentBracket } from './components/TournamentBracket';
 export {
@@ -45,12 +46,19 @@ export {
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
 export {
+  calculateRoundRobinStandings,
   type DoubleEliminationBracketOptions,
   type DoubleEliminationEdgeMeta,
   type DoubleEliminationGraph,
   generateDoubleEliminationBracket,
+  generateRoundRobinSchedule,
   generateSingleEliminationBracket,
+  groupRoundRobinMatchesByRound,
   nextPowerOfTwo,
+  type RoundRobinGroup,
+  type RoundRobinMatch,
+  type RoundRobinPointsRule,
+  type RoundRobinStanding,
   type SingleEliminationBracketOptions,
   type SingleEliminationGraph,
   type SingleEliminationSeeding,
