@@ -25,6 +25,10 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
       data-testid="squash-node-html"
     >
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={props.ariaLabel}
+        data-match-card
         style={{
           boxSizing: 'border-box',
           width: '100%',
@@ -39,6 +43,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
           transform: 'none',
           overflow: 'hidden',
           position: 'relative',
+          outline: 'none',
         }}
       >
         {meta.status === MatchStatus.Live ? <LiveIndicator color={colors.LIVE_INDICATOR} /> : null}

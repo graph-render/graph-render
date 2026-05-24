@@ -45,7 +45,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const clipId = `ds-${sanitizedNodeId}-${stableId}`;
 
   return (
-    <g>
+    <g role="button" tabIndex={0} aria-label={props.ariaLabel} data-match-card>
       <defs>
         <clipPath id={clipId} data-testid="squash-node-svg-clip">
           <rect width={nodeWidth} height={nodeHeight} rx={borderRadius} ry={borderRadius} />
@@ -59,6 +59,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
         fill={props.isHovered ? colors.HOVER_BG : colors.BASE_BG}
         stroke={colors.CARD_BORDER}
         strokeWidth={NODE_BORDER_WIDTH}
+        data-match-card-rect
         data-testid="squash-node-svg-rect"
       />
 

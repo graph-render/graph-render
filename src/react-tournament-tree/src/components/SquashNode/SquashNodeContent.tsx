@@ -8,6 +8,7 @@ import { ensureSquashNodeAnimations } from '../../utils/animations';
 import { isSvgCompatibleRenderMode } from '../../utils/renderMode';
 import {
   getCompletedWinnerIndex,
+  getMatchAriaLabel,
   getSetWins,
   normalizeMatchMeta,
   normalizePlayerKey,
@@ -28,10 +29,8 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
   const { colors, matchCard: defaultMatchCard, compact: densityCompact } = useBracketAppearance();
 
   useEffect(() => {
-    if (renderMode === SquashNodeRenderMode.Html) {
-      ensureSquashNodeAnimations();
-    }
-  }, [renderMode]);
+    ensureSquashNodeAnimations();
+  }, []);
 
   const meta = normalizeMatchMeta(node.meta);
   const p1 = meta.players[0] ?? DEFAULT_PLAYER_ONE;
@@ -42,6 +41,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
   const layoutCompact =
     densityCompact || nodeHeight < NODE_DIMENSIONS.HEIGHT || nodeWidth < NODE_DIMENSIONS.WIDTH;
   const setWins = getSetWins(meta.sets, meta.status, meta.currentSet);
+  const winnerIndex = getCompletedWinnerIndex(setWins, meta.status);
   const sharedProps = {
     nodeId: node.id,
     nodeWidth,
@@ -52,9 +52,18 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
     normalizedActivePathKey: activePathKey ? normalizePlayerKey(activePathKey) : null,
     isNodeInActivePath: activePathNodeIds?.has(node.id) ?? false,
     isTBD: p1.name === 'TBD' || p2.name === 'TBD',
+    ariaLabel: getMatchAriaLabel({
+      currentSet: meta.currentSet,
+      players: meta.players,
+      setWins,
+      stage: meta.stage,
+      status: meta.status,
+      venue: meta.venue,
+      winnerIndex,
+    }),
     meta,
     setWins,
-    winnerIndex: getCompletedWinnerIndex(setWins, meta.status),
+    winnerIndex,
     colors,
     onPlayerEnter: (playerIndex: number, player: (typeof meta.players)[number]) => {
       setHoveredPlayerIndex(playerIndex);

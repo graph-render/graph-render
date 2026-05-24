@@ -1,6 +1,12 @@
+import { MatchStatus } from '@graph-render/types/tournament';
 import { describe, expect, it } from 'vitest';
 
-import { getPlayerBadgeText, getPlayerMetadataText, truncateText } from '../text';
+import {
+  getMatchAriaLabel,
+  getPlayerBadgeText,
+  getPlayerMetadataText,
+  truncateText,
+} from '../text';
 
 // ── truncateText ──────────────────────────────────────────────────────────────
 describe('truncateText', () => {
@@ -11,6 +17,27 @@ describe('truncateText', () => {
   describe('getPlayerMetadataText', () => {
     it('combines seed and country', () => {
       expect(getPlayerMetadataText({ name: 'Alice', seed: 1, country: 'eg' })).toBe('#1 · EG');
+    });
+
+    describe('getMatchAriaLabel', () => {
+      it('summarizes stage, players, status, score, winner, and venue', () => {
+        expect(
+          getMatchAriaLabel({
+            currentSet: 0,
+            players: [
+              { name: 'Alice', seed: 1 },
+              { name: 'Bob', seed: 2 },
+            ],
+            setWins: { p1: 2, p2: 1 },
+            stage: 'Final',
+            status: MatchStatus.Completed,
+            venue: 'Court 1',
+            winnerIndex: 0,
+          })
+        ).toBe(
+          'Final match: Alice versus Bob. Status completed. Score Alice 2 sets, Bob 1 sets. Winner Alice. Venue Court 1.'
+        );
+      });
     });
 
     it('renders only seed when country is absent', () => {

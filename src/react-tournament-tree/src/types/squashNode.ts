@@ -28,6 +28,7 @@ export type SquashNodeVariantProps = PlayerHoverHandlers & {
   readonly normalizedActivePathKey: string | null;
   readonly isNodeInActivePath: boolean;
   readonly isTBD: boolean;
+  readonly ariaLabel: string;
   readonly meta: NormalizedSquashMatchMeta;
   readonly setWins: SetWins;
   readonly winnerIndex: number | null;

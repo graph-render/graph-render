@@ -24,6 +24,15 @@ export function ensureSquashNodeAnimations(): void {
         animation: none !important;
       }
     }
+
+    [data-match-card]:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+
+    g[data-match-card]:focus-visible [data-match-card-rect] {
+      stroke-width: 3px;
+    }
   `;
   document.head.append(styleTag);
 }
