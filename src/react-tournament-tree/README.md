@@ -643,6 +643,48 @@ The correction result includes the updated source match, original/corrected winn
 
 ---
 
+## Live update patterns
+
+`TournamentBracket` is controlled: keep match state in your app, pass the latest `graph`, and re-render when polling or socket messages arrive. The library does not include WebSocket/server transport.
+
+```tsx
+function LiveBracket() {
+  const [graph, setGraph] = useState(initialGraph);
+
+  useEffect(() => {
+    const timer = window.setInterval(async () => {
+      const nextGraph = await fetch('/api/bracket').then((response) => response.json());
+      setGraph(nextGraph);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  return <TournamentBracket graph={graph} title="Live bracket" />;
+}
+```
+
+For WebSocket-style integrations, update the same controlled graph from your own subscription:
+
+```tsx
+socket.on('match:update', (message) => {
+  setGraph((graph) => patchMatch(graph, message.matchId, message.update));
+});
+```
+
+Custom editable cards can use `onMatchUpdate` as a typed callback channel without the bracket owning persistence:
+
+```tsx
+<TournamentBracket
+  graph={graph}
+  vertexComponent={EditableCard}
+  onMatchUpdate={({ matchId, update }) => saveScore(matchId, update)}
+/>
+```
+
+Score and status changes use lightweight CSS transitions, and live indicators respect `prefers-reduced-motion`.
+
+---
+
 ## Printing brackets
 
 `TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.

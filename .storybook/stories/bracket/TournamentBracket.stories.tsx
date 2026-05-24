@@ -1,5 +1,10 @@
-import { generateSingleEliminationBracket, TournamentBracket } from '@graph-render/tournament-tree';
+import {
+  generateSingleEliminationBracket,
+  MatchStatus,
+  TournamentBracket,
+} from '@graph-render/tournament-tree';
 import type { Meta, StoryObj } from '@storybook/react';
+import { useMemo, useState } from 'react';
 
 import { bracketGraph } from './data/bracket';
 import { bracketGraphLive } from './data/bracket_live';
@@ -51,6 +56,35 @@ const bestOfSeriesGraph = {
   },
   adj: { final: {} },
 };
+
+function ControlledLiveUpdateExample() {
+  const [score, setScore] = useState(4);
+  const graph = useMemo(
+    () => ({
+      nodes: {
+        live: {
+          meta: {
+            currentSet: 0,
+            players: [{ name: 'Live Alpha' }, { name: 'Live Bravo' }],
+            sets: [[score, 3]],
+            status: score >= 11 ? MatchStatus.Completed : MatchStatus.Live,
+          },
+        },
+      },
+      adj: { live: {} },
+    }),
+    [score]
+  );
+
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <button type="button" onClick={() => setScore((value) => Math.min(11, value + 1))}>
+        Simulate score update
+      </button>
+      <TournamentBracket graph={graph} title="Controlled Live Updates" />
+    </div>
+  );
+}
 
 const meta: Meta<typeof TournamentBracket> = {
   title: 'Tournament/Bracket',
@@ -164,6 +198,19 @@ export const BestOfSeries: Story = {
     docs: {
       description: {
         story: 'Renders labeled game/map scores and computes the winner from game results.',
+      },
+    },
+  },
+};
+
+export const ControlledLiveUpdates: Story = {
+  name: 'Live — controlled updates',
+  render: () => <ControlledLiveUpdateExample />,
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Demonstrates consumer-owned live score state. The bracket receives a new graph; no transport dependency is included.',
       },
     },
   },

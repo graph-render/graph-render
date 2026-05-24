@@ -136,6 +136,7 @@ function LiveIndicator({ color }: { readonly color: string }) {
       }}
     >
       <span
+        data-match-status-indicator
         data-squash-live-indicator
         style={{
           width: 10,

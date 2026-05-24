@@ -47,6 +47,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   pinchZoomEnabled,
   compact = true,
   onMatchClick,
+  onMatchUpdate,
   onInvalidNode,
   onExportError,
 }) {
@@ -103,6 +104,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
       compact,
       nodeRenderMode,
       onInvalidNode,
+      onMatchUpdate,
       vertexComponent,
     });
   const handleExportSVG = useBracketSvgExport({

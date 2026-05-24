@@ -80,6 +80,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
           role="img"
           aria-label="Live match"
           aria-live="polite"
+          data-match-status-indicator
         >
           <title>Live match</title>
           <circle r={4} fill={colors.LIVE_INDICATOR} />

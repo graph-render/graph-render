@@ -22,17 +22,19 @@ export {
   BracketAppearanceProvider,
   useBracketAppearance,
 } from './contexts/BracketAppearanceContext';
-/* eslint-disable @typescript-eslint/no-deprecated -- legacy theme API kept for backward compatibility */
+/* eslint-disable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
 export { BracketThemeProvider, useBracketTheme } from './contexts/BracketThemeContext';
+/* eslint-enable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
+export { useBracketMatchUpdate } from './contexts/BracketVertexOptionsContext';
 export type {
   TournamentBracketInteractionOptions,
   TournamentBracketProps,
   TournamentBracketThemeOptions,
   TournamentBracketToolbarOptions,
+  TournamentMatchUpdatePayload,
 } from './models/tournamentBracket';
 export { routeBracketEdges } from './utils/bracketRouting';
 export { injectTournamentPathKeys } from './utils/pathKeys';
-/* eslint-enable @typescript-eslint/no-deprecated -- legacy theme API kept for backward compatibility */
 export type {
   ResolvedBracketAppearance,
   ResolvedBracketFrameStyle,

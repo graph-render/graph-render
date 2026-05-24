@@ -1,6 +1,7 @@
 import type { GraphConfig, NxGraphInput } from '@graph-render/types';
 import type { GraphViewport, VertexComponent } from '@graph-render/types/react';
 import type {
+  MatchMeta,
   MatchPositionedNode,
   SquashNodeRenderMode,
   TournamentBracketAppearance,
@@ -22,6 +23,11 @@ export interface TournamentBracketThemeOptions {
 export interface TournamentBracketToolbarOptions {
   readonly showToolbar?: boolean | undefined;
   readonly showViewportControls?: boolean | undefined;
+}
+
+export interface TournamentMatchUpdatePayload {
+  readonly matchId: string;
+  readonly update: Partial<MatchMeta>;
 }
 
 export interface TournamentBracketProps {
@@ -56,4 +62,5 @@ export interface TournamentBracketProps {
   readonly onMatchClick?: ((node: MatchPositionedNode) => void) | undefined;
   readonly onInvalidNode?: ((nodeId: string, error: Error) => void) | undefined;
   readonly onExportError?: ((error: Error) => void) | undefined;
+  readonly onMatchUpdate?: ((payload: TournamentMatchUpdatePayload) => void) | undefined;
 }

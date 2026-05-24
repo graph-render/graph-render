@@ -46,6 +46,7 @@ export function SquashSvgScoreSegments({
               fontWeight={400}
               fill={textColor}
               fontFamily={scoreFontFamily}
+              data-score-segment
             >
               {truncateText(segment, 6)}
             </text>
