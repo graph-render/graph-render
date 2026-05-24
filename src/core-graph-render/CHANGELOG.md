@@ -1,3 +1,17 @@
+## <small>1.3.7 (2026-05-24)</small>
+
+* chore: enterprise architecture review fixes ([cc06ecc](https://github.com/graph-render/graph-render/commit/cc06ecc))
+* chore: production hardening review (#23) ([70cf4bb](https://github.com/graph-render/graph-render/commit/70cf4bb)), closes [#23](https://github.com/graph-render/graph-render/issues/23)
+* chore(deps-dev): bump the npm-dependencies group across 1 directory with 40 updates (#21) ([6c34eae](https://github.com/graph-render/graph-render/commit/6c34eae)), closes [#21](https://github.com/graph-render/graph-render/issues/21)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/types:** upgraded to 1.3.0
+
 ## <small>1.3.6 (2026-05-21)</small>
 
 - fix(core): format vitest config files for prettier ([2c81d40](https://github.com/graph-render/graph-render/commit/2c81d40))

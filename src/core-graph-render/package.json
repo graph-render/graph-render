@@ -1,6 +1,6 @@
 {
   "name": "@graph-render/core",
-  "version": "1.3.6",
+  "version": "1.3.7",
   "description": "Framework-independent graph layout, routing, validation, and SVG rendering primitives.",
   "keywords": [
     "graph",
@@ -48,7 +48,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@graph-render/types": "1.2.6"
+    "@graph-render/types": "1.3.0"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
