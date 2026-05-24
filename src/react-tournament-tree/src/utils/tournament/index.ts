@@ -5,6 +5,13 @@ export {
   generateDoubleEliminationBracket,
 } from './doubleElimination';
 export {
+  buildKnockoutBracketFromGroups,
+  type BuildKnockoutFromGroupsOptions,
+  calculateGroupAdvancers,
+  type EliminationFormat,
+  type GroupAdvancementRule,
+} from './multiStage';
+export {
   calculateRoundRobinStandings,
   generateRoundRobinSchedule,
   groupRoundRobinMatchesByRound,

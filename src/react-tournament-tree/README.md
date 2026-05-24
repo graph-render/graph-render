@@ -543,6 +543,51 @@ const matches = schedule.map((match) =>
 
 ---
 
+## Compose groups and knockout stages
+
+Use `MultiStageTournament` when a tournament starts with round-robin groups and advances players into a knockout bracket.
+
+```tsx
+import {
+  buildKnockoutBracketFromGroups,
+  MatchStatus,
+  MultiStageTournament,
+} from '@graph-render/tournament-tree';
+
+const groups = [
+  {
+    id: 'a',
+    name: 'Group A',
+    participants: [{ name: 'Alpha' }, { name: 'Bravo' }, { name: 'Charlie' }, { name: 'Delta' }],
+    matches: [
+      {
+        id: 'a-r1-m1',
+        round: 1,
+        players: [{ name: 'Alpha' }, { name: 'Bravo' }],
+        scores: [2, 0],
+        status: MatchStatus.Completed,
+      },
+    ],
+  },
+  // Group B...
+];
+
+const knockout = buildKnockoutBracketFromGroups(groups, {
+  advancement: { topPerGroup: 2 },
+});
+
+<MultiStageTournament
+  stages={[
+    { type: 'groups', name: 'Groups', groups, advancement: { topPerGroup: 2 } },
+    { type: 'elimination', name: 'Semifinals', bracket: knockout },
+  ]}
+/>;
+```
+
+Computed advancement uses `calculateGroupAdvancers(groups, { topPerGroup })`, which reads each group's completed round-robin standings. Use `manualAdvancers` when tournament officials override standings, then pass those players to `generateSingleEliminationBracket()` or a provided `bracket` for full manual control.
+
+---
+
 ## Printing brackets
 
 `TournamentBracket` injects print-friendly CSS automatically. Browser print output hides toolbar/navigation controls, switches the bracket surface to high-contrast light colors, and avoids clipping interactive chrome where possible.

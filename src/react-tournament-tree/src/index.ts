@@ -1,6 +1,10 @@
 'use client';
 
 export { BracketToolbar } from './components/BracketToolbar';
+export {
+  MultiStageTournament,
+  type MultiStageTournamentProps,
+} from './components/MultiStageTournament';
 export { RoundRobinBracket, type RoundRobinBracketProps } from './components/RoundRobinBracket';
 export { SquashNode } from './components/SquashNode';
 export { TournamentBracket } from './components/TournamentBracket';
@@ -46,13 +50,18 @@ export {
 export { getStageViewport } from './utils/stageViewport';
 export { buildStageViews } from './utils/stageViews';
 export {
+  buildKnockoutBracketFromGroups,
+  type BuildKnockoutFromGroupsOptions,
+  calculateGroupAdvancers,
   calculateRoundRobinStandings,
   type DoubleEliminationBracketOptions,
   type DoubleEliminationEdgeMeta,
   type DoubleEliminationGraph,
+  type EliminationFormat,
   generateDoubleEliminationBracket,
   generateRoundRobinSchedule,
   generateSingleEliminationBracket,
+  type GroupAdvancementRule,
   groupRoundRobinMatchesByRound,
   nextPowerOfTwo,
   type RoundRobinGroup,
@@ -70,6 +79,7 @@ export type {
   MatchNodeData,
   MatchPlayer,
   MatchPositionedNode,
+  MultiStageTournamentConfig,
   SeriesFormat,
   SquashMatchMeta,
   SquashNodeData,

@@ -16,6 +16,7 @@ export interface DoubleEliminationBracketOptions {
 }
 
 export interface DoubleEliminationEdgeMeta {
+  readonly [key: string]: unknown;
   readonly sourceResult?: 'winner' | 'loser' | 'reset' | undefined;
   readonly sourcePlayer?: number | undefined;
   readonly targetPlayer?: number | undefined;

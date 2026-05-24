@@ -1,3 +1,4 @@
+import type { NxGraphInput } from './graph';
 import type { NodeData, PositionedNode } from './node';
 import type { GraphViewport } from './viewport';
 
@@ -77,7 +78,15 @@ export interface RoundRobinGroup {
   readonly points?: RoundRobinPointsRule | undefined;
 }
 
+export interface GroupAdvancementRule {
+  readonly topPerGroup?: number | undefined;
+  readonly manualAdvancers?: readonly MatchPlayer[] | undefined;
+}
+
+export type EliminationFormat = 'double' | 'single';
+
 export interface MatchMeta {
+  readonly [key: string]: unknown;
   readonly stage?: string | undefined;
   readonly players?: readonly MatchPlayer[] | undefined;
   readonly sets?: ReadonlyArray<readonly number[]> | undefined;
@@ -113,12 +122,23 @@ export type TournamentStage =
       readonly type: 'elimination';
       readonly id?: string | undefined;
       readonly name?: string | undefined;
+      readonly format?: EliminationFormat | undefined;
+      readonly bracket?: NxGraphInput<unknown, MatchMeta, string> | undefined;
+      readonly participants?: readonly MatchPlayer[] | undefined;
     }
   | {
       readonly type: 'groups';
       readonly id?: string | undefined;
       readonly name?: string | undefined;
+      readonly groups?: readonly RoundRobinGroup[] | undefined;
+      readonly advancement?: GroupAdvancementRule | undefined;
     };
+
+export interface MultiStageTournamentConfig {
+  readonly id?: string | undefined;
+  readonly name?: string | undefined;
+  readonly stages: readonly TournamentStage[];
+}
 
 export enum SquashNodeRenderMode {
   Svg = 'svg',
