@@ -56,6 +56,7 @@ export const getMatchAriaLabel = ({
   bracketSection,
   currentSet,
   players,
+  scoreUnit = 'sets',
   setWins,
   stage,
   status,
@@ -67,6 +68,7 @@ export const getMatchAriaLabel = ({
   readonly currentSet: number;
   readonly matchType?: string | undefined;
   readonly players: readonly [MatchPlayer, MatchPlayer];
+  readonly scoreUnit?: 'games' | 'sets' | undefined;
   readonly setWins: SetWins;
   readonly stage: string;
   readonly status: MatchStatus;
@@ -74,7 +76,7 @@ export const getMatchAriaLabel = ({
   readonly winnerIndex: number | null;
 }): string => {
   const [playerOne, playerTwo] = players;
-  const score = `${playerOne.name} ${setWins.p1} sets, ${playerTwo.name} ${setWins.p2} sets`;
+  const score = `${playerOne.name} ${setWins.p1} ${scoreUnit}, ${playerTwo.name} ${setWins.p2} ${scoreUnit}`;
   const winnerPlayer = winnerIndex == null ? undefined : players[winnerIndex];
   const winner = winnerPlayer ? `Winner ${winnerPlayer.name}` : 'No winner yet';
   const liveDetail = statusText(status) === 'live' ? ` Current set ${currentSet + 1}.` : '';

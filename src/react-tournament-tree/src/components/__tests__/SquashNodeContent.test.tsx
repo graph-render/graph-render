@@ -81,6 +81,29 @@ describe('SquashNodeContent', () => {
     expect(screen.getByRole('status', { name: 'Live match' })).toBeInTheDocument();
   });
 
+  it('uses game results for best-of-N score and winner summaries', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeContent
+          node={makeNode({
+            ...MOCK_META,
+            games: [
+              { label: 'M1', scores: [13, 11] },
+              { label: 'M2', scores: [8, 13], winner: 1 },
+              { label: 'M3', scores: [16, 14] },
+            ],
+            seriesFormat: { bestOf: 3, label: 'BO3' },
+            sets: [],
+          })}
+          renderMode={SquashNodeRenderMode.Html}
+        />
+      </svg>
+    );
+
+    expect(screen.getByText('M1:13')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Score Player One 2 games/i })).toBeInTheDocument();
+  });
+
   it('uses default Export renderMode when not specified', () => {
     renderWithAppearance(
       <svg>

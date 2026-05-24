@@ -31,6 +31,26 @@ const generatedBracketWithByes = generateSingleEliminationBracket(
   ],
   { seeding: 'standard', byeLabel: 'BYE' }
 );
+const bestOfSeriesGraph = {
+  nodes: {
+    final: {
+      meta: {
+        games: [
+          { label: 'Map 1', scores: [13, 11] },
+          { label: 'Map 2', scores: [8, 13], winner: 1 },
+          { label: 'Map 3', scores: [16, 14] },
+        ],
+        players: [
+          { name: 'Alpha Esports', seed: 1, country: 'USA' },
+          { name: 'Bravo Gaming', seed: 2, country: 'CAN' },
+        ],
+        seriesFormat: { bestOf: 3, label: 'BO3' },
+        status: 'completed',
+      },
+    },
+  },
+  adj: { final: {} },
+};
 
 const meta: Meta<typeof TournamentBracket> = {
   title: 'Tournament/Bracket',
@@ -129,6 +149,21 @@ export const Live: Story = {
       description: {
         story:
           'Shows live match indicators (pulsing dot, blue border), tiebreak score display, winning player highlighting, and upcoming match styling.',
+      },
+    },
+  },
+};
+
+export const BestOfSeries: Story = {
+  name: 'Best-of series — BO3 maps',
+  args: {
+    graph: bestOfSeriesGraph,
+    title: 'Best-of Series',
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Renders labeled game/map scores and computes the winner from game results.',
       },
     },
   },

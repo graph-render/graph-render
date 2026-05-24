@@ -1,5 +1,6 @@
 import type {
   BracketSection,
+  GameResult,
   MatchPlayer,
   MatchStatus,
   MatchType,
@@ -19,6 +20,7 @@ export interface NormalizedSquashMatchMeta {
   readonly timezone?: string | undefined;
   readonly venue?: string | undefined;
   readonly seriesFormat?: SeriesFormat | string | undefined;
+  readonly games: readonly GameResult[];
 }
 
 export interface SetWins {

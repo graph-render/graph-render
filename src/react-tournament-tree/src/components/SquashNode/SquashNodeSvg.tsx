@@ -7,8 +7,9 @@ import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
 import {
   getMatchBadgeLabel,
+  getMatchScoreSegmentCount,
+  getMatchScoreSegments,
   getScoreGroupWidth,
-  getScoreSegments,
   normalizePlayerKey,
 } from '../../utils/squash';
 import { SquashPlayerSvgRow } from './SquashPlayerSvgRow';
@@ -36,7 +37,11 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const scoreFontSize = scoreLayout.fontSize;
   const matchCountFontSize = scoreLayout.matchCountFontSize;
   const rowHeight = nodeHeight / 2;
-  const scoreSectionWidth = getScoreGroupWidth(Math.max(meta.sets.length, 1), scoreSegW, scoreSegG);
+  const scoreSectionWidth = getScoreGroupWidth(
+    getMatchScoreSegmentCount(meta),
+    scoreSegW,
+    scoreSegG
+  );
   const internalDividerX = nodeWidth - insetX - matchCountWidth - matchCountTrailingGap;
   const scoreGroupRightX = internalDividerX - scoreGroupTrailingGap;
   const matchCountX = nodeWidth - insetX - matchCountWidth / 2;
@@ -125,7 +130,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
               isPlayerHovered={props.hoveredPlayerIndex === playerIndex || isPathMatch}
               playerOpacity={meta.status === MatchStatus.Upcoming ? 0.6 : 1}
               setCount={playerIndex === 0 ? setWins.p1 : setWins.p2}
-              scoreSegments={getScoreSegments(meta.sets, meta.tiebreaks, playerIndex)}
+              scoreSegments={getMatchScoreSegments(meta, playerIndex)}
               textColor={textColor}
               rowY={playerIndex * rowHeight}
               rowHeight={rowHeight}

@@ -75,6 +75,7 @@ export {
 } from './utils/tournament';
 /* eslint-disable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */
 export type {
+  GameResult,
   MatchMeta,
   MatchNodeData,
   MatchPlayer,

@@ -8,6 +8,7 @@ describe('normalizeMatchMeta', () => {
     const meta = normalizeMatchMeta(undefined);
     expect(meta.status).toBe(MatchStatus.Completed);
     expect(meta.sets).toHaveLength(0);
+    expect(meta.games).toHaveLength(0);
     expect(meta.tiebreaks).toHaveLength(0);
     expect(meta.currentSet).toBe(0);
     expect(meta.stage).toBe('Stage');
@@ -99,12 +100,32 @@ describe('normalizeMatchMeta', () => {
       venue: 'Court 1',
       seriesFormat: { bestOf: 5, label: 'BO5' },
     });
+
     expect(meta.matchType).toBe(MatchType.ThirdPlace);
     expect(meta.bracketSection).toBe(BracketSection.Winners);
     expect(meta.scheduledAt).toBe('2026-06-01T10:00:00Z');
     expect(meta.timezone).toBe('UTC');
     expect(meta.venue).toBe('Court 1');
     expect(meta.seriesFormat).toEqual({ bestOf: 5, label: 'BO5' });
+  });
+
+  it('normalizes best-of-N game results', () => {
+    const meta = normalizeMatchMeta({
+      games: [
+        { label: 'Map 1', scores: [13, 11] },
+        { scores: [8, 13], winner: 1 },
+      ],
+    });
+
+    expect(meta.games).toEqual([
+      { label: 'Map 1', scores: [13, 11] },
+      { scores: [8, 13], winner: 1 },
+    ]);
+  });
+
+  it('throws for invalid game results', () => {
+    expect(() => normalizeMatchMeta({ games: [{ scores: [1] }] })).toThrow(/games\[0\]/);
+    expect(() => normalizeMatchMeta({ games: [{ scores: [1, 2], winner: 2 }] })).toThrow(/winner/);
   });
 
   it('throws for invalid generic tournament metadata', () => {

@@ -5,6 +5,11 @@ export type { SetWins } from './score';
 export {
   getCompletedWinnerIndex,
   getDisplayScores,
+  getGameScoreSegments,
+  getGameWins,
+  getMatchScoreSegmentCount,
+  getMatchScoreSegments,
+  getMatchWins,
   getScoreGroupWidth,
   getScoreSegments,
   getSetWins,

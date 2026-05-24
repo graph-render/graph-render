@@ -37,10 +37,9 @@ describe('SquashHtmlScoreSegments', () => {
     expect(screen.queryAllByTestId('score-divider')).toHaveLength(0);
   });
 
-  it('truncates segments longer than 4 characters', () => {
-    render(<SquashHtmlScoreSegments {...defaultProps} scoreSegments={['12345']} />);
-    // truncateText('12345', 4) → '123…' (Unicode ellipsis, slices to maxLength-1=3 chars)
-    expect(screen.getByText('123\u2026')).toBeInTheDocument();
+  it('truncates segments longer than 6 characters', () => {
+    render(<SquashHtmlScoreSegments {...defaultProps} scoreSegments={['1234567']} />);
+    expect(screen.getByText('12345\u2026')).toBeInTheDocument();
   });
 
   it('renders correctly for player index 1', () => {

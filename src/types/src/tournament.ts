@@ -42,6 +42,12 @@ export interface SeriesFormat {
   readonly label?: string | undefined;
 }
 
+export interface GameResult {
+  readonly label?: string | undefined;
+  readonly scores: readonly [number, number];
+  readonly winner?: 0 | 1 | undefined;
+}
+
 export interface RoundRobinPointsRule {
   readonly win?: number | undefined;
   readonly draw?: number | undefined;
@@ -99,6 +105,7 @@ export interface MatchMeta {
   readonly timezone?: string | undefined;
   readonly venue?: string | undefined;
   readonly seriesFormat?: SeriesFormat | string | undefined;
+  readonly games?: readonly GameResult[] | undefined;
 }
 
 /** @deprecated Use MatchMeta. */

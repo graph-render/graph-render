@@ -1,4 +1,4 @@
-import type { MatchMeta } from '@graph-render/types/tournament';
+import type { GameResult, MatchMeta } from '@graph-render/types/tournament';
 import { BracketSection, MatchStatus, MatchType } from '@graph-render/types/tournament';
 
 import type { NormalizedSquashMatchMeta } from '../../models/squash';
@@ -91,6 +91,39 @@ const normalizeTiebreaks = (value: unknown): ReadonlyArray<readonly number[] | n
   });
 };
 
+const normalizeGames = (value: unknown): readonly GameResult[] => {
+  if (value == null) {
+    return [];
+  }
+
+  if (!Array.isArray(value)) {
+    throw new TypeError('Invalid match payload: games must be an array of game results.');
+  }
+
+  return value.map((entry, index) => {
+    if (!entry || typeof entry !== 'object') {
+      throw new TypeError(`Invalid match payload: games[${index}] must be an object.`);
+    }
+
+    const game = entry as Partial<NonNullable<MatchMeta['games']>[number]>;
+    if (!Array.isArray(game.scores) || game.scores.length !== 2) {
+      throw new TypeError(`Invalid match payload: games[${index}].scores must contain two scores.`);
+    }
+    if (game.winner != null && game.winner !== 0 && game.winner !== 1) {
+      throw new TypeError(`Invalid match payload: games[${index}].winner must be 0 or 1.`);
+    }
+
+    return {
+      ...(typeof game.label === 'string' && game.label.trim() ? { label: game.label.trim() } : {}),
+      scores: [
+        normalizeScore(game.scores[0], `games[${index}].scores[0]`),
+        normalizeScore(game.scores[1], `games[${index}].scores[1]`),
+      ] as const,
+      ...(game.winner == null ? {} : { winner: game.winner }),
+    };
+  });
+};
+
 export const normalizeMatchMeta = (meta: unknown): NormalizedSquashMatchMeta => {
   if (meta != null && typeof meta !== 'object') {
     throw new TypeError('Invalid match payload: node meta must be an object when provided.');
@@ -114,6 +147,7 @@ export const normalizeMatchMeta = (meta: unknown): NormalizedSquashMatchMeta => 
   }
 
   const sets = normalizeSets(rawMeta?.sets);
+  const games = normalizeGames(rawMeta?.games);
   const currentSet =
     rawMeta?.currentSet == null
       ? 0
@@ -133,6 +167,7 @@ export const normalizeMatchMeta = (meta: unknown): NormalizedSquashMatchMeta => 
       typeof rawMeta?.stage === 'string' && rawMeta.stage.trim() ? rawMeta.stage.trim() : 'Stage',
     players: normalizePlayers(rawMeta?.players),
     sets,
+    games,
     tiebreaks: normalizeTiebreaks(rawMeta?.tiebreaks),
     status: rawMeta?.status ?? MatchStatus.Completed,
     currentSet,

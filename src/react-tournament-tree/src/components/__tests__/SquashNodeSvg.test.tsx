@@ -101,6 +101,27 @@ describe('SquashNodeSvg', () => {
     expect(screen.getByText('4')).toBeInTheDocument();
   });
 
+  it('renders game labels and scores for best-of-N matches', () => {
+    renderWithAppearance(
+      <svg>
+        <SquashNodeSvg
+          {...baseVariantProps}
+          meta={{
+            ...MOCK_META,
+            games: [
+              { label: 'M1', scores: [13, 11] },
+              { label: 'M2', scores: [8, 13] },
+            ],
+            sets: [],
+          }}
+        />
+      </svg>
+    );
+
+    expect(screen.getByText('M1:13')).toBeInTheDocument();
+    expect(screen.getByText('M2:13')).toBeInTheDocument();
+  });
+
   it('renders a clipPath for masking', () => {
     renderWithAppearance(
       <svg>

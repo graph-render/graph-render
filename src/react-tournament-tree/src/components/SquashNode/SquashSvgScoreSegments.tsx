@@ -47,7 +47,7 @@ export function SquashSvgScoreSegments({
               fill={textColor}
               fontFamily={scoreFontFamily}
             >
-              {truncateText(segment, 4)}
+              {truncateText(segment, 6)}
             </text>
             {segmentIndex < scoreSegments.length - 1 ? (
               <line

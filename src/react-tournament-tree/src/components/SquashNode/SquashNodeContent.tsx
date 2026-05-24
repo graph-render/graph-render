@@ -9,7 +9,7 @@ import { isSvgCompatibleRenderMode } from '../../utils/renderMode';
 import {
   getCompletedWinnerIndex,
   getMatchAriaLabel,
-  getSetWins,
+  getMatchWins,
   normalizeMatchMeta,
   normalizePlayerKey,
 } from '../../utils/squash';
@@ -40,7 +40,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
   /** Fall back to compact drawing metrics when the box is smaller than the standard card. */
   const layoutCompact =
     densityCompact || nodeHeight < NODE_DIMENSIONS.HEIGHT || nodeWidth < NODE_DIMENSIONS.WIDTH;
-  const setWins = getSetWins(meta.sets, meta.status, meta.currentSet);
+  const setWins = getMatchWins(meta);
   const winnerIndex = getCompletedWinnerIndex(setWins, meta.status);
   const sharedProps = {
     nodeId: node.id,
@@ -57,6 +57,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
       currentSet: meta.currentSet,
       matchType: meta.matchType,
       players: meta.players,
+      scoreUnit: meta.games.length > 0 ? 'games' : 'sets',
       setWins,
       stage: meta.stage,
       status: meta.status,

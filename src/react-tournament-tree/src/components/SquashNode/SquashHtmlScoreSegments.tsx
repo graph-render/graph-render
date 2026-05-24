@@ -51,7 +51,7 @@ export function SquashHtmlScoreSegments({
               flexShrink: 0,
             }}
           >
-            {truncateText(segment, 4)}
+            {truncateText(segment, 6)}
           </span>
           {segmentIndex < scoreSegments.length - 1 ? (
             <span

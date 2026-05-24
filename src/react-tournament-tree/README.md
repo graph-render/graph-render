@@ -396,6 +396,7 @@ interface MatchMeta {
   timezone?: string;
   venue?: string;
   seriesFormat?: string | { bestOf?: number; label?: string };
+  games?: { label?: string; scores: readonly [number, number]; winner?: 0 | 1 }[];
 }
 ```
 
@@ -585,6 +586,34 @@ const knockout = buildKnockoutBracketFromGroups(groups, {
 ```
 
 Computed advancement uses `calculateGroupAdvancers(groups, { topPerGroup })`, which reads each group's completed round-robin standings. Use `manualAdvancers` when tournament officials override standings, then pass those players to `generateSingleEliminationBracket()` or a provided `bracket` for full manual control.
+
+---
+
+## Render best-of-N series scores
+
+Use `seriesFormat` and `games` when a match is a BO3/BO5/BO7 series with map- or game-level scores.
+
+```ts
+const graph = {
+  nodes: {
+    final: {
+      meta: {
+        players: [{ name: 'Alpha' }, { name: 'Bravo' }],
+        status: MatchStatus.Completed,
+        seriesFormat: { bestOf: 5, label: 'BO5' },
+        games: [
+          { label: 'Map 1', scores: [13, 11] },
+          { label: 'Map 2', scores: [8, 13], winner: 1 },
+          { label: 'Map 3', scores: [16, 14] },
+        ],
+      },
+    },
+  },
+  adj: { final: {} },
+};
+```
+
+When `games` are present, the default match card renders labeled game segments and computes the highlighted winner from game winners/scores. Existing `sets` and `tiebreaks` rendering remains unchanged for squash-style inputs.
 
 ---
 
