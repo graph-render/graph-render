@@ -3,8 +3,10 @@ import type {
   TournamentBracketAppearance,
   TournamentStage,
 } from '@graph-render/types/tournament';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
+import type { TournamentLocalizationOptions, TournamentUiLabels } from '../models/localization';
+import { resolveTournamentLocalization } from '../utils/localization';
 import {
   calculateGroupAdvancers,
   generateDoubleEliminationBracket,
@@ -17,6 +19,7 @@ export interface MultiStageTournamentProps {
   readonly stages: MultiStageTournamentConfig['stages'];
   readonly title?: string | undefined;
   readonly appearance?: TournamentBracketAppearance | undefined;
+  readonly localization?: TournamentLocalizationOptions | undefined;
   readonly isDarkMode?: boolean | undefined;
   readonly compact?: boolean | undefined;
 }
@@ -26,11 +29,16 @@ export const MultiStageTournament = React.memo<MultiStageTournamentProps>(
     appearance,
     compact = true,
     isDarkMode = false,
+    localization,
     stages,
     title = 'Tournament',
   }) {
     const [activeStageIndex, setActiveStageIndex] = useState(0);
     const activeStage = stages[activeStageIndex];
+    const resolvedLocalization = useMemo(
+      () => resolveTournamentLocalization(localization),
+      [localization]
+    );
 
     const handleTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (stages.length === 0) return;
@@ -81,7 +89,7 @@ export const MultiStageTournament = React.memo<MultiStageTournamentProps>(
                   padding: '8px 12px',
                 }}
               >
-                {stage.name ?? defaultStageName(stage, index)}
+                {stage.name ?? defaultStageName(stage, index, resolvedLocalization.uiLabels)}
               </button>
             );
           })}
@@ -97,8 +105,13 @@ export const MultiStageTournament = React.memo<MultiStageTournamentProps>(
               appearance={appearance}
               compact={compact}
               isDarkMode={isDarkMode}
+              localization={localization}
               stage={activeStage}
-              title={activeStage.name ?? defaultStageName(activeStage, activeStageIndex)}
+              title={
+                activeStage.name ??
+                defaultStageName(activeStage, activeStageIndex, resolvedLocalization.uiLabels)
+              }
+              uiLabels={resolvedLocalization.uiLabels}
             />
           </div>
         ) : null}
@@ -113,14 +126,18 @@ function MultiStagePanel({
   appearance,
   compact,
   isDarkMode,
+  localization,
   stage,
   title,
+  uiLabels,
 }: {
   readonly appearance?: TournamentBracketAppearance | undefined;
   readonly compact: boolean;
   readonly isDarkMode: boolean;
+  readonly localization?: TournamentLocalizationOptions | undefined;
   readonly stage: TournamentStage;
   readonly title: string;
+  readonly uiLabels: TournamentUiLabels;
 }) {
   if (stage.type === 'groups') {
     const groups = stage.groups ?? [];
@@ -128,7 +145,7 @@ function MultiStagePanel({
 
     return (
       <div style={{ display: 'grid', gap: 16 }}>
-        {advancers.length > 0 ? <AdvancersList players={advancers} /> : null}
+        {advancers.length > 0 ? <AdvancersList players={advancers} uiLabels={uiLabels} /> : null}
         <div style={{ display: 'grid', gap: 16 }}>
           {groups.map((group) => (
             <RoundRobinBracket
@@ -137,6 +154,7 @@ function MultiStagePanel({
               compact={compact}
               groupName={group.name ?? group.id}
               isDarkMode={isDarkMode}
+              localization={localization}
               matches={group.matches}
               participants={group.participants}
               points={group.points}
@@ -156,6 +174,7 @@ function MultiStagePanel({
       compact={compact}
       graph={graph}
       isDarkMode={isDarkMode}
+      localization={localization}
       title={title}
     />
   );
@@ -163,19 +182,21 @@ function MultiStagePanel({
 
 function AdvancersList({
   players,
+  uiLabels,
 }: {
   readonly players: ReadonlyArray<{ readonly name: string }>;
+  readonly uiLabels: TournamentUiLabels;
 }) {
   return (
     <aside
-      aria-label="Advanced participants"
+      aria-label={uiLabels.advancedParticipants}
       style={{
         border: '1px solid currentColor',
         borderRadius: 12,
         padding: '10px 12px',
       }}
     >
-      <strong>Advancing:</strong> {players.map((player) => player.name).join(', ')}
+      <strong>{uiLabels.advancing}:</strong> {players.map((player) => player.name).join(', ')}
     </aside>
   );
 }
@@ -198,8 +219,12 @@ function resolveEliminationGraph(
   return generateSingleEliminationBracket(stage.participants);
 }
 
-function defaultStageName(stage: TournamentStage, index: number): string {
-  if (stage.type === 'groups') return stage.name ?? `Group stage ${index + 1}`;
-  if (stage.format === 'double') return stage.name ?? 'Double elimination';
-  return stage.name ?? 'Knockout';
+function defaultStageName(
+  stage: TournamentStage,
+  index: number,
+  labels: TournamentUiLabels
+): string {
+  if (stage.type === 'groups') return stage.name ?? `${labels.groupStage} ${index + 1}`;
+  if (stage.format === 'double') return stage.name ?? labels.doubleElimination;
+  return stage.name ?? labels.knockout;
 }

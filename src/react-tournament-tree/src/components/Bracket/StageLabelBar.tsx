@@ -1,4 +1,5 @@
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
+import { useBracketLocalization } from '../../contexts/BracketLocalizationContext';
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons';
 import { StageLabelGrid } from './stage-labels/StageLabelGrid';
 import { StageStepButton } from './stage-labels/StageStepButton';
@@ -25,6 +26,7 @@ export function StageLabelBar({
   onNextStage,
 }: StageLabelBarProps) {
   const { colors, stageLabels: stageLabelStyle, typography } = useBracketAppearance();
+  const { uiLabels } = useBracketLocalization();
 
   if (stageLabels.length === 0) return null;
 
@@ -39,7 +41,7 @@ export function StageLabelBar({
       {isNavigationMode ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
           <StageStepButton
-            label="Previous stage"
+            label={uiLabels.previousStage}
             disabled={!canGoPrev}
             border={stageLabelStyle.navBorder}
             color={stageLabelStyle.navColor}
@@ -76,7 +78,7 @@ export function StageLabelBar({
             </span>
           </div>
           <StageStepButton
-            label="Next stage"
+            label={uiLabels.nextStage}
             disabled={!canGoNext}
             border={stageLabelStyle.navBorder}
             color={stageLabelStyle.navColor}

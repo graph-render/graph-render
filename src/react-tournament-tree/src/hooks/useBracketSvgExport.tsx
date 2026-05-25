@@ -8,9 +8,12 @@ import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 
 import { BracketAppearanceProvider } from '../contexts/BracketAppearanceContext';
+import { BracketLocalizationProvider } from '../contexts/BracketLocalizationContext';
+import type { ResolvedTournamentLocalization } from '../models/localization';
 import type { TournamentBracketProps } from '../models/tournamentBracket';
 import { routeBracketEdges } from '../utils/bracketRouting';
 import { downloadSvgFromElement, downloadSvgString } from '../utils/exportSvg';
+import { resolveTournamentLocalization } from '../utils/localization';
 import {
   type BracketVertexOptions,
   BracketVertexOptionsProvider,
@@ -26,6 +29,7 @@ interface UseBracketSvgExportParams {
   readonly mergedConfig: GraphConfig;
   readonly appearance?: TournamentBracketProps['appearance'];
   readonly compact: boolean;
+  readonly resolvedLocalization?: ResolvedTournamentLocalization | undefined;
   readonly vertexOptions: BracketVertexOptions;
   readonly onExportError?: TournamentBracketProps['onExportError'];
 }
@@ -40,6 +44,7 @@ export function useBracketSvgExport({
   mergedConfig,
   appearance,
   compact,
+  resolvedLocalization = resolveTournamentLocalization(),
   vertexOptions,
   onExportError,
 }: UseBracketSvgExportParams) {
@@ -85,14 +90,16 @@ export function useBracketSvgExport({
               isDarkMode={isDarkMode}
               compact={compact}
             >
-              <BracketVertexOptionsProvider value={vertexOptions}>
-                <Graph
-                  graph={enrichedGraph}
-                  vertexComponent={exportVertexComponent}
-                  config={mergedConfig}
-                  routeEdgesOverride={routeBracketEdges}
-                />
-              </BracketVertexOptionsProvider>
+              <BracketLocalizationProvider resolvedLocalization={resolvedLocalization}>
+                <BracketVertexOptionsProvider value={vertexOptions}>
+                  <Graph
+                    graph={enrichedGraph}
+                    vertexComponent={exportVertexComponent}
+                    config={mergedConfig}
+                    routeEdgesOverride={routeBracketEdges}
+                  />
+                </BracketVertexOptionsProvider>
+              </BracketLocalizationProvider>
             </BracketAppearanceProvider>
           );
         });
@@ -116,6 +123,7 @@ export function useBracketSvgExport({
     mergedConfig,
     nodeRenderMode,
     onExportError,
+    resolvedLocalization,
     vertexComponent,
     vertexOptions,
     wrapperRef,

@@ -3,6 +3,7 @@ import { MatchStatus } from '@graph-render/types/tournament';
 import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH } from '../../constants';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
+import { resolveTournamentLocalization } from '../../utils/localization';
 import {
   getMatchBadgeLabel,
   getMatchScoreSegmentCount,
@@ -15,9 +16,10 @@ import { SquashPlayerHtmlRow } from './SquashPlayerHtmlRow';
 export function SquashNodeHtml(props: SquashNodeVariantProps) {
   const { nodeId, nodeWidth, nodeHeight, colors, meta, setWins, winnerIndex } = props;
   const { matchCard, typography } = useBracketAppearance();
+  const localization = props.localization ?? resolveTournamentLocalization();
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
-  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection);
+  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection, localization);
   const scoreGroupWidth = getScoreGroupWidth(
     getMatchScoreSegmentCount(meta),
     matchCard.score.segmentWidth,
@@ -53,8 +55,13 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
           outline: 'none',
         }}
       >
-        {meta.status === MatchStatus.Live ? <LiveIndicator color={colors.LIVE_INDICATOR} /> : null}
+        {meta.status === MatchStatus.Live ? (
+          <LiveIndicator color={colors.LIVE_INDICATOR} label={localization.uiLabels.liveMatch} />
+        ) : null}
         {matchBadgeLabel ? <MatchTypeBadge label={matchBadgeLabel} /> : null}
+        {meta.status === MatchStatus.Upcoming && props.scheduleText ? (
+          <ScheduleMetadata text={props.scheduleText} />
+        ) : null}
         <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)' }}>
           {[p1, p2].map((player, playerIndex) => {
             const isWinner = winnerIndex === playerIndex;
@@ -116,12 +123,39 @@ function MatchTypeBadge({ label }: { readonly label: string }) {
   );
 }
 
-function LiveIndicator({ color }: { readonly color: string }) {
+function ScheduleMetadata({ text }: { readonly text: string }) {
+  const { colors, typography } = useBracketAppearance();
+
+  return (
+    <div
+      data-testid="match-schedule-metadata"
+      style={{
+        position: 'absolute',
+        right: 10,
+        bottom: 4,
+        left: 10,
+        zIndex: 1,
+        overflow: 'hidden',
+        color: colors.MUTED_TEXT,
+        fontFamily: typography.bodyFontFamily,
+        fontSize: 8,
+        fontWeight: 700,
+        textAlign: 'center',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+function LiveIndicator({ color, label }: { readonly color: string; readonly label: string }) {
   return (
     <div
       role="status"
       aria-live="polite"
-      aria-label="Live match"
+      aria-label={label}
       style={{
         position: 'absolute',
         top: 10,
@@ -159,7 +193,7 @@ function LiveIndicator({ color }: { readonly color: string }) {
           borderWidth: 0,
         }}
       >
-        Live
+        {label}
       </span>
     </div>
   );

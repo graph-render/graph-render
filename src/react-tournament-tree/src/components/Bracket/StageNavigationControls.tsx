@@ -1,5 +1,6 @@
 import { VerticalStagePosition } from '@graph-render/types/tournament';
 
+import { useBracketLocalization } from '../../contexts/BracketLocalizationContext';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon } from '../icons';
 import { getNavigationColors, RoundNavigationButton } from './navigation/NavigationButton';
 
@@ -26,6 +27,8 @@ export function StageNavigationControls({
   onPagePlayersUp,
   onPagePlayersDown,
 }: StageNavigationControlsProps) {
+  const { uiLabels } = useBracketLocalization();
+
   if (stageCount <= 1) return null;
   const colors = getNavigationColors(isDarkMode);
   const canGoPrev = activeStageIndex > 0;
@@ -38,7 +41,7 @@ export function StageNavigationControls({
   return (
     <>
       <OverlayButton
-        label="Go to previous stage"
+        label={uiLabels.goToPreviousStage}
         position="left"
         disabled={!canGoPrev}
         colors={colors}
@@ -47,7 +50,7 @@ export function StageNavigationControls({
         <ChevronLeftIcon color={colors.text} />
       </OverlayButton>
       <OverlayButton
-        label="Go to next stage"
+        label={uiLabels.goToNextStage}
         position="right"
         disabled={!canGoNext}
         colors={colors}
@@ -67,7 +70,7 @@ export function StageNavigationControls({
           }}
         >
           <RoundNavigationButton
-            label="Show upper players"
+            label={uiLabels.showUpperPlayers}
             disabled={!canPageUp}
             colors={colors}
             onClick={onPagePlayersUp}
@@ -75,7 +78,7 @@ export function StageNavigationControls({
             <ChevronUpIcon color={colors.text} />
           </RoundNavigationButton>
           <RoundNavigationButton
-            label="Show lower players"
+            label={uiLabels.showLowerPlayers}
             disabled={!canPageDown}
             colors={colors}
             onClick={onPagePlayersDown}

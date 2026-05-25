@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react';
 
 import { DEFAULT_PLAYER_ONE, DEFAULT_PLAYER_TWO, NODE_DIMENSIONS } from '../../constants';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
+import { useBracketLocalization } from '../../contexts/BracketLocalizationContext';
 import type { SquashNodeProps } from '../../types/squashNode';
 import { ensureSquashNodeAnimations } from '../../utils/animations';
+import { getMatchScheduleText } from '../../utils/localization';
 import { isSvgCompatibleRenderMode } from '../../utils/renderMode';
 import {
   getCompletedWinnerIndex,
@@ -27,6 +29,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
 }) {
   const [hoveredPlayerIndex, setHoveredPlayerIndex] = useState<number | null>(null);
   const { colors, matchCard: defaultMatchCard, compact: densityCompact } = useBracketAppearance();
+  const localization = useBracketLocalization();
 
   useEffect(() => {
     ensureSquashNodeAnimations();
@@ -42,6 +45,7 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
     densityCompact || nodeHeight < NODE_DIMENSIONS.HEIGHT || nodeWidth < NODE_DIMENSIONS.WIDTH;
   const setWins = getMatchWins(meta);
   const winnerIndex = getCompletedWinnerIndex(setWins, meta.status);
+  const scheduleText = getMatchScheduleText(meta, localization);
   const sharedProps = {
     nodeId: node.id,
     nodeWidth,
@@ -55,16 +59,19 @@ export const SquashNodeContent = React.memo<SquashNodeProps>(function SquashNode
     ariaLabel: getMatchAriaLabel({
       bracketSection: meta.bracketSection,
       currentSet: meta.currentSet,
+      localization,
       matchType: meta.matchType,
       players: meta.players,
+      scheduleText,
       scoreUnit: meta.games.length > 0 ? 'games' : 'sets',
       setWins,
       stage: meta.stage,
       status: meta.status,
-      venue: meta.venue,
       winnerIndex,
     }),
+    localization,
     meta,
+    scheduleText,
     setWins,
     winnerIndex,
     colors,

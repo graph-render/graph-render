@@ -16,6 +16,7 @@ vi.mock('@graph-render/core', () => ({
 }));
 
 const MINIMAL_GRAPH = { nodes: {}, adj: {}, edges: {} };
+const SINGLE_MATCH_GRAPH = { nodes: { final: {} }, adj: { final: {} }, edges: {} };
 
 describe('TournamentBracket', () => {
   it('renders without crashing with minimal props', () => {
@@ -116,5 +117,27 @@ describe('TournamentBracket', () => {
         />
       )
     ).not.toThrow();
+  });
+
+  it('uses localized generated round labels while preserving config label overrides', () => {
+    const { rerender } = render(
+      <TournamentBracket
+        graph={SINGLE_MATCH_GRAPH}
+        localization={{ roundLabels: { final: 'FINALE' } }}
+      />
+    );
+
+    expect(screen.getByText('FINALE')).toBeInTheDocument();
+
+    rerender(
+      <TournamentBracket
+        config={{ labels: ['Custom final'] }}
+        graph={SINGLE_MATCH_GRAPH}
+        localization={{ roundLabels: { final: 'FINALE' } }}
+      />
+    );
+
+    expect(screen.getByText('Custom final')).toBeInTheDocument();
+    expect(screen.queryByText('FINALE')).not.toBeInTheDocument();
   });
 });

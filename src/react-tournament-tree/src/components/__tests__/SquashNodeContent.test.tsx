@@ -2,6 +2,7 @@ import { SquashNodeRenderMode } from '@graph-render/types/tournament';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
+import { BracketLocalizationProvider } from '../../contexts/BracketLocalizationContext';
 import { SquashNodeContent } from '../SquashNode/SquashNodeContent';
 import { MOCK_META, MOCK_META_LIVE, renderWithAppearance, withAppearance } from './testUtils';
 
@@ -134,6 +135,74 @@ describe('SquashNodeContent', () => {
 
     expect(screen.getByText('11')).toBeInTheDocument();
     expect(screen.queryByRole('status', { name: 'Live match' })).not.toBeInTheDocument();
+  });
+
+  it('renders localized schedule metadata for upcoming Html cards', () => {
+    const scheduledAt = '2026-06-01T10:00:00Z';
+    const expectedDate = new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'UTC',
+    }).format(new Date(scheduledAt));
+
+    renderWithAppearance(
+      <BracketLocalizationProvider
+        localization={{
+          locale: 'en-US',
+          timeZone: 'UTC',
+          statusLabels: { upcoming: 'scheduled' },
+          uiLabels: { scheduled: 'Scheduled for' },
+        }}
+      >
+        <svg>
+          <SquashNodeContent
+            node={makeNode({
+              ...MOCK_META,
+              scheduledAt,
+              status: 'upcoming',
+              venue: 'Court 1',
+            })}
+            renderMode={SquashNodeRenderMode.Html}
+          />
+        </svg>
+      </BracketLocalizationProvider>
+    );
+
+    expect(screen.getByTestId('match-schedule-metadata')).toHaveTextContent(
+      `${expectedDate} · Court 1`
+    );
+    expect(screen.getByRole('button', { name: /Status scheduled/i })).toHaveAccessibleName(
+      /Scheduled for/
+    );
+  });
+
+  it('renders schedule metadata in SVG/export mode', () => {
+    const scheduledAt = '2026-06-01T10:00:00Z';
+    const expectedDate = new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'UTC',
+    }).format(new Date(scheduledAt));
+
+    renderWithAppearance(
+      <BracketLocalizationProvider localization={{ locale: 'en-US', timeZone: 'UTC' }}>
+        <svg>
+          <SquashNodeContent
+            node={makeNode({
+              ...MOCK_META,
+              scheduledAt,
+              status: 'upcoming',
+              venue: 'Court 2',
+            })}
+            renderMode={SquashNodeRenderMode.Export}
+          />
+        </svg>
+      </BracketLocalizationProvider>
+    );
+
+    expect(screen.getByTestId('match-schedule-svg-metadata')).toHaveTextContent(
+      `${expectedDate} · Court 2`
+    );
   });
 
   it('uses default Export renderMode when not specified', () => {
