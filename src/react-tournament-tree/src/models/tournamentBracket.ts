@@ -25,6 +25,8 @@ export interface TournamentBracketThemeOptions {
 export interface TournamentBracketToolbarOptions {
   readonly showToolbar?: boolean | undefined;
   readonly showViewportControls?: boolean | undefined;
+  /** When true, shows a PDF export button in the toolbar. Requires jspdf to be installed. */
+  readonly showPdfExport?: boolean | undefined;
 }
 
 export interface TournamentMatchUpdatePayload {
@@ -46,6 +48,8 @@ export interface TournamentBracketProps {
   readonly toolbar?: TournamentBracketToolbarOptions | undefined;
   readonly showToolbar?: boolean | undefined;
   readonly showViewportControls?: boolean | undefined;
+  /** When true, shows a PDF export button in the toolbar. Requires jspdf to be installed. */
+  readonly showPdfExport?: boolean | undefined;
   readonly defaultNavigationMode?: boolean | undefined;
   /** Prefer grouped theme options; flat props remain supported for compatibility. */
   readonly theme?: TournamentBracketThemeOptions | undefined;

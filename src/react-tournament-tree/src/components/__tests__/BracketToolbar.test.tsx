@@ -9,13 +9,25 @@ const baseProps = {
   onToggleNavigationMode: vi.fn(),
   onToggleDarkMode: vi.fn(),
   onExportSVG: vi.fn(),
+  onExportPNG: vi.fn(),
 };
 
 describe('BracketToolbar', () => {
-  it('renders three buttons', () => {
+  it('renders four buttons by default (SVG, PNG, Nav, DarkMode)', () => {
     render(<BracketToolbar {...baseProps} />);
-    expect(screen.getAllByRole('button')).toHaveLength(3);
+    expect(screen.getAllByRole('button')).toHaveLength(4);
     expect(screen.getByTestId('bracket-toolbar')).toHaveAttribute('data-print-hidden');
+  });
+
+  it('renders five buttons when onExportPDF is provided', () => {
+    render(<BracketToolbar {...baseProps} onExportPDF={vi.fn()} />);
+    expect(screen.getAllByRole('button')).toHaveLength(5);
+    expect(screen.getByRole('button', { name: 'Export as PDF' })).toBeInTheDocument();
+  });
+
+  it('does not render a PDF button when onExportPDF is not provided', () => {
+    render(<BracketToolbar {...baseProps} />);
+    expect(screen.queryByRole('button', { name: 'Export as PDF' })).not.toBeInTheDocument();
   });
 
   it('dark-mode button shows "Switch to Dark Mode" label in light mode', () => {
@@ -54,10 +66,24 @@ describe('BracketToolbar', () => {
     expect(onToggle).toHaveBeenCalledOnce();
   });
 
-  it('calls onExportSVG when export button is clicked', () => {
+  it('calls onExportSVG when SVG export button is clicked', () => {
     const onExportSVG = vi.fn();
     render(<BracketToolbar {...baseProps} onExportSVG={onExportSVG} />);
     fireEvent.click(screen.getByRole('button', { name: 'Export as SVG' }));
     expect(onExportSVG).toHaveBeenCalledOnce();
+  });
+
+  it('calls onExportPNG when PNG export button is clicked', () => {
+    const onExportPNG = vi.fn();
+    render(<BracketToolbar {...baseProps} onExportPNG={onExportPNG} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Export as PNG' }));
+    expect(onExportPNG).toHaveBeenCalledOnce();
+  });
+
+  it('calls onExportPDF when PDF export button is clicked', () => {
+    const onExportPDF = vi.fn();
+    render(<BracketToolbar {...baseProps} onExportPDF={onExportPDF} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Export as PDF' }));
+    expect(onExportPDF).toHaveBeenCalledOnce();
   });
 });

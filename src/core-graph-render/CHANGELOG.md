@@ -1,14 +1,10 @@
 ## @graph-render/core 1.4.0 (2026-05-25)
 
-* feat(tournament): localize schedule metadata (#28) ([40f49e1](https://github.com/graph-render/graph-render/commit/40f49e1)), closes [#28](https://github.com/graph-render/graph-render/issues/28)
-
-
-
-
+- feat(tournament): localize schedule metadata (#28) ([40f49e1](https://github.com/graph-render/graph-render/commit/40f49e1)), closes [#28](https://github.com/graph-render/graph-render/issues/28)
 
 ### Dependencies
 
-* **@graph-render/types:** upgraded to 1.4.0
+- **@graph-render/types:** upgraded to 1.4.0
 
 ## <small>1.3.7 (2026-05-24)</small>
 

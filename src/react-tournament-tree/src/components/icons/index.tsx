@@ -177,3 +177,48 @@ export function ToolbarNavigationIcon({ isActive }: { readonly isActive: boolean
     </svg>
   );
 }
+
+export function PngExportIcon() {
+  return (
+    <svg
+      width={ICON_SIZE}
+      height={ICON_SIZE}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      data-testid="icon-svg"
+    >
+      {/* Image frame */}
+      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      {/* Mountain silhouette */}
+      <path
+        d="M3 15.5 8 11l4.5 4 3-3L21 16"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {/* Sun circle */}
+      <circle cx="8" cy="10" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function PdfExportIcon() {
+  return (
+    <svg
+      width={ICON_SIZE}
+      height={ICON_SIZE}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      data-testid="icon-svg"
+    >
+      {/* Document outline with folded corner */}
+      <path d="M6 2h9l3 3v17H6V2z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="M15 2v3h3" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      {/* PDF lines */}
+      <path d="M9 12h6M9 15h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}

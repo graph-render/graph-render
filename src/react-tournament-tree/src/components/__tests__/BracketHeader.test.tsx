@@ -14,6 +14,7 @@ const baseProps = {
   onToggleNavigationMode: vi.fn(),
   onToggleDarkMode: vi.fn(),
   onExportSVG: vi.fn(),
+  onExportPNG: vi.fn(),
 };
 
 describe('BracketHeader', () => {
