@@ -1,3 +1,7 @@
+## @graph-render/types 1.4.0 (2026-05-25)
+
+* feat(tournament): localize schedule metadata (#28) ([40f49e1](https://github.com/graph-render/graph-render/commit/40f49e1)), closes [#28](https://github.com/graph-render/graph-render/issues/28)
+
 ## @graph-render/types 1.3.0 (2026-05-24)
 
 - feat(tournament): features ([7c4fbd7](https://github.com/graph-render/graph-render/commit/7c4fbd7))
