@@ -22,10 +22,21 @@ export {
   BracketAppearanceProvider,
   useBracketAppearance,
 } from './contexts/BracketAppearanceContext';
+export {
+  BracketLocalizationProvider,
+  useBracketLocalization,
+} from './contexts/BracketLocalizationContext';
 /* eslint-disable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
 export { BracketThemeProvider, useBracketTheme } from './contexts/BracketThemeContext';
 /* eslint-enable @typescript-eslint/no-deprecated -- legacy theme exports remain available for backward compatibility */
 export { useBracketMatchUpdate } from './contexts/BracketVertexOptionsContext';
+export type {
+  ResolvedTournamentLocalization,
+  TournamentLocale,
+  TournamentLocalizationOptions,
+  TournamentRoundLabelKey,
+  TournamentUiLabels,
+} from './models/localization';
 export type {
   TournamentBracketInteractionOptions,
   TournamentBracketProps,
@@ -34,6 +45,15 @@ export type {
   TournamentMatchUpdatePayload,
 } from './models/tournamentBracket';
 export { routeBracketEdges } from './utils/bracketRouting';
+export {
+  formatBracketSectionLabel,
+  formatMatchDateTime,
+  formatMatchTypeLabel,
+  formatStatusLabel,
+  getMatchScheduleText,
+  getTournamentRoundLabel,
+  resolveTournamentLocalization,
+} from './utils/localization';
 export { injectTournamentPathKeys } from './utils/pathKeys';
 export type {
   ResolvedBracketAppearance,

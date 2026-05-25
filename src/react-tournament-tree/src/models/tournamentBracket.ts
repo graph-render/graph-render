@@ -7,6 +7,8 @@ import type {
   TournamentBracketAppearance,
 } from '@graph-render/types/tournament';
 
+import type { TournamentLocalizationOptions } from './localization';
+
 export interface TournamentBracketInteractionOptions {
   readonly panEnabled?: boolean | undefined;
   readonly zoomEnabled?: boolean | undefined;
@@ -34,6 +36,7 @@ export interface TournamentBracketProps {
   readonly graph: NxGraphInput;
   readonly config?: Partial<GraphConfig> | undefined;
   readonly appearance?: TournamentBracketAppearance | undefined;
+  readonly localization?: TournamentLocalizationOptions | undefined;
   readonly defaultViewport?: Partial<GraphViewport> | undefined;
   readonly vertexComponent?: VertexComponent | undefined;
   readonly nodeRenderMode?: SquashNodeRenderMode | undefined;

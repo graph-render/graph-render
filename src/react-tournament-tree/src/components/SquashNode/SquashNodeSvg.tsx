@@ -5,6 +5,7 @@ import { DEFAULT_PLAYERS, NODE_BORDER_WIDTH, NODE_DIMENSIONS } from '../../const
 import { getSquashScoreLayout } from '../../constants/squashNode';
 import { useBracketAppearance } from '../../contexts/BracketAppearanceContext';
 import type { SquashNodeVariantProps } from '../../types/squashNode';
+import { resolveTournamentLocalization } from '../../utils/localization';
 import {
   getMatchBadgeLabel,
   getMatchScoreSegmentCount,
@@ -17,12 +18,13 @@ import { SquashPlayerSvgRow } from './SquashPlayerSvgRow';
 export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const { nodeId, nodeWidth, nodeHeight, compact, colors, meta, setWins, winnerIndex } = props;
   const { matchCard: defaultMatchCard, typography } = useBracketAppearance();
+  const localization = props.localization ?? resolveTournamentLocalization();
   const scoreLayout = layoutUsesCompactMetrics(compact, nodeWidth, nodeHeight)
     ? getSquashScoreLayout(true)
     : defaultMatchCard.score;
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
-  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection);
+  const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection, localization);
   const {
     insetX,
     badgeSize,
@@ -78,11 +80,11 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
         <g
           transform={`translate(${nodeWidth - 18}, 14)`}
           role="img"
-          aria-label="Live match"
+          aria-label={localization.uiLabels.liveMatch}
           aria-live="polite"
           data-match-status-indicator
         >
-          <title>Live match</title>
+          <title>{localization.uiLabels.liveMatch}</title>
           <circle r={4} fill={colors.LIVE_INDICATOR} />
         </g>
       ) : null}
@@ -164,6 +166,20 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
           stroke={colors.BORDER}
           strokeWidth={1}
         />
+        {meta.status === MatchStatus.Upcoming && props.scheduleText ? (
+          <text
+            x={nodeWidth / 2}
+            y={nodeHeight - 6}
+            textAnchor="middle"
+            fontSize={8}
+            fontWeight={700}
+            fill={colors.MUTED_TEXT}
+            fontFamily={typography.bodyFontFamily}
+            data-testid="match-schedule-svg-metadata"
+          >
+            {props.scheduleText}
+          </text>
+        ) : null}
       </g>
     </g>
   );

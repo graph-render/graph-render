@@ -5,6 +5,7 @@ import type {
   TournamentThemeColors,
 } from '@graph-render/types/tournament';
 
+import type { ResolvedTournamentLocalization } from '../models/localization';
 import type { NormalizedSquashMatchMeta, SetWins } from '../models/squash';
 
 export interface SquashNodeProps extends VertexComponentProps {
@@ -29,7 +30,9 @@ export type SquashNodeVariantProps = PlayerHoverHandlers & {
   readonly isNodeInActivePath: boolean;
   readonly isTBD: boolean;
   readonly ariaLabel: string;
+  readonly localization?: ResolvedTournamentLocalization | undefined;
   readonly meta: NormalizedSquashMatchMeta;
+  readonly scheduleText?: string | undefined;
   readonly setWins: SetWins;
   readonly winnerIndex: number | null;
   readonly colors: TournamentThemeColors;

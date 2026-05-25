@@ -10,6 +10,12 @@ import {
   BracketAppearanceProvider,
   useBracketAppearance,
 } from '../contexts/BracketAppearanceContext';
+import {
+  BracketLocalizationProvider,
+  useBracketLocalization,
+} from '../contexts/BracketLocalizationContext';
+import type { TournamentLocalizationOptions } from '../models/localization';
+import { formatStatusLabel, getMatchScheduleText } from '../utils/localization';
 import type { TournamentParticipantInput } from '../utils/tournament';
 import {
   calculateRoundRobinStandings,
@@ -24,6 +30,7 @@ export interface RoundRobinBracketProps {
   readonly title?: string | undefined;
   readonly groupName?: string | undefined;
   readonly appearance?: TournamentBracketAppearance | undefined;
+  readonly localization?: TournamentLocalizationOptions | undefined;
   readonly isDarkMode?: boolean | undefined;
   readonly compact?: boolean | undefined;
 }
@@ -32,11 +39,14 @@ export const RoundRobinBracket = React.memo<RoundRobinBracketProps>(function Rou
   appearance,
   compact = false,
   isDarkMode = false,
+  localization,
   ...props
 }) {
   return (
     <BracketAppearanceProvider appearance={appearance} compact={compact} isDarkMode={isDarkMode}>
-      <RoundRobinBracketContent {...props} compact={compact} />
+      <BracketLocalizationProvider localization={localization}>
+        <RoundRobinBracketContent {...props} compact={compact} />
+      </BracketLocalizationProvider>
     </BracketAppearanceProvider>
   );
 });
@@ -50,8 +60,9 @@ function RoundRobinBracketContent({
   participants,
   points,
   title = 'Round Robin',
-}: Omit<RoundRobinBracketProps, 'appearance' | 'isDarkMode'>) {
+}: Omit<RoundRobinBracketProps, 'appearance' | 'isDarkMode' | 'localization'>) {
   const { colors, frame, matchCard, typography } = useBracketAppearance();
+  const { uiLabels } = useBracketLocalization();
   const schedule = useMemo(
     () => matches ?? generateRoundRobinSchedule(participants),
     [matches, participants]
@@ -87,7 +98,7 @@ function RoundRobinBracketContent({
             textTransform: 'uppercase',
           }}
         >
-          {groupName ?? 'Group stage'}
+          {groupName ?? uiLabels.groupStage}
         </p>
         <h2
           style={{
@@ -109,7 +120,7 @@ function RoundRobinBracketContent({
         }}
       >
         <div>
-          <h3 style={{ fontSize: tableFontSize, margin: '0 0 8px' }}>Standings</h3>
+          <h3 style={{ fontSize: tableFontSize, margin: '0 0 8px' }}>{uiLabels.standings}</h3>
           <div style={{ overflowX: 'auto' }}>
             <table
               style={{
@@ -121,7 +132,15 @@ function RoundRobinBracketContent({
             >
               <thead>
                 <tr>
-                  {['Team', 'P', 'W', 'D', 'L', '+/-', 'Pts'].map((label) => (
+                  {[
+                    uiLabels.team,
+                    uiLabels.played,
+                    uiLabels.wins,
+                    uiLabels.draws,
+                    uiLabels.losses,
+                    uiLabels.scoreDifference,
+                    uiLabels.points,
+                  ].map((label) => (
                     <th
                       key={label}
                       scope="col"
@@ -129,7 +148,7 @@ function RoundRobinBracketContent({
                         borderBottom: `1px solid ${colors.BORDER}`,
                         color: colors.LABEL_TEXT,
                         padding: '8px 6px',
-                        textAlign: label === 'Team' ? 'left' : 'right',
+                        textAlign: label === uiLabels.team ? 'left' : 'right',
                       }}
                     >
                       {label}
@@ -159,7 +178,7 @@ function RoundRobinBracketContent({
         </div>
 
         <div>
-          <h3 style={{ fontSize: tableFontSize, margin: '0 0 8px' }}>Schedule</h3>
+          <h3 style={{ fontSize: tableFontSize, margin: '0 0 8px' }}>{uiLabels.schedule}</h3>
           <div style={{ display: 'grid', gap: compact ? 10 : 14 }}>
             {rounds.map((round) => (
               <section key={round.round} aria-labelledby={`rr-round-${round.round}`}>
@@ -173,7 +192,7 @@ function RoundRobinBracketContent({
                     textTransform: 'uppercase',
                   }}
                 >
-                  Round {round.round}
+                  {uiLabels.round} {round.round}
                 </h4>
                 <div style={{ display: 'grid', gap: 8 }}>
                   {round.matches.map((match) => (
@@ -201,13 +220,25 @@ function RoundRobinMatchCard({
   readonly match: RoundRobinMatch;
 }) {
   const { colors, typography } = useBracketAppearance();
+  const localization = useBracketLocalization();
   const [playerOne, playerTwo] = match.players;
   const isCompleted = match.status === MatchStatus.Completed && match.scores;
-  const scoreText = isCompleted ? `${match.scores?.[0]} - ${match.scores?.[1]}` : match.status;
+  const statusText = match.status
+    ? formatStatusLabel(match.status, localization)
+    : localization.uiLabels.upcoming;
+  const scoreText = isCompleted ? `${match.scores?.[0]} - ${match.scores?.[1]}` : statusText;
+  const scheduleText = getMatchScheduleText(
+    {
+      scheduledAt: match.scheduledAt,
+      timezone: undefined,
+      venue: match.venue,
+    },
+    localization
+  );
 
   return (
     <article
-      aria-label={`${playerOne.name} versus ${playerTwo.name}, round ${match.round}, ${scoreText ?? 'upcoming'}`}
+      aria-label={`${playerOne.name} versus ${playerTwo.name}, ${localization.uiLabels.round.toLowerCase()} ${match.round}, ${scoreText}${scheduleText ? `, ${localization.uiLabels.scheduled} ${scheduleText}` : ''}`}
       style={{
         alignItems: 'center',
         background: colors.BASE_BG,
@@ -228,9 +259,21 @@ function RoundRobinMatchCard({
           whiteSpace: 'nowrap',
         }}
       >
-        {scoreText ?? 'upcoming'}
+        {scoreText}
       </strong>
       <span style={{ textAlign: 'right' }}>{playerTwo.name}</span>
+      {scheduleText ? (
+        <small
+          style={{
+            color: colors.MUTED_TEXT,
+            fontSize: 11,
+            gridColumn: '1 / -1',
+            textAlign: 'center',
+          }}
+        >
+          {scheduleText}
+        </small>
+      ) : null}
     </article>
   );
 }

@@ -56,6 +56,23 @@ const bestOfSeriesGraph = {
   },
   adj: { final: {} },
 };
+const localizedScheduleGraph = {
+  nodes: {
+    semifinal: {
+      meta: {
+        players: [
+          { name: 'Львів Сквош', seed: 1, country: 'UKR' },
+          { name: 'Київ Ракетс', seed: 2, country: 'UKR' },
+        ],
+        scheduledAt: '2026-06-01T10:00:00Z',
+        status: MatchStatus.Upcoming,
+        timezone: 'Europe/Kyiv',
+        venue: 'Корт 1',
+      },
+    },
+  },
+  adj: { semifinal: {} },
+};
 
 function ControlledLiveUpdateExample() {
   const [score, setScore] = useState(4);
@@ -211,6 +228,45 @@ export const ControlledLiveUpdates: Story = {
       description: {
         story:
           'Demonstrates consumer-owned live score state. The bracket receives a new graph; no transport dependency is included.',
+      },
+    },
+  },
+};
+
+export const LocalizedSchedule: Story = {
+  name: 'Localized — Ukrainian schedule',
+  args: {
+    graph: localizedScheduleGraph,
+    title: 'Кубок України',
+    localization: {
+      locale: 'uk-UA',
+      timeZone: 'Europe/Kyiv',
+      roundLabels: {
+        final: 'Фінал',
+        quarterfinals: 'Чвертьфінали',
+        roundOf: 'Раунд {count}',
+        semifinals: 'Півфінали',
+      },
+      statusLabels: {
+        completed: 'завершено',
+        live: 'наживо',
+        upcoming: 'заплановано',
+      },
+      uiLabels: {
+        nextStage: 'Наступний етап',
+        previousStage: 'Попередній етап',
+        round: 'Раунд',
+        scheduled: 'Заплановано',
+        schedule: 'Розклад',
+        standings: 'Таблиця',
+      },
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Uses Intl.DateTimeFormat with Ukrainian labels and Europe/Kyiv timezone for scheduled upcoming matches.',
       },
     },
   },

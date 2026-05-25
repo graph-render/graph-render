@@ -4,6 +4,7 @@ import { SquashNodeRenderMode } from '@graph-render/types/tournament';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { BracketAppearanceProvider } from '../contexts/BracketAppearanceContext';
+import { BracketLocalizationProvider } from '../contexts/BracketLocalizationContext';
 import { useBracketSvgExport } from '../hooks/useBracketSvgExport';
 import {
   BracketVertexOptionsProvider,
@@ -18,6 +19,7 @@ import {
   getTranslateExtent,
   resolveBadgeText,
 } from '../utils/bracketGraph';
+import { resolveTournamentLocalization } from '../utils/localization';
 import { resolveBracketAppearance } from '../utils/resolveBracketAppearance';
 import { roundLabelsForGraph } from '../utils/roundLabels';
 import { BracketFrame } from './Bracket/BracketFrame';
@@ -27,6 +29,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   graph,
   config,
   appearance,
+  localization,
   defaultViewport,
   vertexComponent,
   nodeRenderMode = SquashNodeRenderMode.Export,
@@ -68,9 +71,13 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   });
   const [stageViews, setStageViews] = useState<readonly StageView[]>([]);
 
+  const resolvedLocalization = useMemo(
+    () => resolveTournamentLocalization(localization),
+    [localization]
+  );
   const labels = useMemo(
-    () => config?.labels ?? roundLabelsForGraph(graph),
-    [config?.labels, graph]
+    () => config?.labels ?? roundLabelsForGraph(graph, resolvedLocalization),
+    [config?.labels, graph, resolvedLocalization]
   );
   const resolvedAppearance = useMemo(
     () => resolveBracketAppearance(appearance, isDarkMode, compact),
@@ -117,54 +124,57 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
     mergedConfig,
     appearance,
     compact,
+    resolvedLocalization,
     vertexOptions,
     onExportError,
   });
 
   return (
     <BracketAppearanceProvider resolvedAppearance={resolvedAppearance}>
-      <BracketFrame
-        title={title}
-        badgeText={resolvedBadgeText}
-        stageLabels={labels}
-        isDarkMode={isDarkMode}
-        isNavigationMode={navigation.isNavigationMode}
-        stageViews={stageViews}
-        activeStageIndex={navigation.activeStageIndex}
-        verticalStagePosition={navigation.verticalStagePosition}
-        canPagePlayersVertically={navigation.canPagePlayersVertically}
-        contentViewportRef={contentViewportRef}
-        showToolbar={resolvedShowToolbar}
-        compact={compact}
-        onToggleNavigationMode={navigation.handleToggleNavigationMode}
-        onPreviousStage={navigation.handlePreviousStage}
-        onNextStage={navigation.handleNextStage}
-        onPagePlayersUp={navigation.handlePagePlayersUp}
-        onPagePlayersDown={navigation.handlePagePlayersDown}
-        onToggleDarkMode={toggleDarkMode}
-        onExportSVG={handleExportSVG}
-      >
-        <BracketVertexOptionsProvider value={vertexOptions}>
-          <BracketGraphCanvas
-            graphRef={graphRef}
-            wrapperRef={wrapperRef}
-            graph={enrichedGraph}
-            vertexComponent={resolvedVertexComponent}
-            config={mergedConfig}
-            defaultViewport={defaultViewport}
-            isNavigationMode={navigation.isNavigationMode}
-            translateExtent={translateExtent}
-            showViewportControls={resolvedShowViewportControls}
-            panEnabled={resolvedPanEnabled}
-            zoomEnabled={resolvedZoomEnabled}
-            pinchZoomEnabled={resolvedPinchZoomEnabled}
-            labels={labels}
-            onStagesChange={navigation.handleStagesChange}
-            onMatchClick={onMatchClick}
-            onInvalidNode={onInvalidNode}
-          />
-        </BracketVertexOptionsProvider>
-      </BracketFrame>
+      <BracketLocalizationProvider resolvedLocalization={resolvedLocalization}>
+        <BracketFrame
+          title={title}
+          badgeText={resolvedBadgeText}
+          stageLabels={labels}
+          isDarkMode={isDarkMode}
+          isNavigationMode={navigation.isNavigationMode}
+          stageViews={stageViews}
+          activeStageIndex={navigation.activeStageIndex}
+          verticalStagePosition={navigation.verticalStagePosition}
+          canPagePlayersVertically={navigation.canPagePlayersVertically}
+          contentViewportRef={contentViewportRef}
+          showToolbar={resolvedShowToolbar}
+          compact={compact}
+          onToggleNavigationMode={navigation.handleToggleNavigationMode}
+          onPreviousStage={navigation.handlePreviousStage}
+          onNextStage={navigation.handleNextStage}
+          onPagePlayersUp={navigation.handlePagePlayersUp}
+          onPagePlayersDown={navigation.handlePagePlayersDown}
+          onToggleDarkMode={toggleDarkMode}
+          onExportSVG={handleExportSVG}
+        >
+          <BracketVertexOptionsProvider value={vertexOptions}>
+            <BracketGraphCanvas
+              graphRef={graphRef}
+              wrapperRef={wrapperRef}
+              graph={enrichedGraph}
+              vertexComponent={resolvedVertexComponent}
+              config={mergedConfig}
+              defaultViewport={defaultViewport}
+              isNavigationMode={navigation.isNavigationMode}
+              translateExtent={translateExtent}
+              showViewportControls={resolvedShowViewportControls}
+              panEnabled={resolvedPanEnabled}
+              zoomEnabled={resolvedZoomEnabled}
+              pinchZoomEnabled={resolvedPinchZoomEnabled}
+              labels={labels}
+              onStagesChange={navigation.handleStagesChange}
+              onMatchClick={onMatchClick}
+              onInvalidNode={onInvalidNode}
+            />
+          </BracketVertexOptionsProvider>
+        </BracketFrame>
+      </BracketLocalizationProvider>
     </BracketAppearanceProvider>
   );
 });

@@ -1,6 +1,13 @@
-import type { MatchPlayer, MatchStatus } from '@graph-render/types/tournament';
+import { type MatchPlayer, MatchStatus } from '@graph-render/types/tournament';
 
+import type { ResolvedTournamentLocalization } from '../../models/localization';
 import type { SetWins } from '../../models/squash';
+import {
+  formatBracketSectionLabel,
+  formatMatchTypeLabel,
+  formatStatusLabel,
+  resolveTournamentLocalization,
+} from '../localization';
 
 export const truncateText = (value: string, maxLength: number): string => {
   if (value.length <= maxLength) {
@@ -30,32 +37,32 @@ export const getPlayerMetadataText = (player: MatchPlayer): string => {
   return parts.join(' · ');
 };
 
-const statusText = (status: MatchStatus): string => status;
+const DEFAULT_LOCALIZATION = resolveTournamentLocalization();
 
-export const getMatchTypeLabel = (matchType: string | undefined): string => {
-  if (matchType === 'thirdPlace') return 'Third place';
-  if (matchType === 'grandFinal') return 'Grand final';
-  if (matchType === 'bye') return 'Bye';
-  if (matchType === 'walkover') return 'Walkover';
-  return '';
-};
+export const getMatchTypeLabel = (
+  matchType: string | undefined,
+  localization: ResolvedTournamentLocalization = DEFAULT_LOCALIZATION
+): string => formatMatchTypeLabel(matchType, localization);
 
-export const getBracketSectionLabel = (bracketSection: string | undefined): string => {
-  if (bracketSection === 'winners') return 'Winners';
-  if (bracketSection === 'losers') return 'Losers';
-  if (bracketSection === 'grandFinal') return 'Grand final';
-  return '';
-};
+export const getBracketSectionLabel = (
+  bracketSection: string | undefined,
+  localization: ResolvedTournamentLocalization = DEFAULT_LOCALIZATION
+): string => formatBracketSectionLabel(bracketSection, localization);
 
 export const getMatchBadgeLabel = (
   matchType: string | undefined,
-  bracketSection: string | undefined
-): string => getMatchTypeLabel(matchType) || getBracketSectionLabel(bracketSection);
+  bracketSection: string | undefined,
+  localization: ResolvedTournamentLocalization = DEFAULT_LOCALIZATION
+): string =>
+  getMatchTypeLabel(matchType, localization) ||
+  getBracketSectionLabel(bracketSection, localization);
 
 export const getMatchAriaLabel = ({
   bracketSection,
   currentSet,
+  localization = DEFAULT_LOCALIZATION,
   players,
+  scheduleText,
   scoreUnit = 'sets',
   setWins,
   stage,
@@ -66,8 +73,10 @@ export const getMatchAriaLabel = ({
 }: {
   readonly bracketSection?: string | undefined;
   readonly currentSet: number;
+  readonly localization?: ResolvedTournamentLocalization | undefined;
   readonly matchType?: string | undefined;
   readonly players: readonly [MatchPlayer, MatchPlayer];
+  readonly scheduleText?: string | undefined;
   readonly scoreUnit?: 'games' | 'sets' | undefined;
   readonly setWins: SetWins;
   readonly stage: string;
@@ -79,12 +88,15 @@ export const getMatchAriaLabel = ({
   const score = `${playerOne.name} ${setWins.p1} ${scoreUnit}, ${playerTwo.name} ${setWins.p2} ${scoreUnit}`;
   const winnerPlayer = winnerIndex == null ? undefined : players[winnerIndex];
   const winner = winnerPlayer ? `Winner ${winnerPlayer.name}` : 'No winner yet';
-  const liveDetail = statusText(status) === 'live' ? ` Current set ${currentSet + 1}.` : '';
-  const venueDetail = venue ? ` Venue ${venue}.` : '';
-  const semanticLabel = getMatchBadgeLabel(matchType, bracketSection);
+  const localizedStatus = formatStatusLabel(status, localization);
+  const liveDetail = status === MatchStatus.Live ? ` Current set ${currentSet + 1}.` : '';
+  const scheduleDetail = scheduleText
+    ? ` ${localization.uiLabels.scheduled} ${scheduleText}.`
+    : venue
+      ? ` Venue ${venue}.`
+      : '';
+  const semanticLabel = getMatchBadgeLabel(matchType, bracketSection, localization);
   const prefix = semanticLabel ? `${semanticLabel} match` : `${stage} match`;
 
-  return `${prefix}: ${playerOne.name} versus ${playerTwo.name}. Status ${statusText(
-    status
-  )}. Score ${score}. ${winner}.${liveDetail}${venueDetail}`;
+  return `${prefix}: ${playerOne.name} versus ${playerTwo.name}. Status ${localizedStatus}. Score ${score}. ${winner}.${liveDetail}${scheduleDetail}`;
 };

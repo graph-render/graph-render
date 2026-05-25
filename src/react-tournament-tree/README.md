@@ -225,6 +225,56 @@ import { EdgeType, LayoutDirection, LayoutType } from '@graph-render/types';
 
 `config.theme` only affects the **graph engine** (edges, canvas background, node spacing). Match-card colors come from `appearance.colors`.
 
+### Localization and schedules
+
+Use `localization` to translate generated labels and format upcoming match times with
+`Intl.DateTimeFormat`. Existing `config.labels` still wins when you provide an explicit
+round-label array.
+
+```tsx
+<TournamentBracket
+  graph={{
+    nodes: {
+      final: {
+        meta: {
+          players: [{ name: 'Львів' }, { name: 'Київ' }],
+          status: MatchStatus.Upcoming,
+          scheduledAt: '2026-06-01T10:00:00Z',
+          timezone: 'Europe/Kyiv',
+          venue: 'Корт 1',
+        },
+      },
+    },
+    adj: { final: {} },
+  }}
+  localization={{
+    locale: 'uk-UA',
+    timeZone: 'Europe/Kyiv',
+    roundLabels: {
+      final: 'Фінал',
+      semifinals: 'Півфінали',
+      quarterfinals: 'Чвертьфінали',
+      roundOf: 'Раунд {count}',
+    },
+    statusLabels: {
+      upcoming: 'заплановано',
+      live: 'наживо',
+      completed: 'завершено',
+    },
+    uiLabels: {
+      scheduled: 'Заплановано',
+      standings: 'Таблиця',
+      schedule: 'Розклад',
+      round: 'Раунд',
+    },
+  }}
+/>
+```
+
+`scheduledAt` should be an ISO-compatible date string. Per-match `timezone` is used first,
+then `localization.timeZone`, then the browser/runtime default timezone. Invalid date or
+timezone values surface through the existing invalid-node error path instead of being hidden.
+
 ### Default match-card sizes
 
 | Mode     | `compact` | Default size (W×H) |

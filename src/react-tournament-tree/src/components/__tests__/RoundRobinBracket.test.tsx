@@ -65,4 +65,46 @@ describe('RoundRobinBracket', () => {
     expect(screen.getByRole('heading', { name: 'Round 3' })).toBeInTheDocument();
     expect(screen.getAllByText('upcoming').length).toBeGreaterThan(0);
   });
+
+  it('localizes schedule labels and scheduled match metadata', () => {
+    const scheduledAt = '2026-06-01T10:00:00Z';
+    const expectedDate = new Intl.DateTimeFormat('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'UTC',
+    }).format(new Date(scheduledAt));
+
+    renderWithAppearance(
+      <RoundRobinBracket
+        participants={participants}
+        matches={[
+          {
+            id: 'm-localized',
+            players: [{ name: 'Alpha' }, { name: 'Bravo' }],
+            round: 1,
+            scheduledAt,
+            status: MatchStatus.Upcoming,
+            venue: 'Court 1',
+          },
+        ]}
+        localization={{
+          locale: 'en-US',
+          timeZone: 'UTC',
+          statusLabels: { upcoming: 'programmado' },
+          uiLabels: {
+            round: 'Ronda',
+            schedule: 'Calendario',
+            standings: 'Tabla',
+            team: 'Equipo',
+          },
+        }}
+      />
+    );
+
+    expect(screen.getByRole('heading', { name: 'Tabla' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Calendario' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Ronda 1' })).toBeInTheDocument();
+    expect(screen.getByText(`${expectedDate} · Court 1`)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Alpha versus Bravo, ronda 1, programmado/i)).toBeInTheDocument();
+  });
 });
