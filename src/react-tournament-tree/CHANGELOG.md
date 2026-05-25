@@ -1,3 +1,17 @@
+## @graph-render/tournament-tree 1.7.0 (2026-05-25)
+
+* feat(tournament): localize schedule metadata (#28) ([40f49e1](https://github.com/graph-render/graph-render/commit/40f49e1)), closes [#28](https://github.com/graph-render/graph-render/issues/28)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/core:** upgraded to 1.4.0
+* **@graph-render/react:** upgraded to 1.5.0
+* **@graph-render/types:** upgraded to 1.4.0
+
 ## @graph-render/tournament-tree 1.6.0 (2026-05-24)
 
 - feat(tournament): features ([7c4fbd7](https://github.com/graph-render/graph-render/commit/7c4fbd7))
