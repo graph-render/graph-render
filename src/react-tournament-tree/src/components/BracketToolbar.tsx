@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { DownloadIcon, SunMoonIcon, ToolbarNavigationIcon } from './icons';
+import {
+  DownloadIcon,
+  PdfExportIcon,
+  PngExportIcon,
+  SunMoonIcon,
+  ToolbarNavigationIcon,
+} from './icons';
 
 interface BracketToolbarProps {
   readonly isDarkMode: boolean;
@@ -8,6 +14,8 @@ interface BracketToolbarProps {
   readonly onToggleDarkMode: () => void;
   readonly onToggleNavigationMode: () => void;
   readonly onExportSVG: () => void;
+  readonly onExportPNG: () => void;
+  readonly onExportPDF?: (() => void) | undefined;
 }
 
 export const BracketToolbar = React.memo<BracketToolbarProps>(function BracketToolbar({
@@ -16,6 +24,8 @@ export const BracketToolbar = React.memo<BracketToolbarProps>(function BracketTo
   onToggleDarkMode,
   onToggleNavigationMode,
   onExportSVG,
+  onExportPNG,
+  onExportPDF,
 }) {
   const buttonBaseStyle: React.CSSProperties = {
     display: 'flex',
@@ -50,6 +60,26 @@ export const BracketToolbar = React.memo<BracketToolbarProps>(function BracketTo
       >
         <DownloadIcon />
       </button>
+
+      <button
+        type="button"
+        onClick={onExportPNG}
+        style={buttonBaseStyle}
+        aria-label="Export as PNG"
+      >
+        <PngExportIcon />
+      </button>
+
+      {onExportPDF != null ? (
+        <button
+          type="button"
+          onClick={onExportPDF}
+          style={buttonBaseStyle}
+          aria-label="Export as PDF"
+        >
+          <PdfExportIcon />
+        </button>
+      ) : null}
 
       <button
         type="button"

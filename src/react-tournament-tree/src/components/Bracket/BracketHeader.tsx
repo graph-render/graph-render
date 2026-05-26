@@ -12,6 +12,8 @@ interface BracketHeaderProps {
   readonly onToggleNavigationMode: () => void;
   readonly onToggleDarkMode: () => void;
   readonly onExportSVG: () => void;
+  readonly onExportPNG: () => void;
+  readonly onExportPDF?: (() => void) | undefined;
 }
 
 export function BracketHeader({
@@ -24,6 +26,8 @@ export function BracketHeader({
   onToggleNavigationMode,
   onToggleDarkMode,
   onExportSVG,
+  onExportPNG,
+  onExportPDF,
 }: BracketHeaderProps) {
   const { colors, header, typography } = useBracketAppearance();
 
@@ -100,6 +104,8 @@ export function BracketHeader({
           onToggleNavigationMode={onToggleNavigationMode}
           onToggleDarkMode={onToggleDarkMode}
           onExportSVG={onExportSVG}
+          onExportPNG={onExportPNG}
+          onExportPDF={onExportPDF}
         />
       ) : null}
     </div>

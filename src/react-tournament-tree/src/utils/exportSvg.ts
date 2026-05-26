@@ -22,12 +22,12 @@ export function downloadSvgString(svgString: string, filename?: string) {
   URL.revokeObjectURL(url);
 }
 
-export function downloadSvgFromElement(rootElement: Element | null) {
+export function getSvgStringFromElement(rootElement: Element | null): string {
   if (!rootElement) {
     throw new SvgExportError('Cannot export SVG because the export root element is missing.');
   }
 
-  const svgElement = rootElement?.querySelector('svg');
+  const svgElement = rootElement.querySelector('svg');
   if (!svgElement) {
     throw new SvgExportError('Cannot export SVG because no <svg> element was found.');
   }
@@ -36,6 +36,9 @@ export function downloadSvgFromElement(rootElement: Element | null) {
   clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   clonedSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
 
-  const serializer = new XMLSerializer();
-  downloadSvgString(serializer.serializeToString(clonedSvg));
+  return new XMLSerializer().serializeToString(clonedSvg);
+}
+
+export function downloadSvgFromElement(rootElement: Element | null) {
+  downloadSvgString(getSvgStringFromElement(rootElement));
 }

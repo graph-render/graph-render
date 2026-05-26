@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { downloadSvgFromElement, SvgExportError } from '../exportSvg';
+import { downloadSvgFromElement, getSvgStringFromElement, SvgExportError } from '../exportSvg';
 
 // jsdom does not implement URL.createObjectURL, so we must mock it.
 const mockCreateObjectURL = vi.fn((_blob: Blob) => 'blob:mock-url');
@@ -27,6 +27,34 @@ function makeSvgContainer(): HTMLDivElement {
   document.body.append(container);
   return container;
 }
+
+describe('getSvgStringFromElement', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('throws SvgExportError when rootElement is null', () => {
+    expect(() => getSvgStringFromElement(null)).toThrow(SvgExportError);
+  });
+
+  it('throws SvgExportError when there is no <svg> inside rootElement', () => {
+    const div = document.createElement('div');
+    expect(() => getSvgStringFromElement(div)).toThrow(SvgExportError);
+  });
+
+  it('returns an SVG string with xmlns attributes', () => {
+    const container = makeSvgContainer();
+    const result = getSvgStringFromElement(container);
+    expect(result).toContain('xmlns="http://www.w3.org/2000/svg"');
+    expect(result).toContain('xmlns:xlink="http://www.w3.org/1999/xlink"');
+  });
+
+  it('returns a non-empty string containing <svg', () => {
+    const container = makeSvgContainer();
+    const result = getSvgStringFromElement(container);
+    expect(result).toMatch(/<svg/);
+  });
+});
 
 describe('downloadSvgFromElement', () => {
   afterEach(() => {

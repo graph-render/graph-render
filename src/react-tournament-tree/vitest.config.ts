@@ -1,8 +1,16 @@
 import react from '@vitejs/plugin-react';
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      // Provides a minimal jsPDF stub so dynamic import('jspdf') resolves in tests.
+      // jspdf is an optional peer dependency; real integration tests should install it.
+      jspdf: path.resolve(__dirname, 'src/__mocks__/jspdf.ts'),
+    },
+  },
   benchmark: {
     include: ['src/**/*.bench.ts'],
   },

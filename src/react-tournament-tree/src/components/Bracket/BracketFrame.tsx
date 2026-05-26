@@ -29,6 +29,8 @@ interface BracketFrameProps {
   readonly onPagePlayersDown: () => void;
   readonly onToggleDarkMode: () => void;
   readonly onExportSVG: () => void;
+  readonly onExportPNG: () => void;
+  readonly onExportPDF?: (() => void) | undefined;
 }
 
 export function BracketFrame({
@@ -52,6 +54,8 @@ export function BracketFrame({
   onPagePlayersDown,
   onToggleDarkMode,
   onExportSVG,
+  onExportPNG,
+  onExportPDF,
 }: BracketFrameProps) {
   const { colors, frame } = useBracketAppearance();
   const canGoPrev = activeStageIndex > 0;
@@ -84,6 +88,8 @@ export function BracketFrame({
         onToggleNavigationMode={onToggleNavigationMode}
         onToggleDarkMode={onToggleDarkMode}
         onExportSVG={onExportSVG}
+        onExportPNG={onExportPNG}
+        onExportPDF={onExportPDF}
       />
       <StageLabelBar
         stageLabels={stageLabels}

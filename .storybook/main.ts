@@ -36,6 +36,13 @@ const config: StorybookConfig = {
         jsx: 'automatic',
         jsxImportSource: 'react',
       },
+      build: {
+        rolldownOptions: {
+          // jspdf is an optional peer dependency; mark external so the bundler
+          // doesn't error when it cannot resolve it during the storybook build.
+          external: ['jspdf'],
+        },
+      },
       resolve: {
         alias: {
           '@graph-render/types': path.resolve(__dirname, '../src/types/src'),

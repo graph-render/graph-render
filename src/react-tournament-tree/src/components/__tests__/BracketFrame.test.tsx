@@ -26,6 +26,7 @@ const baseProps = {
   onPagePlayersDown: vi.fn(),
   onToggleDarkMode: vi.fn(),
   onExportSVG: vi.fn(),
+  onExportPNG: vi.fn(),
 };
 
 describe('BracketFrame', () => {

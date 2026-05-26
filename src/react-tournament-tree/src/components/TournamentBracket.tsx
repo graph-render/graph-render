@@ -5,6 +5,8 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { BracketAppearanceProvider } from '../contexts/BracketAppearanceContext';
 import { BracketLocalizationProvider } from '../contexts/BracketLocalizationContext';
+import { useBracketPdfExport } from '../hooks/useBracketPdfExport';
+import { useBracketPngExport } from '../hooks/useBracketPngExport';
 import { useBracketSvgExport } from '../hooks/useBracketSvgExport';
 import {
   BracketVertexOptionsProvider,
@@ -38,6 +40,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   toolbar,
   showToolbar,
   showViewportControls,
+  showPdfExport,
   defaultNavigationMode = true,
   theme,
   isDarkMode: controlledDarkMode,
@@ -60,6 +63,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   const resolvedShowToolbar = showToolbar ?? toolbar?.showToolbar ?? true;
   const resolvedShowViewportControls =
     showViewportControls ?? toolbar?.showViewportControls ?? false;
+  const resolvedShowPdfExport = showPdfExport ?? toolbar?.showPdfExport ?? false;
   const resolvedPanEnabled = panEnabled ?? interaction?.panEnabled;
   const resolvedZoomEnabled = zoomEnabled ?? interaction?.zoomEnabled;
   const resolvedPinchZoomEnabled = pinchZoomEnabled ?? interaction?.pinchZoomEnabled;
@@ -114,7 +118,8 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
       onMatchUpdate,
       vertexComponent,
     });
-  const handleExportSVG = useBracketSvgExport({
+
+  const sharedExportParams = {
     wrapperRef,
     nodeRenderMode,
     vertexComponent,
@@ -127,7 +132,11 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
     resolvedLocalization,
     vertexOptions,
     onExportError,
-  });
+  };
+
+  const handleExportSVG = useBracketSvgExport(sharedExportParams);
+  const handleExportPNG = useBracketPngExport(sharedExportParams);
+  const handleExportPDF = useBracketPdfExport(sharedExportParams);
 
   return (
     <BracketAppearanceProvider resolvedAppearance={resolvedAppearance}>
@@ -152,6 +161,8 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
           onPagePlayersDown={navigation.handlePagePlayersDown}
           onToggleDarkMode={toggleDarkMode}
           onExportSVG={handleExportSVG}
+          onExportPNG={handleExportPNG}
+          onExportPDF={resolvedShowPdfExport ? handleExportPDF : undefined}
         >
           <BracketVertexOptionsProvider value={vertexOptions}>
             <BracketGraphCanvas
