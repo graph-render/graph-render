@@ -8,6 +8,7 @@ export {
 export { PlacementBracket, type PlacementBracketProps } from './components/PlacementBracket';
 export { RoundRobinBracket, type RoundRobinBracketProps } from './components/RoundRobinBracket';
 export { SquashNode } from './components/SquashNode';
+export { SwissBracket, type SwissBracketProps } from './components/SwissBracket';
 export { TournamentBracket } from './components/TournamentBracket';
 export {
   COMPACT_TOURNAMENT_CONFIG,
@@ -78,6 +79,7 @@ export {
   type BuildKnockoutFromGroupsOptions,
   calculateGroupAdvancers,
   calculateRoundRobinStandings,
+  calculateSwissStandings,
   correctMatchResult,
   type DoubleEliminationBracketOptions,
   type DoubleEliminationEdgeMeta,
@@ -91,6 +93,7 @@ export {
   groupPlacementMatchesByRound,
   groupPlacementMatchesByTier,
   groupRoundRobinMatchesByRound,
+  groupSwissMatchesByRound,
   type MatchResultUpdate,
   nextPowerOfTwo,
   type ParticipantCascadeChange,
@@ -105,6 +108,9 @@ export {
   type SingleEliminationBracketOptions,
   type SingleEliminationGraph,
   type SingleEliminationSeeding,
+  type SwissMatch,
+  type SwissPointsRule,
+  type SwissStanding,
   type TournamentParticipantInput,
 } from './utils/tournament';
 /* eslint-disable @typescript-eslint/no-deprecated -- legacy tournament aliases remain exported for backward compatibility */

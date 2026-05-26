@@ -90,6 +90,52 @@ export interface GroupAdvancementRule {
   readonly manualAdvancers?: readonly MatchPlayer[] | undefined;
 }
 
+// ── Swiss System ────────────────────────────────────────────────────────────
+
+/**
+ * Configurable win/draw/loss point values for Swiss standings.
+ * Defaults: win=1, draw=0.5, loss=0.
+ */
+export interface SwissPointsRule {
+  readonly win?: number | undefined;
+  readonly draw?: number | undefined;
+  readonly loss?: number | undefined;
+}
+
+/**
+ * A single pairing in a Swiss-system tournament.
+ * Pairings are manual — supply them round by round.
+ */
+export interface SwissMatch {
+  readonly id: string;
+  readonly round: number;
+  readonly players: readonly [MatchPlayer, MatchPlayer];
+  /** Final scores for each player. Required when status is Completed. */
+  readonly scores?: readonly [number, number] | undefined;
+  readonly status?: MatchStatus | `${MatchStatus}` | undefined;
+  readonly scheduledAt?: string | undefined;
+  readonly venue?: string | undefined;
+}
+
+/**
+ * Standing entry for a Swiss-system tournament.
+ * Includes Buchholz and Sonneborn-Berger tiebreakers.
+ */
+export interface SwissStanding {
+  readonly player: MatchPlayer;
+  readonly played: number;
+  readonly wins: number;
+  readonly draws: number;
+  readonly losses: number;
+  readonly points: number;
+  /** Buchholz: sum of each opponent's total points (strength-of-schedule). */
+  readonly buchholz: number;
+  /** Sonneborn-Berger: sum of points of defeated opponents + half of drawn opponents' points. */
+  readonly sonnebornBerger: number;
+}
+
+// ── Elimination ─────────────────────────────────────────────────────────────
+
 export type EliminationFormat = 'double' | 'single';
 
 // --- Placement matches ---
