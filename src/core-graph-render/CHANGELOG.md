@@ -1,3 +1,15 @@
+## @graph-render/core 1.5.0 (2026-05-26)
+
+* feat(tournament-tree): add PNG and optional PDF export (#16) (#29) ([03e8508](https://github.com/graph-render/graph-render/commit/03e8508)), closes [#16](https://github.com/graph-render/graph-render/issues/16) [#29](https://github.com/graph-render/graph-render/issues/29)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/types:** upgraded to 1.5.0
+
 ## @graph-render/core 1.4.0 (2026-05-25)
 
 - feat(tournament): localize schedule metadata (#28) ([40f49e1](https://github.com/graph-render/graph-render/commit/40f49e1)), closes [#28](https://github.com/graph-render/graph-render/issues/28)
