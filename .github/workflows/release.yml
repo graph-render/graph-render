@@ -36,7 +36,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN || github.token }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'yarn'
@@ -64,7 +64,7 @@ jobs:
           multi-semantic-release
 
       - name: Setup Node.js for GitHub Packages
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           registry-url: https://npm.pkg.github.com
