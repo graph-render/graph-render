@@ -29,6 +29,7 @@ export enum MatchType {
   GrandFinal = 'grandFinal',
   Bye = 'bye',
   Walkover = 'walkover',
+  Placement = 'placement',
 }
 
 export enum BracketSection {
@@ -90,6 +91,23 @@ export interface GroupAdvancementRule {
 }
 
 export type EliminationFormat = 'double' | 'single';
+
+// --- Placement matches ---
+
+export interface PlacementMatch {
+  readonly id: string;
+  /** Round within the placement tier (1 = outermost round). */
+  readonly round: number;
+  /** The lowest rank being contested in this match (e.g. 5 = "5th Place" final). */
+  readonly placement: number;
+  readonly players: readonly [MatchPlayer, MatchPlayer];
+  readonly scores?: readonly [number, number] | undefined;
+  readonly status?: MatchStatus | `${MatchStatus}` | undefined;
+  /** Optional custom label override (e.g. "Bronze Match"). */
+  readonly label?: string | undefined;
+  readonly venue?: string | undefined;
+  readonly scheduledAt?: string | undefined;
+}
 
 export interface MatchMeta {
   readonly [key: string]: unknown;

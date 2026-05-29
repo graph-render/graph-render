@@ -12,6 +12,14 @@ export {
   type GroupAdvancementRule,
 } from './multiStage';
 export {
+  generatePlacementMatches,
+  groupPlacementMatchesByRound,
+  groupPlacementMatchesByTier,
+  type PlacementMatch,
+  type PlacementTierInput,
+  resolvePlacementLabel,
+} from './placement';
+export {
   calculateRoundRobinStandings,
   generateRoundRobinSchedule,
   groupRoundRobinMatchesByRound,

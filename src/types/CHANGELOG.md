@@ -1,6 +1,6 @@
 ## @graph-render/types 1.5.0 (2026-05-26)
 
-* feat(tournament-tree): add PNG and optional PDF export (#16) (#29) ([03e8508](https://github.com/graph-render/graph-render/commit/03e8508)), closes [#16](https://github.com/graph-render/graph-render/issues/16) [#29](https://github.com/graph-render/graph-render/issues/29)
+- feat(tournament-tree): add PNG and optional PDF export (#16) (#29) ([03e8508](https://github.com/graph-render/graph-render/commit/03e8508)), closes [#16](https://github.com/graph-render/graph-render/issues/16) [#29](https://github.com/graph-render/graph-render/issues/29)
 
 ## @graph-render/types 1.4.0 (2026-05-25)
 

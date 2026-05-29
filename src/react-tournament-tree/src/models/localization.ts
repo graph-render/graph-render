@@ -12,6 +12,7 @@ export type TournamentRoundLabelKey =
 export interface TournamentUiLabels {
   readonly advancedParticipants: string;
   readonly advancing: string;
+  readonly buchholz: string;
   readonly doubleElimination: string;
   readonly draws: string;
   readonly goToNextStage: string;
@@ -21,6 +22,7 @@ export interface TournamentUiLabels {
   readonly liveMatch: string;
   readonly losses: string;
   readonly nextStage: string;
+  readonly placementMatch: string;
   readonly played: string;
   readonly points: string;
   readonly previousStage: string;
@@ -30,7 +32,9 @@ export interface TournamentUiLabels {
   readonly scoreDifference: string;
   readonly showLowerPlayers: string;
   readonly showUpperPlayers: string;
+  readonly sonnebornBerger: string;
   readonly standings: string;
+  readonly swiss: string;
   readonly team: string;
   readonly tournament: string;
   readonly upcoming: string;

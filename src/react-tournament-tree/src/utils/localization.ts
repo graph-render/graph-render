@@ -15,6 +15,7 @@ const DEFAULT_DATE_TIME_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
 export const DEFAULT_TOURNAMENT_UI_LABELS: TournamentUiLabels = {
   advancedParticipants: 'Advanced participants',
   advancing: 'Advancing',
+  buchholz: 'BH',
   doubleElimination: 'Double elimination',
   draws: 'D',
   goToNextStage: 'Go to next stage',
@@ -24,6 +25,7 @@ export const DEFAULT_TOURNAMENT_UI_LABELS: TournamentUiLabels = {
   liveMatch: 'Live match',
   losses: 'L',
   nextStage: 'Next stage',
+  placementMatch: 'Placement',
   played: 'P',
   points: 'Pts',
   previousStage: 'Previous stage',
@@ -33,7 +35,9 @@ export const DEFAULT_TOURNAMENT_UI_LABELS: TournamentUiLabels = {
   scoreDifference: '+/-',
   showLowerPlayers: 'Show lower players',
   showUpperPlayers: 'Show upper players',
+  sonnebornBerger: 'SB',
   standings: 'Standings',
+  swiss: 'Swiss',
   team: 'Team',
   tournament: 'Tournament',
   upcoming: 'upcoming',
@@ -56,6 +60,7 @@ const DEFAULT_STATUS_LABELS: Record<MatchStatus, string> = {
 const DEFAULT_MATCH_TYPE_LABELS: Record<MatchType, string> = {
   [MatchType.Bye]: 'Bye',
   [MatchType.GrandFinal]: 'Grand final',
+  [MatchType.Placement]: 'Placement',
   [MatchType.Standard]: '',
   [MatchType.ThirdPlace]: 'Third place',
   [MatchType.Walkover]: 'Walkover',

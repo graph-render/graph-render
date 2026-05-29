@@ -5,6 +5,7 @@ export {
   MultiStageTournament,
   type MultiStageTournamentProps,
 } from './components/MultiStageTournament';
+export { PlacementBracket, type PlacementBracketProps } from './components/PlacementBracket';
 export { RoundRobinBracket, type RoundRobinBracketProps } from './components/RoundRobinBracket';
 export { SquashNode } from './components/SquashNode';
 export { TournamentBracket } from './components/TournamentBracket';
@@ -83,13 +84,19 @@ export {
   type DoubleEliminationGraph,
   type EliminationFormat,
   generateDoubleEliminationBracket,
+  generatePlacementMatches,
   generateRoundRobinSchedule,
   generateSingleEliminationBracket,
   type GroupAdvancementRule,
+  groupPlacementMatchesByRound,
+  groupPlacementMatchesByTier,
   groupRoundRobinMatchesByRound,
   type MatchResultUpdate,
   nextPowerOfTwo,
   type ParticipantCascadeChange,
+  type PlacementMatch,
+  type PlacementTierInput,
+  resolvePlacementLabel,
   type RoundRobinGroup,
   type RoundRobinMatch,
   type RoundRobinPointsRule,
