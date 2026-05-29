@@ -1,3 +1,16 @@
+## @graph-render/react 1.7.0 (2026-05-29)
+
+* feat(bracket): add Placement Matches support (#19) (#34) ([1cd54cf](https://github.com/graph-render/graph-render/commit/1cd54cf)), closes [#19](https://github.com/graph-render/graph-render/issues/19) [#34](https://github.com/graph-render/graph-render/issues/34)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/core:** upgraded to 1.6.0
+* **@graph-render/types:** upgraded to 1.6.0
+
 ## @graph-render/react 1.6.0 (2026-05-26)
 
 - feat(tournament-tree): add PNG and optional PDF export (#16) (#29) ([03e8508](https://github.com/graph-render/graph-render/commit/03e8508)), closes [#16](https://github.com/graph-render/graph-render/issues/16) [#29](https://github.com/graph-render/graph-render/issues/29)
