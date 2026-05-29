@@ -8,3 +8,6 @@ tmp
 .DS_Store
 storybook-static
 .github
+
+# Release tooling can generate Markdown that should not block CI formatting.
+*.md

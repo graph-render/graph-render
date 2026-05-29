@@ -6,3 +6,6 @@ coverage
 *.d.ts
 *.js
 *.js.map
+
+# Release tooling can generate Markdown that should not block CI linting.
+*.md
