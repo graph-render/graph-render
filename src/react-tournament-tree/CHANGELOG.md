@@ -1,3 +1,17 @@
+## @graph-render/tournament-tree 1.10.0 (2026-05-31)
+
+* feat(bracket): add Swiss System tournament support (#18) (#30) ([a1a7c85](https://github.com/graph-render/graph-render/commit/a1a7c85)), closes [#18](https://github.com/graph-render/graph-render/issues/18) [#30](https://github.com/graph-render/graph-render/issues/30)
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/core:** upgraded to 1.6.1
+* **@graph-render/react:** upgraded to 1.7.1
+* **@graph-render/types:** upgraded to 1.7.0
+
 ## @graph-render/tournament-tree 1.9.0 (2026-05-29)
 
 * feat(bracket): add Placement Matches support (#19) (#34) ([1cd54cf](https://github.com/graph-render/graph-render/commit/1cd54cf)), closes [#19](https://github.com/graph-render/graph-render/issues/19) [#34](https://github.com/graph-render/graph-render/issues/34)

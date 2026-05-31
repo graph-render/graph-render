@@ -1,6 +1,6 @@
 {
   "name": "@graph-render/tournament-tree",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "description": "React tournament bracket components built on graph-render.",
   "keywords": [
     "bracket",
@@ -53,9 +53,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@graph-render/core": "1.6.0",
-    "@graph-render/react": "1.7.0",
-    "@graph-render/types": "1.6.0"
+    "@graph-render/core": "1.6.1",
+    "@graph-render/react": "1.7.1",
+    "@graph-render/types": "1.7.0"
   },
   "engines": {
     "node": ">=20.19.0"
