@@ -55,7 +55,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "react": ">=19.2.6"
+    "react": ">=19.2.7"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -63,10 +63,10 @@
     }
   },
   "devDependencies": {
-    "@types/react": "^19.2.15",
-    "@vitest/coverage-v8": "^4.1.7",
-    "react": ">=19.2.6",
+    "@types/react": "^19.2.16",
+    "@vitest/coverage-v8": "^4.1.8",
+    "react": ">=19.2.7",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.8"
   }
 }
