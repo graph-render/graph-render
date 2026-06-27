@@ -22,6 +22,7 @@ export interface NormalizedSquashMatchMeta extends MatchMeta {
   readonly venue?: string | undefined;
   readonly seriesFormat?: SeriesFormat | string | undefined;
   readonly games: readonly GameResult[];
+  readonly finalScore?: readonly [number, number] | undefined;
 }
 
 export interface SetWins {

@@ -9,6 +9,7 @@ import {
   getMatchScoreSegmentCount,
   getMatchScoreSegments,
   getScoreGroupWidth,
+  hasFinalScoreOnly,
   normalizePlayerKey,
 } from '../../utils/squash';
 import { SquashPlayerHtmlRow } from './SquashPlayerHtmlRow';
@@ -20,11 +21,12 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
   const p1 = meta.players[0] ?? DEFAULT_PLAYERS[0] ?? { name: 'TBD', seed: 0 };
   const p2 = meta.players[1] ?? DEFAULT_PLAYERS[1] ?? { name: 'TBD', seed: 0 };
   const matchBadgeLabel = getMatchBadgeLabel(meta.matchType, meta.bracketSection, localization);
-  const scoreGroupWidth = getScoreGroupWidth(
-    getMatchScoreSegmentCount(meta),
-    matchCard.score.segmentWidth,
-    matchCard.score.segmentGap
-  );
+  const finalScoreOnly = hasFinalScoreOnly(meta);
+  const segmentCount = getMatchScoreSegmentCount(meta);
+  const scoreGroupWidth =
+    segmentCount === 0
+      ? 0
+      : getScoreGroupWidth(segmentCount, matchCard.score.segmentWidth, matchCard.score.segmentGap);
 
   return (
     <foreignObject
@@ -81,6 +83,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
                 playerOpacity={meta.status === MatchStatus.Upcoming ? 0.6 : 1}
                 setCount={playerIndex === 0 ? setWins.p1 : setWins.p2}
                 scoreSegments={getMatchScoreSegments(meta, playerIndex)}
+                hideScoreSegments={finalScoreOnly}
                 textColor={isWinner ? colors.FOREGROUND : colors.MUTED_TEXT}
                 nodeHeight={nodeHeight}
                 scoreGroupWidth={scoreGroupWidth}

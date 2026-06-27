@@ -49,6 +49,8 @@ export type SquashPlayerRowProps = PlayerHoverHandlers & {
   readonly playerOpacity: number;
   readonly setCount: number;
   readonly scoreSegments: readonly string[];
+  /** Hide the per-set score column + divider (final-score-only matches). */
+  readonly hideScoreSegments?: boolean | undefined;
   readonly textColor: string;
   readonly colors: TournamentThemeColors;
 };

@@ -170,6 +170,13 @@ export interface MatchMeta {
   readonly venue?: string | undefined;
   readonly seriesFormat?: SeriesFormat | string | undefined;
   readonly games?: readonly GameResult[] | undefined;
+  /**
+   * Decisive match score (e.g. sets/games won) for a result entered without
+   * any per-set/per-game detail. Used only when `sets` and `games` are both
+   * empty: the card shows these numbers as the per-player tally and renders
+   * no per-set score columns. Ignored when `sets` or `games` are present.
+   */
+  readonly finalScore?: readonly [number, number] | undefined;
 }
 
 /** @deprecated Use MatchMeta. */

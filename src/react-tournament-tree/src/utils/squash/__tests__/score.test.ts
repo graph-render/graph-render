@@ -6,11 +6,13 @@ import {
   getDisplayScores,
   getGameScoreSegments,
   getGameWins,
+  getMatchScoreSegmentCount,
   getMatchScoreSegments,
   getMatchWins,
   getScoreGroupWidth,
   getScoreSegments,
   getSetWins,
+  hasFinalScoreOnly,
 } from '../score';
 
 const sets = [
@@ -83,6 +85,50 @@ describe('getScoreSegments', () => {
 
   it('returns ["—"] for empty sets', () => {
     expect(getScoreSegments([], [], 0)).toEqual(['—']);
+  });
+});
+
+// ── finalScore-only matches ───────────────────────────────────────────────────
+describe('finalScore-only matches', () => {
+  const finalOnly = {
+    currentSet: 0,
+    finalScore: [2, 0],
+    games: [],
+    players: [{ name: 'A' }, { name: 'B' }],
+    sets: [],
+    stage: 'Final',
+    status: MatchStatus.Completed,
+    tiebreaks: [],
+  } as const;
+
+  it('detects a final-score-only match', () => {
+    expect(hasFinalScoreOnly(finalOnly)).toBe(true);
+  });
+
+  it('is NOT final-score-only when sets exist', () => {
+    expect(hasFinalScoreOnly({ ...finalOnly, sets })).toBe(false);
+  });
+
+  it('is NOT final-score-only when games exist', () => {
+    const games = [{ scores: [11, 9] }] as const;
+    expect(hasFinalScoreOnly({ ...finalOnly, games })).toBe(false);
+  });
+
+  it('uses the finalScore as the per-player tally', () => {
+    expect(getMatchWins(finalOnly)).toEqual({ p1: 2, p2: 0 });
+  });
+
+  it('renders no per-set score segments', () => {
+    expect(getMatchScoreSegments(finalOnly, 0)).toEqual([]);
+    expect(getMatchScoreSegments(finalOnly, 1)).toEqual([]);
+  });
+
+  it('reports a zero segment count so the column collapses', () => {
+    expect(getMatchScoreSegmentCount(finalOnly)).toBe(0);
+  });
+
+  it('still derives the winner from the finalScore', () => {
+    expect(getCompletedWinnerIndex(getMatchWins(finalOnly), MatchStatus.Completed)).toBe(0);
   });
 });
 

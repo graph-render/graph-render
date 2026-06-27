@@ -131,7 +131,7 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: 20,
-          borderLeft: `1px solid ${colors.DARK_BORDER}`,
+          borderLeft: props.hideScoreSegments ? 'none' : `1px solid ${colors.DARK_BORDER}`,
           fontSize: matchCard.score.matchCountFontSize,
           fontWeight: 700,
           color: props.textColor,

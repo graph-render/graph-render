@@ -13,6 +13,7 @@ export {
   getScoreGroupWidth,
   getScoreSegments,
   getSetWins,
+  hasFinalScoreOnly,
 } from './score';
 export {
   getBracketSectionLabel,
