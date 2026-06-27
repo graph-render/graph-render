@@ -1,3 +1,7 @@
+## @graph-render/types 1.8.0 (2026-06-27)
+
+* feat(bracket): allow to pass final score only (#44) ([00a8cd9](https://github.com/graph-render/graph-render/commit/00a8cd9)), closes [#44](https://github.com/graph-render/graph-render/issues/44)
+
 ## @graph-render/types 1.7.0 (2026-05-31)
 
 * feat(bracket): add Swiss System tournament support (#18) (#30) ([a1a7c85](https://github.com/graph-render/graph-render/commit/a1a7c85)), closes [#18](https://github.com/graph-render/graph-render/issues/18) [#30](https://github.com/graph-render/graph-render/issues/30)
