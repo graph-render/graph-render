@@ -50,13 +50,26 @@ export const getGameScoreSegments = (
 export const getMatchScoreSegments = (
   meta: NormalizedSquashMatchMeta,
   playerIndex: number
-): readonly string[] =>
-  meta.games.length > 0
+): readonly string[] => {
+  if (hasFinalScoreOnly(meta)) {
+    return [];
+  }
+
+  return meta.games.length > 0
     ? getGameScoreSegments(meta.games, playerIndex)
     : getScoreSegments(meta.sets, meta.tiebreaks, playerIndex);
+};
+
+/**
+ * True when the match carries only an aggregate `finalScore` (no per-set or
+ * per-game detail). In that case the card shows the final score as the tally
+ * and renders no per-set score columns.
+ */
+export const hasFinalScoreOnly = (meta: NormalizedSquashMatchMeta): boolean =>
+  meta.sets.length === 0 && meta.games.length === 0 && meta.finalScore != null;
 
 export const getMatchScoreSegmentCount = (meta: NormalizedSquashMatchMeta): number =>
-  Math.max(meta.games.length || meta.sets.length, 1);
+  hasFinalScoreOnly(meta) ? 0 : Math.max(meta.games.length || meta.sets.length, 1);
 
 export const getScoreGroupWidth = (
   segmentCount: number,
@@ -121,10 +134,16 @@ export const getGameWins = (
   );
 };
 
-export const getMatchWins = (meta: NormalizedSquashMatchMeta): SetWins =>
-  meta.games.length > 0
+export const getMatchWins = (meta: NormalizedSquashMatchMeta): SetWins => {
+  if (hasFinalScoreOnly(meta)) {
+    const [p1, p2] = meta.finalScore!;
+    return { p1, p2 };
+  }
+
+  return meta.games.length > 0
     ? getGameWins(meta.games, meta.status, meta.currentSet)
     : getSetWins(meta.sets, meta.status, meta.currentSet);
+};
 
 export const getCompletedWinnerIndex = (setWins: SetWins, status: MatchStatus): number | null => {
   if (status !== MatchStatus.Completed || setWins.p1 === setWins.p2) {

@@ -111,15 +111,17 @@ export function SquashPlayerSvgRow(props: SquashPlayerSvgRowProps) {
           </text>
         ) : null}
       </g>
-      <line
-        x1={props.internalDividerX}
-        y1={props.rowHeight / 2 - 8}
-        x2={props.internalDividerX}
-        y2={props.rowHeight / 2 + 8}
-        stroke={colors.DARK_BORDER}
-        strokeWidth={1}
-        data-testid="player-svg-divider"
-      />
+      {props.hideScoreSegments ? null : (
+        <line
+          x1={props.internalDividerX}
+          y1={props.rowHeight / 2 - 8}
+          x2={props.internalDividerX}
+          y2={props.rowHeight / 2 + 8}
+          stroke={colors.DARK_BORDER}
+          strokeWidth={1}
+          data-testid="player-svg-divider"
+        />
+      )}
       <SquashSvgScoreSegments {...props} />
       <text
         x={props.matchCountX}

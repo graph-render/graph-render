@@ -133,4 +133,18 @@ describe('normalizeMatchMeta', () => {
     expect(() => normalizeMatchMeta({ bracketSection: 'other' })).toThrow(/bracketSection/);
     expect(() => normalizeMatchMeta({ venue: ' ' })).toThrow(/venue/);
   });
+
+  it('normalizes a valid finalScore', () => {
+    const meta = normalizeMatchMeta({ finalScore: [2, 0] });
+    expect(meta.finalScore).toEqual([2, 0]);
+  });
+
+  it('omits finalScore when not provided', () => {
+    expect(normalizeMatchMeta({}).finalScore).toBeUndefined();
+  });
+
+  it('throws for a malformed finalScore', () => {
+    expect(() => normalizeMatchMeta({ finalScore: [1] })).toThrow(/finalScore/);
+    expect(() => normalizeMatchMeta({ finalScore: [1, -1] })).toThrow(/finalScore\[1\]/);
+  });
 });

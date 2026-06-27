@@ -41,6 +41,21 @@ const normalizeScore = (value: unknown, label: string): number => {
   return value;
 };
 
+const normalizeFinalScore = (value: unknown): readonly [number, number] | undefined => {
+  if (value == null) {
+    return undefined;
+  }
+
+  if (!Array.isArray(value) || value.length !== 2) {
+    throw new TypeError('Invalid match payload: finalScore must contain exactly two scores.');
+  }
+
+  return [
+    normalizeScore(value[0], 'finalScore[0]'),
+    normalizeScore(value[1], 'finalScore[1]'),
+  ] as const;
+};
+
 const normalizeSets = (value: unknown): ReadonlyArray<readonly number[]> => {
   if (value == null) {
     return [];
@@ -148,6 +163,7 @@ export const normalizeMatchMeta = (meta: unknown): NormalizedSquashMatchMeta => 
 
   const sets = normalizeSets(rawMeta?.sets);
   const games = normalizeGames(rawMeta?.games);
+  const finalScore = normalizeFinalScore(rawMeta?.finalScore);
   const currentSet =
     rawMeta?.currentSet == null
       ? 0
@@ -177,6 +193,7 @@ export const normalizeMatchMeta = (meta: unknown): NormalizedSquashMatchMeta => 
     ...(timezone ? { timezone } : {}),
     ...(venue ? { venue } : {}),
     ...(rawMeta?.seriesFormat !== undefined ? { seriesFormat: rawMeta.seriesFormat } : {}),
+    ...(finalScore ? { finalScore } : {}),
   };
 };
 

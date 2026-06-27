@@ -11,6 +11,7 @@ import {
   getMatchScoreSegmentCount,
   getMatchScoreSegments,
   getScoreGroupWidth,
+  hasFinalScoreOnly,
   normalizePlayerKey,
 } from '../../utils/squash';
 import { SquashPlayerSvgRow } from './SquashPlayerSvgRow';
@@ -39,11 +40,10 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
   const scoreFontSize = scoreLayout.fontSize;
   const matchCountFontSize = scoreLayout.matchCountFontSize;
   const rowHeight = nodeHeight / 2;
-  const scoreSectionWidth = getScoreGroupWidth(
-    getMatchScoreSegmentCount(meta),
-    scoreSegW,
-    scoreSegG
-  );
+  const finalScoreOnly = hasFinalScoreOnly(meta);
+  const segmentCount = getMatchScoreSegmentCount(meta);
+  const scoreSectionWidth =
+    segmentCount === 0 ? 0 : getScoreGroupWidth(segmentCount, scoreSegW, scoreSegG);
   const internalDividerX = nodeWidth - insetX - matchCountWidth - matchCountTrailingGap;
   const scoreGroupRightX = internalDividerX - scoreGroupTrailingGap;
   const matchCountX = nodeWidth - insetX - matchCountWidth / 2;
@@ -134,6 +134,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
               playerOpacity={meta.status === MatchStatus.Upcoming ? 0.6 : 1}
               setCount={playerIndex === 0 ? setWins.p1 : setWins.p2}
               scoreSegments={getMatchScoreSegments(meta, playerIndex)}
+              hideScoreSegments={finalScoreOnly}
               textColor={textColor}
               rowY={playerIndex * rowHeight}
               rowHeight={rowHeight}
