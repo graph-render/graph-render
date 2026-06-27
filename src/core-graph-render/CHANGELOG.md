@@ -1,3 +1,14 @@
+## <small>1.6.2 (2026-06-27)</small>
+
+
+
+
+
+
+### Dependencies
+
+* **@graph-render/types:** upgraded to 1.8.0
+
 ## <small>1.6.1 (2026-05-31)</small>
 
 
