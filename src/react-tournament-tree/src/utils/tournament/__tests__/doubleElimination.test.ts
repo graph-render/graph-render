@@ -7,8 +7,7 @@ const edgeMeta = (
   edge: ReturnType<typeof generateDoubleEliminationBracket>['adj'][string][string] | undefined
 ) => {
   const singleEdge = (Array.isArray(edge) ? edge[0] : edge) as
-    | { readonly meta?: Record<string, unknown> | undefined }
-    | undefined;
+    { readonly meta?: Record<string, unknown> | undefined } | undefined;
   return singleEdge?.meta;
 };
 

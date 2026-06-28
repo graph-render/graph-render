@@ -11,3 +11,6 @@ storybook-static
 
 # Release tooling can generate Markdown that should not block CI formatting.
 *.md
+
+# Claude Code internal files
+.claude

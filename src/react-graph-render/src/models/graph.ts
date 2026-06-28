@@ -55,8 +55,7 @@ export interface UseGraphModelOptions {
     | undefined;
   readonly onSearchResultsChange?: ((results: GraphSearchResults) => void) | undefined;
   readonly layoutNodesOverride?:
-    | ((options: LayoutOptions) => readonly PositionedNode[])
-    | undefined;
+    ((options: LayoutOptions) => readonly PositionedNode[]) | undefined;
   readonly routeEdgesOverride?:
     | ((
         nodes: readonly PositionedNode[],

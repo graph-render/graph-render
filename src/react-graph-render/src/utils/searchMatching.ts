@@ -44,8 +44,7 @@ export const findSearchMatchedEdgeIds = <TEdge extends EdgeData>(
 export const getDerivedHighlightResults = <TNode extends NodeData, TEdge extends EdgeData>(
   context: HighlightContext<TNode, TEdge>,
   highlightStrategy:
-    | ((context: HighlightContext<TNode, TEdge>) => Partial<GraphSearchResults>)
-    | undefined
+    ((context: HighlightContext<TNode, TEdge>) => Partial<GraphSearchResults>) | undefined
 ): Partial<GraphSearchResults> => {
   if (!context.query.trim()) {
     return { nodeIds: [], edgeIds: [] };
