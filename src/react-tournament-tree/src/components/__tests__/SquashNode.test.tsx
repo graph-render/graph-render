@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { SquashNode } from '../SquashNode/SquashNode';
 import { MOCK_META, renderWithAppearance } from './testUtils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- test fixture needs to accept arbitrary meta values including null and throwing getters
 const makeNode = (meta: unknown = MOCK_META): any => ({
   id: 'node-1',
   position: { x: 0, y: 0 },

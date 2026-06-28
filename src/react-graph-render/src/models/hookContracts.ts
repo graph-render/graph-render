@@ -68,11 +68,9 @@ export interface HoverMeta {
 export interface UseGraphHoverHandlersOptions {
   readonly hoverHighlight: boolean;
   readonly onEdgeHoverChange:
-    | ((edge: PositionedEdge, hovered: boolean, meta: HoverMeta) => void)
-    | undefined;
+    ((edge: PositionedEdge, hovered: boolean, meta: HoverMeta) => void) | undefined;
   readonly onNodeHoverChange:
-    | ((node: PositionedNode, hovered: boolean, meta: HoverMeta) => void)
-    | undefined;
+    ((node: PositionedNode, hovered: boolean, meta: HoverMeta) => void) | undefined;
   readonly positionedEdgeMap: ReadonlyMap<string, PositionedEdge>;
   readonly positionedNodeMap: ReadonlyMap<string, PositionedNode>;
   readonly selection: GraphSelection;
@@ -124,8 +122,7 @@ export interface UseGraphPointerInteractionsOptions {
   readonly selectionMode: SelectionMode;
   readonly svgRef: React.RefObject<SVGSVGElement | null>;
   readonly translateExtent:
-    | readonly [readonly [number, number], readonly [number, number]]
-    | undefined;
+    readonly [readonly [number, number], readonly [number, number]] | undefined;
   readonly updateSelection: (
     next: GraphSelection | ((current: GraphSelection) => GraphSelection)
   ) => void;
@@ -242,8 +239,7 @@ export interface UseGraphWheelZoomOptions {
   readonly safeMinZoom: number;
   readonly svgRef: React.RefObject<SVGSVGElement | null>;
   readonly translateExtent:
-    | readonly [readonly [number, number], readonly [number, number]]
-    | undefined;
+    readonly [readonly [number, number], readonly [number, number]] | undefined;
   readonly updateViewport: GraphHandle['setViewport'];
   readonly viewportRef: React.RefObject<GraphViewport>;
   readonly zoomEnabled: boolean;

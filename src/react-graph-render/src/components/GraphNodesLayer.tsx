@@ -24,8 +24,7 @@ interface GraphNodesLayerProps {
   readonly hoverNodeOutColor: string;
   readonly hoverNodeHighlight: boolean;
   readonly hoveredNodeStates:
-    | ReadonlyMap<string, { readonly in?: boolean; readonly out?: boolean }>
-    | undefined;
+    ReadonlyMap<string, { readonly in?: boolean; readonly out?: boolean }> | undefined;
   readonly measurementScheduler: NodeMeasurementScheduler;
   readonly onNodeMeasure?: ((nodeId: string, size: Size) => void) | undefined;
   readonly onNodeFocus: (nodeId: string) => void;

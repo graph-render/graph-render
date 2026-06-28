@@ -6,8 +6,7 @@ const edgeId = (
   edge: ReturnType<typeof generateSingleEliminationBracket>['adj'][string][string] | undefined
 ) => {
   const singleEdge = (Array.isArray(edge) ? edge[0] : edge) as
-    | { readonly id?: string | undefined }
-    | undefined;
+    { readonly id?: string | undefined } | undefined;
   return singleEdge?.id;
 };
 
@@ -15,8 +14,7 @@ const edgeMeta = (
   edge: ReturnType<typeof generateSingleEliminationBracket>['adj'][string][string] | undefined
 ) => {
   const singleEdge = (Array.isArray(edge) ? edge[0] : edge) as
-    | { readonly meta?: Record<string, unknown> | undefined }
-    | undefined;
+    { readonly meta?: Record<string, unknown> | undefined } | undefined;
   return singleEdge?.meta;
 };
 

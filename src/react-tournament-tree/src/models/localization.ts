@@ -3,11 +3,7 @@ import type { BracketSection, MatchStatus, MatchType } from '@graph-render/types
 export type TournamentLocale = string | readonly string[];
 
 export type TournamentRoundLabelKey =
-  | 'final'
-  | 'quarterfinals'
-  | 'roundOf'
-  | `roundOf${number}`
-  | 'semifinals';
+  'final' | 'quarterfinals' | 'roundOf' | `roundOf${number}` | 'semifinals';
 
 export interface TournamentUiLabels {
   readonly advancedParticipants: string;
@@ -49,8 +45,7 @@ export interface TournamentLocalizationOptions {
   readonly statusLabels?: Partial<Record<MatchStatus | `${MatchStatus}`, string>> | undefined;
   readonly matchTypeLabels?: Partial<Record<MatchType | `${MatchType}`, string>> | undefined;
   readonly bracketSectionLabels?:
-    | Partial<Record<BracketSection | `${BracketSection}`, string>>
-    | undefined;
+    Partial<Record<BracketSection | `${BracketSection}`, string>> | undefined;
   readonly uiLabels?: Partial<TournamentUiLabels> | undefined;
 }
 

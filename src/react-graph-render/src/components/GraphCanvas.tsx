@@ -75,8 +75,7 @@ export interface GraphCanvasProps {
   readonly hoverNodeOutColor: string;
   readonly hoverNodeHighlight: boolean;
   readonly hoveredNodeStates:
-    | ReadonlyMap<string, { readonly in?: boolean; readonly out?: boolean }>
-    | undefined;
+    ReadonlyMap<string, { readonly in?: boolean; readonly out?: boolean }> | undefined;
   readonly measurementScheduler: NodeMeasurementScheduler;
   readonly handleNodeMeasure: (nodeId: string, size: Size) => void;
   readonly updateFocusedNode: (nodeId: string | null) => void;

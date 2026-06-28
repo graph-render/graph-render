@@ -6,7 +6,6 @@ import { BracketLocalizationProvider } from '../../contexts/BracketLocalizationC
 import { SquashNodeContent } from '../SquashNode/SquashNodeContent';
 import { MOCK_META, MOCK_META_LIVE, renderWithAppearance, withAppearance } from './testUtils';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- test fixture needs to accept arbitrary meta values including null
 const makeNode = (meta: unknown = MOCK_META): any => ({
   id: 'node-1',
   position: { x: 0, y: 0 },

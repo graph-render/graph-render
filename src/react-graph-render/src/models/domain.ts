@@ -93,8 +93,7 @@ export interface ResolvePositionedNodesOptions {
   readonly allowDegradedGraph: boolean;
   readonly graph: NxGraphInput;
   readonly layoutNodesOverride?:
-    | ((options: LayoutOptions) => readonly PositionedNode[])
-    | undefined;
+    ((options: LayoutOptions) => readonly PositionedNode[]) | undefined;
   readonly layoutOptions: LayoutOptions;
   readonly visibleNodes: readonly NodeData[];
 }

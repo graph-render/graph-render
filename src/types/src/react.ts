@@ -39,8 +39,7 @@ export interface VertexComponentProps<TNode extends AnyNode = CorePositionedNode
   readonly nodeBorderWidth?: number | undefined;
   readonly fontFamily?: string | undefined;
   readonly onPathHover?:
-    | ((sourceIndex: number | null, opts?: PathHoverOptions) => void)
-    | undefined;
+    ((sourceIndex: number | null, opts?: PathHoverOptions) => void) | undefined;
   readonly onPathLeave?: (() => void) | undefined;
 }
 
@@ -162,8 +161,7 @@ export interface GraphHandle {
   readonly getViewport: () => GraphViewport;
   readonly setViewport: (
     next:
-      | Partial<GraphViewport>
-      | ((current: GraphViewport) => Partial<GraphViewport> | GraphViewport)
+      Partial<GraphViewport> | ((current: GraphViewport) => Partial<GraphViewport> | GraphViewport)
   ) => void;
   readonly clearSelection: () => void;
   /** Read the current selection without a re-render. */
@@ -204,8 +202,7 @@ export interface GraphViewportOptions {
   readonly maxZoom?: number | undefined;
   readonly zoomStep?: number | undefined;
   readonly translateExtent?:
-    | readonly [readonly [number, number], readonly [number, number]]
-    | undefined;
+    readonly [readonly [number, number], readonly [number, number]] | undefined;
   readonly showControls?: boolean | undefined;
   readonly controlsPosition?: GraphControlsPosition | undefined;
 }
@@ -247,8 +244,7 @@ export interface GraphProps<
    * Flat props take precedence over grouped options when both are set.
    */
   readonly translateExtent?:
-    | readonly [readonly [number, number], readonly [number, number]]
-    | undefined;
+    readonly [readonly [number, number], readonly [number, number]] | undefined;
   /** Prefer grouped {@link GraphInteractionOptions}; flat props override these when both are set. */
   readonly interaction?: GraphInteractionOptions | undefined;
   /** Prefer grouped {@link GraphViewportOptions}; flat props override these when both are set. */
@@ -257,8 +253,7 @@ export interface GraphProps<
   readonly viewportCulling?: boolean | undefined;
   /** Called after layout when positioned nodes/edges change. */
   readonly onLayoutChange?:
-    | ((context: GraphRenderContext<TGraph, TNode, TEdge>) => void)
-    | undefined;
+    ((context: GraphRenderContext<TGraph, TNode, TEdge>) => void) | undefined;
   /**
    * @deprecated Use {@link GraphInteractionOptions.panEnabled} via the `interaction` prop instead.
    * Flat props take precedence over grouped options when both are set.
@@ -339,18 +334,14 @@ export interface GraphProps<
       ) => readonly TEdge[])
     | undefined;
   readonly renderBackground?:
-    | ((context: GraphRenderContext<TGraph, TNode, TEdge>) => ReactNode)
-    | undefined;
+    ((context: GraphRenderContext<TGraph, TNode, TEdge>) => ReactNode) | undefined;
   readonly renderOverlay?:
-    | ((context: GraphRenderContext<TGraph, TNode, TEdge>) => ReactNode)
-    | undefined;
+    ((context: GraphRenderContext<TGraph, TNode, TEdge>) => ReactNode) | undefined;
   readonly onError?: ((error: Error, context: GraphErrorContext<TGraph>) => void) | undefined;
   readonly onNodeHoverChange?:
-    | ((node: TNode, hovered: boolean, meta: GraphHoverMeta) => void)
-    | undefined;
+    ((node: TNode, hovered: boolean, meta: GraphHoverMeta) => void) | undefined;
   readonly onEdgeHoverChange?:
-    | ((edge: TEdge, hovered: boolean, meta: GraphHoverMeta) => void)
-    | undefined;
+    ((edge: TEdge, hovered: boolean, meta: GraphHoverMeta) => void) | undefined;
   readonly onNodeClick?: ((node: TNode) => void) | undefined;
   readonly onEdgeClick?: ((edge: TEdge) => void) | undefined;
   /** Accessible label for the SVG element. Defaults to `"Graph"`. Expose when rendering multiple graphs on a page. */

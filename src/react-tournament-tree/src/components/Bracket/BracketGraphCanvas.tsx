@@ -18,8 +18,7 @@ interface BracketGraphCanvasProps {
   readonly defaultViewport: TournamentBracketProps['defaultViewport'];
   readonly isNavigationMode: boolean;
   readonly translateExtent:
-    | readonly [readonly [number, number], readonly [number, number]]
-    | undefined;
+    readonly [readonly [number, number], readonly [number, number]] | undefined;
   readonly showViewportControls: boolean;
   readonly panEnabled: TournamentBracketProps['panEnabled'];
   readonly zoomEnabled: TournamentBracketProps['zoomEnabled'];

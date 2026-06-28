@@ -9,8 +9,7 @@
     "lint": {
       "inputs": [
         "default",
-        "{workspaceRoot}/.eslintrc.json",
-        "{workspaceRoot}/.eslintrc.react.json"
+        "{workspaceRoot}/eslint.config.mjs"
       ],
       "cache": true
     },

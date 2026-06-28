@@ -16,11 +16,9 @@ export interface UseGraphHoverEngineOptions {
   readonly selection: GraphSelection;
   readonly viewport: GraphViewport;
   readonly onNodeHoverChange:
-    | ((node: PositionedNode, hovered: boolean, meta: GraphHoverMeta) => void)
-    | undefined;
+    ((node: PositionedNode, hovered: boolean, meta: GraphHoverMeta) => void) | undefined;
   readonly onEdgeHoverChange:
-    | ((edge: PositionedEdge, hovered: boolean, meta: GraphHoverMeta) => void)
-    | undefined;
+    ((edge: PositionedEdge, hovered: boolean, meta: GraphHoverMeta) => void) | undefined;
 }
 
 /**
