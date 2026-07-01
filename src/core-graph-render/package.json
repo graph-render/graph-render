@@ -51,7 +51,7 @@
     "@graph-render/types": "1.8.0"
   },
   "devDependencies": {
-    "@types/node": "^26.0.1",
+    "@types/node": "^26.1.0",
     "@vitest/coverage-v8": "^4.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
