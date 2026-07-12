@@ -8,4 +8,4 @@ export type * from './rendering';
 export * from './routing';
 export type * from './svg';
 export type * from './viewport';
-// no-op: verifying npm publish pipeline
+// no-op: verifying automatic npm publish pipeline end-to-end
