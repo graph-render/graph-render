@@ -1,3 +1,12 @@
+## @graph-render/tournament-tree [1.11.1](https://github.com/graph-render/graph-render/compare/%40graph-render%2Ftournament-tree%401.11.0...%40graph-render%2Ftournament-tree%401.11.1) (2026-07-12)
+
+
+### Dependencies
+
+* **@graph-render/core:** upgraded to 1.6.3
+* **@graph-render/react:** upgraded to 1.7.3
+* **@graph-render/types:** upgraded to 1.8.1
+
 ## @graph-render/tournament-tree 1.11.0 (2026-06-27)
 
 * feat(bracket): allow to pass final score only (#44) ([00a8cd9](https://github.com/graph-render/graph-render/commit/00a8cd9)), closes [#44](https://github.com/graph-render/graph-render/issues/44)
