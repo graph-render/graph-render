@@ -64,3 +64,5 @@ package stays framework-neutral and domain-neutral.
 ## License
 
 MIT — free for personal and commercial use.
+
+<!-- dummy -->
