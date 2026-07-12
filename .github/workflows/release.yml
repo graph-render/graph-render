@@ -50,6 +50,7 @@ jobs:
       - name: Release versions and GitHub Releases
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           HUSKY: '0'
         run: ./node_modules/.bin/multi-semantic-release
 
