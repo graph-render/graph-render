@@ -1,3 +1,11 @@
+## @graph-render/react [1.7.3](https://github.com/graph-render/graph-render/compare/%40graph-render%2Freact%401.7.2...%40graph-render%2Freact%401.7.3) (2026-07-12)
+
+
+### Dependencies
+
+* **@graph-render/core:** upgraded to 1.6.3
+* **@graph-render/types:** upgraded to 1.8.1
+
 ## <small>1.7.2 (2026-06-27)</small>
 
 
