@@ -1,4 +1,5 @@
 name: Release
+# Retrigger: verify NPM_TOKEN publishes packages to registry.npmjs.org.
 
 on:
   push:
