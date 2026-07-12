@@ -1,3 +1,10 @@
+## @graph-render/core [1.6.3](https://github.com/graph-render/graph-render/compare/%40graph-render%2Fcore%401.6.2...%40graph-render%2Fcore%401.6.3) (2026-07-12)
+
+
+### Dependencies
+
+* **@graph-render/types:** upgraded to 1.8.1
+
 ## <small>1.6.2 (2026-06-27)</small>
 
 
