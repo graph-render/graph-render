@@ -27,7 +27,12 @@
     "**/@nx/devkit/minimatch": "^9.0.7",
     "picomatch": "^4.0.4",
     "rollup": "^4.59.0",
-    "storybook": "^10.4.6"
+    "storybook": "^10.4.6",
+    "**/handlebars": "^4.7.10",
+    "nx/undici": "^7.30.1",
+    "**/nx/undici": "^7.30.1",
+    "eslint-plugin-functional/deepmerge-ts": "^8.0.2",
+    "**/eslint-plugin-functional/deepmerge-ts": "^8.0.2"
   },
   "scripts": {
     "build:all": "nx run-many -t build",
