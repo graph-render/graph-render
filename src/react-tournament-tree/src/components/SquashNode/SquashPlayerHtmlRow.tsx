@@ -1,6 +1,8 @@
+import { useCountryFlag } from '../../contexts/CountryFlagsContext';
+import { usePlayerAvatar } from '../../hooks/usePlayerAvatar';
 import type { SquashPlayerRowProps } from '../../types/squashNode';
 import type { ResolvedMatchCardStyle } from '../../utils/resolveBracketAppearance';
-import { getPlayerBadgeText, getPlayerMetadataText } from '../../utils/squash';
+import { getPlayerBadgeText, getPlayerCountryText, getPlayerSeedText } from '../../utils/squash';
 import { SquashHtmlScoreSegments } from './SquashHtmlScoreSegments';
 
 type SquashPlayerHtmlRowProps = SquashPlayerRowProps & {
@@ -18,10 +20,10 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
   const badgeColor = isWinner ? colors.WINNER_CREST_TEXT : colors.CREST_TEXT;
   const rowBackground = isPlayerHovered ? colors.ROW_HOVER_BG : colors.ROW_BG;
   const badgeRadius = props.compact ? 3 : 6;
-  const metadataText = getPlayerMetadataText(player);
-  const seedText =
-    typeof player.seed === 'number' && Number.isFinite(player.seed) ? `#${player.seed}` : '';
-  const countryText = player.country?.trim().toUpperCase() ?? '';
+  const flag = useCountryFlag(player.country, props.compact);
+  const avatar = usePlayerAvatar(player.avatarUrl);
+  const seedText = getPlayerSeedText(player);
+  const countryText = getPlayerCountryText(player);
   const handlePlayerEnter = () => props.onPlayerEnter(playerIndex, player);
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' || event.key === ' ') {
@@ -73,26 +75,55 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
           lineHeight: 1,
           flexShrink: 0,
           fontFamily: props.bodyFontFamily,
+          overflow: 'hidden',
         }}
         aria-label={`crest-${player.name}`}
       >
-        {getPlayerBadgeText(player)}
+        {avatar.url ? (
+          <img
+            src={avatar.url}
+            alt=""
+            onError={avatar.onError}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            data-testid="player-html-avatar"
+          />
+        ) : (
+          getPlayerBadgeText(player)
+        )}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         <span
           style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: '0.3em',
+            minWidth: 0,
             fontSize: matchCard.nameFontSize,
-            fontWeight: isWinner ? 600 : 500,
-            color: props.textColor,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
             fontFamily: props.bodyFontFamily,
           }}
         >
-          {player.name}
+          <span
+            style={{
+              fontWeight: isWinner ? 600 : 500,
+              color: props.textColor,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              minWidth: 0,
+            }}
+          >
+            {player.name}
+          </span>
+          {seedText ? (
+            <span
+              style={{ fontWeight: 500, color: colors.SEED_TEXT, flexShrink: 0 }}
+              data-testid="player-html-seed"
+            >
+              {seedText}
+            </span>
+          ) : null}
         </span>
-        {metadataText ? (
+        {flag || countryText ? (
           <span
             data-testid="player-html-metadata"
             style={{
@@ -107,10 +138,27 @@ export function SquashPlayerHtmlRow(props: SquashPlayerHtmlRowProps) {
               fontWeight: 700,
               letterSpacing: '0.02em',
               lineHeight: 1.1,
+              alignItems: 'center',
             }}
           >
-            {seedText ? <span style={{ color: colors.SEED_TEXT }}>{seedText}</span> : null}
-            {countryText ? <span style={{ color: colors.COUNTRY_TEXT }}>{countryText}</span> : null}
+            {flag ? (
+              <img
+                src={flag.url}
+                alt={flag.code}
+                title={flag.code}
+                width={flag.width}
+                height={flag.height}
+                style={{
+                  objectFit: 'cover',
+                  borderRadius: 2,
+                  boxShadow: `0 0 0 0.5px ${colors.BORDER}`,
+                  flexShrink: 0,
+                  marginTop: props.compact ? 2 : 3,
+                }}
+                data-testid="player-html-flag"
+              />
+            ) : null}
+            {flag ? null : <span style={{ color: colors.COUNTRY_TEXT }}>{countryText}</span>}
           </span>
         ) : null}
       </div>

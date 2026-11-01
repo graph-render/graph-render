@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { BracketVertexOptionsProvider } from '../../contexts/BracketVertexOptionsContext';
 import { resolveBracketAppearance } from '../../utils/resolveBracketAppearance';
 import { SquashPlayerHtmlRow } from '../SquashNode/SquashPlayerHtmlRow';
 import { MOCK_COLORS } from './testUtils';
@@ -8,6 +9,22 @@ import { MOCK_COLORS } from './testUtils';
 const resolved = resolveBracketAppearance(undefined, false, false);
 
 const PLAYER_ONE_NAME = 'Player One';
+
+const withFlags = (
+  children: React.ReactNode,
+  getUrl: (code: string) => string | undefined = (code) => `/flags/${code}.svg`
+) => (
+  <BracketVertexOptionsProvider
+    value={{
+      compact: false,
+      nodeRenderMode: undefined,
+      onInvalidNode: undefined,
+      countryFlags: { getUrl, height: 15 },
+    }}
+  >
+    {children}
+  </BracketVertexOptionsProvider>
+);
 
 const baseProps = {
   nodeId: 'n1',
@@ -95,14 +112,53 @@ describe('SquashPlayerHtmlRow', () => {
     expect(screen.getByLabelText('crest-Player Two')).toHaveTextContent('PT');
   });
 
-  it('renders seed and country metadata', () => {
+  it('renders the seed in brackets after the name and the country below', () => {
     render(<SquashPlayerHtmlRow {...baseProps} />);
-    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent('#1');
-    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent('EG');
+    expect(screen.getByTestId('player-html-seed')).toHaveTextContent(/^\(1\)$/);
+    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent(/^EG$/);
+  });
+
+  it('omits the country line for a seeded player without a country', () => {
+    render(<SquashPlayerHtmlRow {...baseProps} player={{ name: 'Player Three', seed: 3 }} />);
+    expect(screen.getByTestId('player-html-seed')).toHaveTextContent('(3)');
+    expect(screen.queryByTestId('player-html-metadata')).not.toBeInTheDocument();
   });
 
   it('omits metadata when seed and country are absent', () => {
     render(<SquashPlayerHtmlRow {...baseProps} player={{ name: 'Player Three' }} />);
+    expect(screen.queryByTestId('player-html-seed')).not.toBeInTheDocument();
     expect(screen.queryByTestId('player-html-metadata')).not.toBeInTheDocument();
+  });
+
+  it('renders a flag image instead of country text when countryFlags resolves a URL', () => {
+    render(withFlags(<SquashPlayerHtmlRow {...baseProps} />));
+    const flag = screen.getByTestId('player-html-flag');
+    expect(flag).toHaveAttribute('src', '/flags/eg.svg');
+    expect(flag).toHaveAttribute('alt', 'EG');
+    expect(screen.getByTestId('player-html-metadata')).toHaveTextContent(/^$/);
+    expect(screen.getByTestId('player-html-seed')).toHaveTextContent('(1)');
+  });
+
+  it('renders the avatar image instead of initials when avatarUrl is set', () => {
+    render(
+      <SquashPlayerHtmlRow
+        {...baseProps}
+        player={{ ...baseProps.player, avatarUrl: '/avatars/p1.jpg' }}
+      />
+    );
+    expect(screen.getByTestId('player-html-avatar')).toHaveAttribute('src', '/avatars/p1.jpg');
+    expect(screen.getByLabelText(`crest-${PLAYER_ONE_NAME}`)).not.toHaveTextContent('PO');
+  });
+
+  it('falls back to initials when the avatar fails to load', () => {
+    render(
+      <SquashPlayerHtmlRow
+        {...baseProps}
+        player={{ ...baseProps.player, avatarUrl: '/avatars/broken.jpg' }}
+      />
+    );
+    fireEvent.error(screen.getByTestId('player-html-avatar'));
+    expect(screen.queryByTestId('player-html-avatar')).not.toBeInTheDocument();
+    expect(screen.getByLabelText(`crest-${PLAYER_ONE_NAME}`)).toHaveTextContent('PO');
   });
 });
