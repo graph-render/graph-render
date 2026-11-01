@@ -21,6 +21,7 @@ export {
   getMatchBadgeLabel,
   getMatchTypeLabel,
   getPlayerBadgeText,
-  getPlayerMetadataText,
+  getPlayerCountryText,
+  getPlayerSeedText,
   truncateText,
 } from './text';

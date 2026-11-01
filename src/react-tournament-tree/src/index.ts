@@ -44,6 +44,7 @@ export type {
   TournamentBracketProps,
   TournamentBracketThemeOptions,
   TournamentBracketToolbarOptions,
+  TournamentCountryFlagOptions,
   TournamentMatchUpdatePayload,
 } from './models/tournamentBracket';
 export { routeBracketEdges } from './utils/bracketRouting';

@@ -4,12 +4,14 @@ import { createContext, type ReactNode, useContext } from 'react';
 
 import { SquashNode } from '../components/SquashNode/SquashNode';
 import type { TournamentBracketProps } from '../models/tournamentBracket';
+import { CountryFlagsContext } from './CountryFlagsContext';
 
 export interface BracketVertexOptions {
   readonly compact: boolean | undefined;
   readonly nodeRenderMode: TournamentBracketProps['nodeRenderMode'];
   readonly onInvalidNode: TournamentBracketProps['onInvalidNode'];
   readonly onMatchUpdate?: TournamentBracketProps['onMatchUpdate'];
+  readonly countryFlags?: TournamentBracketProps['countryFlags'];
 }
 
 const DEFAULT_VERTEX_OPTIONS: BracketVertexOptions = {
@@ -17,6 +19,7 @@ const DEFAULT_VERTEX_OPTIONS: BracketVertexOptions = {
   nodeRenderMode: SquashNodeRenderMode.Export,
   onInvalidNode: undefined,
   onMatchUpdate: undefined,
+  countryFlags: undefined,
 };
 
 const BracketVertexOptionsContext = createContext<BracketVertexOptions>(DEFAULT_VERTEX_OPTIONS);
@@ -34,7 +37,9 @@ export const BracketVertexOptionsProvider = ({
   value,
 }: BracketVertexOptionsProviderProps) => (
   <BracketVertexOptionsContext.Provider value={value}>
-    {children}
+    <CountryFlagsContext.Provider value={value.countryFlags}>
+      {children}
+    </CountryFlagsContext.Provider>
   </BracketVertexOptionsContext.Provider>
 );
 

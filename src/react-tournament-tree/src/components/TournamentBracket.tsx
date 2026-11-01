@@ -56,6 +56,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
   onMatchUpdate,
   onInvalidNode,
   onExportError,
+  countryFlags,
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<GraphHandle>(null);
@@ -117,6 +118,7 @@ export const TournamentBracket = React.memo<TournamentBracketProps>(function Tou
       onInvalidNode,
       onMatchUpdate,
       vertexComponent,
+      countryFlags,
     });
 
   const sharedExportParams = {

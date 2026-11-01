@@ -20,13 +20,19 @@ export function useBracketVertexComponents({
   onInvalidNode,
   onMatchUpdate,
   vertexComponent,
+  countryFlags,
 }: Pick<
   TournamentBracketProps,
-  'compact' | 'nodeRenderMode' | 'onInvalidNode' | 'onMatchUpdate' | 'vertexComponent'
+  | 'compact'
+  | 'nodeRenderMode'
+  | 'onInvalidNode'
+  | 'onMatchUpdate'
+  | 'vertexComponent'
+  | 'countryFlags'
 >) {
   const vertexOptions = useMemo<BracketVertexOptions>(
-    () => ({ compact, nodeRenderMode, onInvalidNode, onMatchUpdate }),
-    [compact, nodeRenderMode, onInvalidNode, onMatchUpdate]
+    () => ({ compact, nodeRenderMode, onInvalidNode, onMatchUpdate, countryFlags }),
+    [compact, nodeRenderMode, onInvalidNode, onMatchUpdate, countryFlags]
   );
   const exportVertexComponent: VertexComponent = vertexComponent ?? defaultExportVertexComponent;
   const resolvedVertexComponent: VertexComponent =

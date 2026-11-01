@@ -28,14 +28,13 @@ export const getPlayerBadgeText = (player: MatchPlayer): string => {
   return initials || '–';
 };
 
-export const getPlayerMetadataText = (player: MatchPlayer): string => {
-  const parts = [
-    typeof player.seed === 'number' && Number.isFinite(player.seed) ? `#${player.seed}` : '',
-    player.country?.trim().toUpperCase() ?? '',
-  ].filter(Boolean);
+// Seed goes after the name in brackets (tennis/squash draw convention), so it is not
+// misread as a national ranking when it sits next to the flag.
+export const getPlayerSeedText = (player: MatchPlayer): string =>
+  typeof player.seed === 'number' && Number.isFinite(player.seed) ? `(${player.seed})` : '';
 
-  return parts.join(' · ');
-};
+export const getPlayerCountryText = (player: MatchPlayer): string =>
+  player.country?.trim().toUpperCase() ?? '';
 
 const DEFAULT_LOCALIZATION = resolveTournamentLocalization();
 

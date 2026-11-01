@@ -7,7 +7,8 @@ import {
   getMatchBadgeLabel,
   getMatchTypeLabel,
   getPlayerBadgeText,
-  getPlayerMetadataText,
+  getPlayerCountryText,
+  getPlayerSeedText,
   truncateText,
 } from '../text';
 
@@ -65,21 +66,23 @@ describe('getPlayerBadgeText', () => {
   });
 });
 
-describe('getPlayerMetadataText', () => {
-  it('combines seed and country', () => {
-    expect(getPlayerMetadataText({ name: 'Alice', seed: 1, country: 'eg' })).toBe('#1 · EG');
+describe('getPlayerSeedText', () => {
+  it('wraps the seed in brackets', () => {
+    expect(getPlayerSeedText({ name: 'Alice', seed: 8 })).toBe('(8)');
   });
 
-  it('renders only seed when country is absent', () => {
-    expect(getPlayerMetadataText({ name: 'Alice', seed: 3 })).toBe('#3');
+  it('returns empty text when the seed is absent', () => {
+    expect(getPlayerSeedText({ name: 'Alice' })).toBe('');
+  });
+});
+
+describe('getPlayerCountryText', () => {
+  it('uppercases the country code', () => {
+    expect(getPlayerCountryText({ name: 'Alice', seed: 1, country: ' eg ' })).toBe('EG');
   });
 
-  it('renders only country when seed is absent', () => {
-    expect(getPlayerMetadataText({ name: 'Alice', country: 'us' })).toBe('US');
-  });
-
-  it('returns empty text when metadata is absent', () => {
-    expect(getPlayerMetadataText({ name: 'Alice' })).toBe('');
+  it('returns empty text when the country is absent', () => {
+    expect(getPlayerCountryText({ name: 'Alice', seed: 1 })).toBe('');
   });
 });
 

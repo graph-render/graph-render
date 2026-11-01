@@ -29,6 +29,17 @@ export interface TournamentBracketToolbarOptions {
   readonly showPdfExport?: boolean | undefined;
 }
 
+export interface TournamentCountryFlagOptions {
+  /**
+   * Returns an image URL for a player's `country` code (as given in the match
+   * data), or `undefined` to fall back to the country text. Use flag images
+   * where emoji flags are too small or unsupported (Windows shows letters).
+   */
+  readonly getUrl: (countryCode: string) => string | undefined;
+  /** Flag height in px; width follows a 4:3 ratio. Defaults to 12 (9 when compact). */
+  readonly height?: number | undefined;
+}
+
 export interface TournamentMatchUpdatePayload {
   readonly matchId: string;
   readonly update: Partial<MatchMeta>;
@@ -70,4 +81,6 @@ export interface TournamentBracketProps {
   readonly onInvalidNode?: ((nodeId: string, error: Error) => void) | undefined;
   readonly onExportError?: ((error: Error) => void) | undefined;
   readonly onMatchUpdate?: ((payload: TournamentMatchUpdatePayload) => void) | undefined;
+  /** Renders player countries as flag images instead of text. */
+  readonly countryFlags?: TournamentCountryFlagOptions | undefined;
 }
