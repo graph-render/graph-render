@@ -1,3 +1,5 @@
+## @graph-render/tournament-tree [1.12.0](https://github.com/graph-render/graph-render/compare/%40graph-render%2Ftournament-tree%401.11.1...%40graph-render%2Ftournament-tree%401.12.0) (2026-11-06)
+
 ## @graph-render/tournament-tree [1.11.1](https://github.com/graph-render/graph-render/compare/%40graph-render%2Ftournament-tree%401.11.0...%40graph-render%2Ftournament-tree%401.11.1) (2026-07-12)
 
 
