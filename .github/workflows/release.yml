@@ -1,5 +1,6 @@
 name: Release
-# Retrigger: verify NPM_TOKEN publishes packages to registry.npmjs.org.
+# npm publishing uses trusted publishing (OIDC) — no NPM_TOKEN secret.
+# GitHub tags/releases use the built-in github.token — no PAT secret.
 
 on:
   push:
@@ -31,9 +32,6 @@ jobs:
           # Full history is required — semantic-release reads every commit since
           # the last release tag to determine the next version.
           fetch-depth: 0
-          # Use the built-in GITHUB_TOKEN for checkout: a configured-but-invalid
-          # GH_TOKEN PAT makes the fetch fail. semantic-release still pushes with
-          # GH_TOKEN (when set) via the GITHUB_TOKEN env var in later steps.
           token: ${{ github.token }}
 
       - name: Setup Node.js
@@ -42,16 +40,22 @@ jobs:
           node-version: '22'
           cache: 'yarn'
 
+      # Trusted publishing requires npm CLI >= 11.5.1; Node 22 ships npm 10.
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
+
       - name: Install dependencies
         run: HUSKY=0 yarn install
 
       - name: Build all packages
         run: yarn build
 
+      # @semantic-release/npm exchanges the GitHub OIDC token (id-token: write)
+      # for a short-lived npm publish token. Each package must list this repo +
+      # release.yml + the `release` environment as its Trusted Publisher on npmjs.com.
       - name: Release versions and GitHub Releases
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           HUSKY: '0'
         run: ./node_modules/.bin/multi-semantic-release
 
@@ -64,6 +68,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ github.token }}
         run: node scripts/publish-github-packages.mjs

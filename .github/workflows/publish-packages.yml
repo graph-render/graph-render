@@ -31,6 +31,6 @@ jobs:
 
       - name: Publish packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN || github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
+          NODE_AUTH_TOKEN: ${{ github.token }}
         run: node scripts/publish-github-packages.mjs
