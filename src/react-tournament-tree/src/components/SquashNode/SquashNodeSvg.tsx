@@ -167,7 +167,7 @@ export function SquashNodeSvg(props: SquashNodeVariantProps) {
           stroke={colors.BORDER}
           strokeWidth={1}
         />
-        {meta.status === MatchStatus.Upcoming && props.scheduleText ? (
+        {props.scheduleText ? (
           <text
             x={nodeWidth / 2}
             y={nodeHeight - 6}
