@@ -61,9 +61,7 @@ export function SquashNodeHtml(props: SquashNodeVariantProps) {
           <LiveIndicator color={colors.LIVE_INDICATOR} label={localization.uiLabels.liveMatch} />
         ) : null}
         {matchBadgeLabel ? <MatchTypeBadge label={matchBadgeLabel} /> : null}
-        {meta.status === MatchStatus.Upcoming && props.scheduleText ? (
-          <ScheduleMetadata text={props.scheduleText} />
-        ) : null}
+        {props.scheduleText ? <ScheduleMetadata text={props.scheduleText} /> : null}
         <div style={{ display: 'grid', gridTemplateRows: 'repeat(2, 1fr)' }}>
           {[p1, p2].map((player, playerIndex) => {
             const isWinner = winnerIndex === playerIndex;
