@@ -1,6 +1,8 @@
 name: Release
 # npm publishing uses trusted publishing (OIDC) — no NPM_TOKEN secret.
-# GitHub tags/releases use the built-in github.token — no PAT secret.
+# GitHub releases use the built-in github.token. The release commit + tags are
+# pushed over SSH with the RELEASE_DEPLOY_KEY deploy key, which is the only
+# actor allowed to bypass the `main` branch ruleset. Nothing here expires.
 
 on:
   push:
@@ -32,7 +34,9 @@ jobs:
           # Full history is required — semantic-release reads every commit since
           # the last release tag to determine the next version.
           fetch-depth: 0
-          token: ${{ github.token }}
+          # Deploy key (write access) — lets semantic-release push the
+          # `chore(release)` commit and tags past the `main` ruleset.
+          ssh-key: ${{ secrets.RELEASE_DEPLOY_KEY }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
